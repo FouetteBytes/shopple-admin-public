@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: crawler
+spec:
+  selector:
+    app: crawler
+  ports:
+  - port: 5002
+    targetPort: 5002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crawler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crawler
+  template:
+    metadata:
+      labels:
+        app: crawler
+    spec:
+      containers:
+      - name: crawler
+        image: shopple-crawler:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5002
+        envFrom:
+        - secretRef:
+            name: shopple-secrets
+        env:
+        - name: HEADLESS_MODE
+          value: "true"
+        # Crawler needs to write output files. 
+        # For local dev, we bind mount the local output folder so you can see results.
+        volumeMounts:
+        - name: crawler-output
+          mountPath: /app/crawler/output
+        - name: crawler-cache
+          mountPath: /app/crawler/cache
+        - name: crawler-jobs
+          mountPath: /app/crawler/jobs
+        - name: crawler-logs
+          mountPath: /app/crawler/logs
+      volumes:
+      - name: crawler-output
+        persistentVolumeClaim:
+          claimName: crawler-output
+      - name: crawler-cache
+        persistentVolumeClaim:
+          claimName: crawler-cache
+      - name: crawler-jobs
+        persistentVolumeClaim:
+          claimName: crawler-jobs
+      - name: crawler-logs
+        persistentVolumeClaim:
+          claimName: crawler-logs

@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush        5
+        Daemon       Off
+        Log_Level    info
+        Parsers_File parsers.conf
+        HTTP_Server  On
+        HTTP_Listen  0.0.0.0
+        HTTP_Port    2020
+
+    [INPUT]
+        Name              tail
+        Path              /app/backend/logs/shopple_admin.json.log
+        Parser            json
+        Tag               shopple.backend
+        Refresh_Interval  10
+        Read_from_Head    true
+        Skip_Empty_Lines  On
+
+    [FILTER]
+        Name    modify
+        Match   shopple.*
+        Add     app shopple-admin
+        Add     component backend
+        Add     environment development
+
+    [OUTPUT]
+        Name   stdout
+        Match  *
+
+    [OUTPUT]
+        Name  es
+        Match shopple.*
+        Host  opensearch
+        Port  9200
+        Index shopple-logs
+        Suppress_Type_Name On
+
+  worker-fluent-bit.conf: |
+    [SERVICE]
+        Flush        5
+        Daemon       Off
+        Log_Level    info
+        Parsers_File parsers.conf
+        HTTP_Server  On
+        HTTP_Listen  0.0.0.0
+        HTTP_Port    2020
+
+    [INPUT]
+        Name              tail
+        Path              /app/backend/logs/shopple_admin.json.log
+        Parser            json
+        Tag               shopple.worker
+        Refresh_Interval  10
+        Read_from_Head    true
+        Skip_Empty_Lines  On
+
+    [FILTER]
+        Name    modify
+        Match   shopple.*
+        Add     app shopple-admin
+        Add     component worker
+        Add     environment development
+
+    [OUTPUT]
+        Name   stdout
+        Match  *
+
+    [OUTPUT]
+        Name  es
+        Match shopple.*
+        Host  opensearch
+        Port  9200
+        Index shopple-logs
+        Suppress_Type_Name On
+
+  frontend-fluent-bit.conf: |
+    [SERVICE]
+        Flush        5
+        Daemon       Off
+        Log_Level    info
+        Parsers_File parsers.conf
+        HTTP_Server  On
+        HTTP_Listen  0.0.0.0
+        HTTP_Port    2020
+
+    [INPUT]
+        Name              tail
+        Path              /app/logs/frontend.json.log
+        Tag               shopple.frontend
+        Refresh_Interval  10
+        Read_from_Head    true
+        Skip_Empty_Lines  On
+
+    [FILTER]
+        Name    modify
+        Match   shopple.*
+        Add     app shopple-admin
+        Add     component frontend
+        Add     environment development
+
+    [OUTPUT]
+        Name   stdout
+        Match  *
+
+    [OUTPUT]
+        Name  es
+        Match shopple.*
+        Host  opensearch
+        Port  9200
+        Index shopple-logs
+        Suppress_Type_Name On
+
+  parsers.conf: |
+    [PARSER]
+        Name        json
+        Format      json
+        Time_Key    timestamp
+        Time_Format %Y-%m-%dT%H:%M:%S.%f%z
+        Time_Keep   On

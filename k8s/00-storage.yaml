@@ -1,0 +1,118 @@
+# =============================================================================
+# KUBERNETES PERSISTENT VOLUME CLAIMS (PVCs)
+# =============================================================================
+# 
+# WHAT IS THIS FILE?
+# ------------------
+# This file creates "storage buckets" (PVCs) that your containers use to
+# store data that needs to persist even when containers restart.
+#
+# WHY DO WE NEED THIS?
+# --------------------
+# - Containers are temporary - when they restart, data inside is LOST
+# - PVCs are like "external hard drives" that containers can mount
+# - Data in PVCs survives container restarts and updates
+#
+# HOW IT WORKS:
+# -------------
+#   Container                    PVC (Storage)
+#   ┌─────────────┐             ┌─────────────┐
+#   │  Backend    │────mounts───│ backend-data│  (1Gi)
+#   │  Container  │             │  /app/data  │
+#   └─────────────┘             └─────────────┘
+#
+# LOCAL vs CLOUD:
+# ---------------
+# - Local (Docker Desktop/Minikube): Uses your laptop's disk
+# - Cloud (GKE/EKS/AKS): Uses cloud storage (e.g., Google Persistent Disk)
+#
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# BACKEND DATA STORAGE
+# Stores: notes.json, user data, API key cache
+# -----------------------------------------------------------------------------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-data
+  labels:
+    app: backend
+spec:
+  accessModes:
+    - ReadWriteOnce      # Only one pod can write at a time
+  resources:
+    requests:
+      storage: 1Gi       # 1 gigabyte of storage
+
+---
+# -----------------------------------------------------------------------------
+# CRAWLER OUTPUT STORAGE
+# Stores: Scraped product data (JSON/CSV files)
+# -----------------------------------------------------------------------------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: crawler-output
+  labels:
+    app: crawler
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi       # 5 gigabytes (crawler generates lots of data)
+
+---
+# -----------------------------------------------------------------------------
+# CRAWLER CACHE STORAGE
+# Stores: Temporary crawl data, HTTP cache
+# -----------------------------------------------------------------------------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: crawler-cache
+  labels:
+    app: crawler
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+# -----------------------------------------------------------------------------
+# CRAWLER JOBS STORAGE
+# Stores: Job queue files, scheduled tasks
+# -----------------------------------------------------------------------------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: crawler-jobs
+  labels:
+    app: crawler
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+# -----------------------------------------------------------------------------
+# CRAWLER LOGS STORAGE
+# Stores: Crawler execution logs (before shipping to OpenSearch)
+# -----------------------------------------------------------------------------
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: crawler-logs
+  labels:
+    app: crawler
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

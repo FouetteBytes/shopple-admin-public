@@ -1,0 +1,5 @@
+FROM fluent/fluent-bit:latest
+
+# Copy configuration files
+COPY backend/fluent-bit.conf /fluent-bit/etc/fluent-bit.conf
+COPY backend/parsers.conf /fluent-bit/etc/parsers.conf

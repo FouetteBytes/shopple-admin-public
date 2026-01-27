@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment (not needed in Docker)
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Environment files (use .env.docker instead)
+# .env
+.env.local
+backend/.env
+frontend/.env.local
+
+# Node modules (frontend not needed in backend Docker)
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Test outputs
+crawler/test_output/
+backend/test_output/
+
+# Logs
+*.log
+logs/
+nohup.out
+
+# Documentation (optional - keep if you want docs in container)
+# doc/
+# *.md
+
+# Development scripts
+setup_venv.sh
+setup_venv.ps1
+start.sh
+start.ps1
+setup_for_cloud.sh
+
+# Cache (will be recreated)
+# cache/
+# crawler/cache/ (Contains source code!)
+crawler/cache/*.db
+crawler/cache/*.db-shm
+crawler/cache/*.db-wal
+
+# Temporary files
+*.tmp
+temp/
+tmp/

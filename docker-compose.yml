@@ -1,0 +1,172 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: shopple-backend
+    ports:
+      - "5001:5001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./backend:/app/backend
+      - ./crawler:/app/crawler
+      - ./backend/logs:/app/backend/logs
+      - ./backend/data:/app/backend/data
+      - ./backend/secure:/app/backend/secure
+      - ./cache:/app/cache
+      - ./crawler/cache:/app/crawler/cache
+      - ./crawler/jobs:/app/crawler/jobs
+      - ./crawler/logs:/app/crawler/logs
+      - ./.env:/app/.env
+    env_file:
+      - ./.env
+    environment:
+      - FLASK_ENV=production
+      - PORT=5001
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_RUN_PORT=5001
+      - FRONTEND_ORIGIN=http://localhost:3000
+      - USE_JOB_QUEUE=true
+    depends_on:
+      - fluent-bit
+    networks:
+      - shopple-network
+
+  crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile.crawler
+    container_name: shopple-crawler
+    volumes:
+      - ./crawler:/app/crawler
+      - ./backend:/app/backend
+      - ./backend/logs:/app/backend/logs
+      - ./crawler/output:/app/crawler/output
+      - ./crawler/cache:/app/crawler/cache
+      - ./crawler/jobs:/app/crawler/jobs
+      - ./crawler/logs:/app/crawler/logs
+      - ./cache:/app/cache
+    env_file:
+      - ./.env
+    environment:
+      - HEADLESS_MODE=true
+    depends_on:
+      - fluent-bit
+    networks:
+      - shopple-network
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: shopple-worker
+    volumes:
+      - ./backend:/app/backend
+      - ./crawler:/app/crawler
+      - ./backend/logs:/app/backend/logs
+      - ./cache:/app/cache
+    env_file:
+      - ./.env
+    depends_on:
+      - fluent-bit
+    networks:
+      - shopple-network
+
+  fluent-bit:
+    image: fluent/fluent-bit:latest
+    container_name: shopple-fluent-bit
+    volumes:
+      - ./backend/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./backend/logs:/app/backend/logs
+    env_file:
+      - ./.env
+    ports:
+      - "24224:24224"
+      - "2020:2020"
+    depends_on:
+      - opensearch
+    networks:
+      - shopple-network
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: shopple-opensearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - DISABLE_SECURITY_PLUGIN=true 
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - shopple-network
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: shopple-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    depends_on:
+      - opensearch
+    networks:
+      - shopple-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../Dockerfile.frontend
+      args:
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost:5001}
+        NEXT_PUBLIC_FIREBASE_API_KEY: ${NEXT_PUBLIC_FIREBASE_API_KEY:-}
+        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:-}
+        NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${NEXT_PUBLIC_FIREBASE_PROJECT_ID:-}
+        NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:-}
+        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:-}
+        NEXT_PUBLIC_FIREBASE_APP_ID: ${NEXT_PUBLIC_FIREBASE_APP_ID:-}
+    container_name: shopple-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_BACKEND_URL:-http://localhost:5001}
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-http://localhost:5001}
+      - NEXT_PUBLIC_FIREBASE_API_KEY=${NEXT_PUBLIC_FIREBASE_API_KEY:-}
+      - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:-}
+      - NEXT_PUBLIC_FIREBASE_PROJECT_ID=${NEXT_PUBLIC_FIREBASE_PROJECT_ID:-}
+      - NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:-}
+      - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:-}
+      - NEXT_PUBLIC_FIREBASE_APP_ID=${NEXT_PUBLIC_FIREBASE_APP_ID:-}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID:-}
+      - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL:-}
+      - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY:-}
+      - FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL:-}
+      - FIREBASE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET:-}
+      - INTERNAL_BACKEND_URL=http://backend:5001
+      - DISABLE_SECURE_COOKIES=true
+    depends_on:
+      - backend
+    networks:
+      - shopple-network
+
+volumes:
+  crawler-output:
+  backend-secure:
+  opensearch-data:
+
+networks:
+  shopple-network:
+    driver: bridge

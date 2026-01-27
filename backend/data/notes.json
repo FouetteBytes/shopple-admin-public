@@ -1,0 +1,37 @@
+{
+  "default": [
+    {
+      "id": "1752600932875",
+      "title": "Check Firebase",
+      "content": "",
+      "completed": false,
+      "category": "work",
+      "priority": "high",
+      "createdAt": "2025-07-15T17:35:32.875Z",
+      "updatedAt": "2025-07-15T23:05:33.446252",
+      "dueDate": "2025-07-16T00:00:00.000Z"
+    },
+    {
+      "id": "1752600702903",
+      "title": "Test Backend Sync",
+      "content": "Testing if notes sync properly with backend",
+      "completed": true,
+      "category": "work",
+      "priority": "medium",
+      "createdAt": "2025-07-15T23:01:42.903838",
+      "updatedAt": "2025-07-15T23:03:04.346265",
+      "dueDate": null
+    },
+    {
+      "id": "1752599901832",
+      "title": "Check Classifiers ",
+      "content": "",
+      "completed": true,
+      "category": "work",
+      "priority": "high",
+      "createdAt": "2025-07-15T17:18:21.832Z",
+      "updatedAt": "2025-07-15T22:49:41.666209",
+      "dueDate": "2025-07-15T00:00:00.000Z"
+    }
+  ]
+}

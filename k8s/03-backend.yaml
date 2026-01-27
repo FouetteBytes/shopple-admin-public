@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      serviceAccountName: shopple-backend  # For K8s API access (service monitoring)
+      containers:
+      - name: backend
+        image: shopple-backend:latest
+        imagePullPolicy: IfNotPresent # Uses local Docker image
+        ports:
+        - containerPort: 5001
+        envFrom:
+        - secretRef:
+            name: shopple-secrets
+        env:
+        - name: FLASK_RUN_HOST
+          value: "0.0.0.0"
+        - name: PORT
+          value: "5001"
+        - name: USE_JOB_QUEUE
+          value: "true"
+        - name: PROJECT_ROOT
+          value: "/app"
+        - name: K8S_NAMESPACE
+          value: "default"
+        # Database/Service URLs must point to K8s Service names, not localhost
+        # Assuming you update .env or override here if names differ
+        # But 'opensearch' service name matches the docker-compose hostname
+        volumeMounts:
+        - name: logs-volume
+          mountPath: /app/backend/logs
+        - name: data-volume
+          mountPath: /app/backend/data
+        - name: crawler-jobs
+          mountPath: /app/crawler/jobs
+        - name: crawler-logs
+          mountPath: /app/crawler/logs
+        - name: crawler-output
+          mountPath: /app/crawler/output
+
+      # Sidecar for logging (optional, keeps architecture same as compose)
+      - name: fluent-bit
+        image: fluent/fluent-bit:latest
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: logs-volume
+          mountPath: /app/backend/logs
+        - name: fluent-bit-config
+          mountPath: /fluent-bit/etc/
+      
+      volumes:
+      - name: logs-volume
+        emptyDir: {} 
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: backend-data
+      - name: crawler-jobs
+        persistentVolumeClaim:
+          claimName: crawler-jobs
+      - name: crawler-logs
+        persistentVolumeClaim:
+          claimName: crawler-logs
+      - name: crawler-output
+        persistentVolumeClaim:
+          claimName: crawler-output
+      - name: fluent-bit-config
+        configMap:
+          name: fluent-bit-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  type: ClusterIP   # Internal only - accessed via Ingress
+  selector:
+    app: backend
+  ports:
+  - port: 5001
+    targetPort: 5001

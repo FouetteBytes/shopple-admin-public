@@ -1,0 +1,218 @@
+# ===========================================================================
+# INGRESS - Single Entry Point for All External Traffic
+# ===========================================================================
+#
+# WHY INGRESS?
+# ------------
+# Instead of each service having its own LoadBalancer (expensive in cloud),
+# we use ONE LoadBalancer (the Ingress Controller) that routes traffic to
+# all services based on the URL path or hostname.
+#
+# ARCHITECTURE:
+# -------------
+#
+#   Internet
+#       │
+#       ▼
+#   ┌─────────────────────────────────────────────────────────────────────┐
+#   │                    INGRESS CONTROLLER                               │
+#   │                  (single LoadBalancer)                              │
+#   │                                                                     │
+#   │   /           → Frontend (port 3000)                               │
+#   │   /api/*      → Backend  (port 5001)                               │
+#   │   /dashboards → OpenSearch Dashboards (port 5601)                  │
+#   │                                                                     │
+#   └─────────────────────────────────────────────────────────────────────┘
+#       │               │               │
+#       ▼               ▼               ▼
+#   [Frontend]      [Backend]      [Dashboards]
+#   ClusterIP       ClusterIP       ClusterIP
+#
+# LOCAL DEVELOPMENT:
+# ------------------
+# 1. Install NGINX Ingress Controller:
+#    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+#
+# 2. Wait for it to be ready:
+#    kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
+#
+# 3. Access via: http://localhost (Ingress Controller binds to port 80/443)
+#
+# CLOUD DEPLOYMENT:
+# -----------------
+# The Ingress Controller automatically provisions a cloud LoadBalancer.
+# Update the 'host' field below with your domain (e.g., app.example.com)
+#
+# ===========================================================================
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shopple-ingress
+  annotations:
+    # NGINX Ingress Controller annotations
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    # WebSocket support for SSE (Server-Sent Events)
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    # Rewrite /api/* to /* when forwarding to backend
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  # ---------------------------------------------------------------------------
+  # LOCAL DEVELOPMENT (no hostname - matches any)
+  # For cloud: change to your domain like "app.example.com"
+  # ---------------------------------------------------------------------------
+  - http:
+      paths:
+      # Frontend auth routes → Frontend (Next.js API routes)
+      # MUST come before /api to take precedence
+      - path: /api/auth
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+      
+      # Frontend admin session management routes → Frontend (Next.js API routes)
+      # Be specific to avoid catching backend /api/admin/users/online etc
+      - path: /api/admin/change-password
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+      
+      - path: /api/admin/change-password-v2
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+      
+      - path: /api/admin/force-password-reset
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+      
+      - path: /api/admin/emergency-reset
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+      
+      - path: /api/admin/manage-sessions
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+      
+      - path: /api/admin/avatar
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+      
+      # Backend API routes → Backend (Flask)
+      # This catches all /api/* including /api/admin/users/*
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 5001
+      
+      # Health check endpoint
+      - path: /health
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 5001
+      
+      # OpenSearch Dashboards
+      - path: /dashboards
+        pathType: Prefix
+        backend:
+          service:
+            name: opensearch-dashboards
+            port:
+              number: 5601
+      
+      # Everything else → Frontend (must be last - catch-all)
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+
+---
+# ===========================================================================
+# ALTERNATIVE: Host-based routing for cloud with custom domains
+# ===========================================================================
+# Uncomment and configure if you have separate domains for each service
+#
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: shopple-ingress-cloud
+#   annotations:
+#     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+#     cert-manager.io/cluster-issuer: "letsencrypt-prod"  # For HTTPS
+# spec:
+#   ingressClassName: nginx
+#   tls:
+#   - hosts:
+#     - app.example.com
+#     - api.example.com
+#     - dashboards.example.com
+#     secretName: shopple-tls
+#   rules:
+#   - host: app.example.com
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: frontend
+#             port:
+#               number: 3000
+#   - host: api.example.com
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: backend
+#             port:
+#               number: 5001
+#   - host: dashboards.example.com
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: opensearch-dashboards
+#             port:
+#               number: 5601

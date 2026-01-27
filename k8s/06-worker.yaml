@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+      - name: worker
+        image: shopple-worker:latest
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - secretRef:
+            name: shopple-secrets
+        volumeMounts:
+        - name: backend-logs
+          mountPath: /app/backend/logs
+      - name: fluent-bit
+        image: fluent/fluent-bit:latest
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: backend-logs
+          mountPath: /app/backend/logs
+        - name: fluent-bit-config
+          mountPath: /fluent-bit/etc/fluent-bit.conf
+          subPath: fluent-bit.conf
+      volumes:
+      - name: backend-logs
+        emptyDir: {}
+      - name: fluent-bit-config
+        configMap:
+          name: fluent-bit-config
+          items:
+          - key: worker-fluent-bit.conf
+            path: fluent-bit.conf

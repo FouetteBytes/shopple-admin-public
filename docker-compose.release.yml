@@ -1,0 +1,134 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-fouettebytes}/shopple-backend:${IMAGE_TAG:-latest}
+    container_name: shopple-backend
+    ports:
+      - "5001:5001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - backend_logs:/app/backend/logs
+      - backend_data:/app/backend/data
+      - backend_secure:/app/backend/secure
+      - cache_data:/app/cache
+      - crawler_cache:/app/crawler/cache
+      - crawler_jobs:/app/crawler/jobs
+      - crawler_logs:/app/crawler/logs
+      - ./.env:/app/.env
+    env_file:
+      - ./.env
+    depends_on:
+      - fluent-bit
+    networks:
+      - shopple-network
+
+  crawler:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-fouettebytes}/shopple-crawler:${IMAGE_TAG:-latest}
+    container_name: shopple-crawler
+    volumes:
+      - backend_logs:/app/backend/logs
+      - crawler_output:/app/crawler/output
+      - crawler_cache:/app/crawler/cache
+      - crawler_jobs:/app/crawler/jobs
+      - crawler_logs:/app/crawler/logs
+      - cache_data:/app/cache
+    env_file:
+      - ./.env
+    depends_on:
+      - fluent-bit
+    networks:
+      - shopple-network
+
+  worker:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-fouettebytes}/shopple-worker:${IMAGE_TAG:-latest}
+    container_name: shopple-worker
+    volumes:
+      - backend_logs:/app/backend/logs
+      - cache_data:/app/cache
+    env_file:
+      - ./.env
+    depends_on:
+      - fluent-bit
+    networks:
+      - shopple-network
+
+  fluent-bit:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-fouettebytes}/shopple-fluent-bit:${IMAGE_TAG:-latest}
+    container_name: shopple-fluent-bit
+    volumes:
+      - backend_logs:/app/backend/logs
+    env_file:
+      - ./.env
+    ports:
+      - "24224:24224"
+      - "2020:2020"
+    depends_on:
+      - opensearch
+    networks:
+      - shopple-network
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: shopple-opensearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - DISABLE_SECURITY_PLUGIN=true 
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - shopple-network
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: shopple-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - 'OPENSEARCH_HOSTS=["http://opensearch:9200"]'
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    depends_on:
+      - opensearch
+    networks:
+      - shopple-network
+
+  frontend:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-fouettebytes}/shopple-frontend:${IMAGE_TAG:-latest}
+    container_name: shopple-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_BACKEND_URL:-http://localhost:5001}
+      - INTERNAL_BACKEND_URL=http://backend:5001
+      - DISABLE_SECURE_COOKIES=true
+    depends_on:
+      - backend
+    networks:
+      - shopple-network
+
+volumes:
+  backend_logs:
+  backend_data:
+  backend_secure:
+  cache_data:
+  crawler_cache:
+  crawler_jobs:
+  crawler_logs:
+  crawler_output:
+  opensearch-data:
+
+networks:
+  shopple-network:
+    driver: bridge

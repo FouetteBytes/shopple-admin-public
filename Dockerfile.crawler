@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/playwright/python:v1.49.0-jammy
+
+WORKDIR /app
+
+# Copy requirements
+COPY crawler/requirements.txt /app/crawler/requirements.txt
+COPY backend/requirements.txt /app/backend/requirements.txt
+
+# Install dependencies
+RUN pip install --no-cache-dir -r /app/crawler/requirements.txt
+RUN pip install --no-cache-dir -r /app/backend/requirements.txt
+RUN playwright install --with-deps chromium
+
+# Copy source code
+COPY crawler /app/crawler
+COPY backend /app/backend
+COPY crawler/cache /app/cache
+# COPY .env /app/.env
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV HEADLESS_MODE=true
+ENV PYTHONUNBUFFERED=1
+
+# Default command - run the job watcher
+CMD ["python", "crawler/job_watcher.py"]

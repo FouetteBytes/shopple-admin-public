@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: shopple-frontend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - secretRef:
+            name: shopple-secrets
+        env:
+        # Crucial: Frontend must talk to backend Service in K8s (internal)
+        # BUT for Next.js CLIENT side calls, it needs localhost (via LoadBalancer)
+        - name: INTERNAL_BACKEND_URL
+          valueFrom:
+            secretKeyRef:
+              name: shopple-secrets
+              key: INTERNAL_BACKEND_URL
+        - name: NEXT_PUBLIC_BACKEND_URL
+          valueFrom:
+            secretKeyRef:
+              name: shopple-secrets
+              key: NEXT_PUBLIC_BACKEND_URL
+        - name: PORT
+          value: "3000"
+        - name: DISABLE_SECURE_COOKIES
+          value: "true"
+        # Use the entrypoint.sh from Dockerfile which generates env-config.js at runtime
+        # The entrypoint reads NEXT_PUBLIC_* env vars and writes them to public/env-config.js
+        command: ["/bin/sh", "-c"]
+        args: ["mkdir -p /app/logs && ./entrypoint.sh npm start > /app/logs/frontend.json.log 2>&1"]
+        volumeMounts:
+        - name: frontend-logs
+          mountPath: /app/logs
+      - name: fluent-bit
+        image: fluent/fluent-bit:latest
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: frontend-logs
+          mountPath: /app/logs
+        - name: fluent-bit-config
+          mountPath: /fluent-bit/etc/fluent-bit.conf
+          subPath: fluent-bit.conf
+      volumes:
+      - name: frontend-logs
+        emptyDir: {}
+      - name: fluent-bit-config
+        configMap:
+          name: fluent-bit-config
+          items:
+          - key: frontend-fluent-bit.conf
+            path: fluent-bit.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: ClusterIP   # Internal only - accessed via Ingress
+  selector:
+    app: frontend
+  ports:
+  - port: 3000
+    targetPort: 3000

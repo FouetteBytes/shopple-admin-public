@@ -1,0 +1,12 @@
+{
+  "storage_mode": "both",
+  "auto_upload": true,
+  "keep_local_days": 7,
+  "max_local_files": 50,
+  "auto_cleanup": false,
+  "post_upload_cleanup_delay_seconds": 30,
+  "firebase_enabled": true,
+  "setup_date": "2025-07-04",
+  "version": "1.0.0",
+  "note": "Cloud-only storage mode by default to avoid local storage issues"
+}

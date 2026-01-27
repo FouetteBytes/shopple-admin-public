@@ -1,0 +1,41 @@
+# ===========================================================================
+# RBAC - Role-Based Access Control for Backend Pod Monitoring
+# ===========================================================================
+#
+# This allows the backend service to query Kubernetes API for:
+# - Listing pods (service status monitoring)
+# - Deleting pods (service restart by deleting pod, deployment recreates it)
+#
+# ===========================================================================
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: shopple-backend
+  namespace: default
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-manager
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: shopple-backend-pod-manager
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: shopple-backend
+  namespace: default
+roleRef:
+  kind: Role
+  name: pod-manager
+  apiGroup: rbac.authorization.k8s.io

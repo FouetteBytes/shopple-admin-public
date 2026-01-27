@@ -1,0 +1,56 @@
+.github
+.pytest_cache/
+.vscode
+
+.env
+.env/
+backend/.env
+
+.venv
+.venv/
+venv/
+**/venv/
+
+# Python cache files
+__pycache__/
+**/__pycache__/
+*.pyc
+**/*.pyc
+*.pyo
+**/*.pyo
+*.pyd
+**/*.pyd
+*.so
+.Python
+
+# Documentation (internal only)
+doc/
+docs/
+**/docs/
+**/docs/
+
+# Log files
+logs/
+*.log
+*.log.*
+backend/logs/
+**/*.log
+**/*.log.*
+
+# Build artifacts and caches
+.next/
+frontend/.next/
+frontend.log
+cache/
+crawler/output/
+backend/test_output/
+crawler/tests/test_output/
+
+
+keys.json.enc
+backend/secure/keys.json.enc
+backend/data/keys.json.enc
+
+# macOS system files
+.DS_Store
+**/.DS_Store
