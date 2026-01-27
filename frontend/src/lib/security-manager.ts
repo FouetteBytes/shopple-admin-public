@@ -1,6 +1,6 @@
 /**
- * Advanced Security Manager for Admin Password Security
- * Implements comprehensive security measures for admin password management
+ * Security manager for admin authentication and password controls.
+ * Implements centralized security policies for administrative access.
  */
 
 interface RateLimitRule {
@@ -75,7 +75,7 @@ class SecurityManager {
   }
 
   private loadFromStorage(): void {
-    if (typeof window === 'undefined') return; // Server-side safety
+    if (typeof window === 'undefined') return; // Guard for server-side execution.
     
     try {
       const attemptsData = localStorage.getItem('security_attempts');
@@ -102,7 +102,7 @@ class SecurityManager {
   }
 
   private saveToStorage(): void {
-    if (typeof window === 'undefined') return; // Server-side safety
+    if (typeof window === 'undefined') return; // Guard for server-side execution.
     
     try {
       localStorage.setItem('security_attempts', JSON.stringify(Object.fromEntries(this.attempts)));
@@ -114,7 +114,7 @@ class SecurityManager {
   }
 
   private startCleanupTimer(): void {
-    // Clean up old records every 10 minutes
+    // Clean up old records every 10 minutes.
     setInterval(() => {
       this.cleanupOldRecords();
     }, 10 * 60 * 1000);
@@ -124,7 +124,7 @@ class SecurityManager {
     const now = Date.now();
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
 
-    // Clean up attempt records
+    // Remove expired attempt records.
     Array.from(this.attempts.entries()).forEach(([key, records]) => {
       const filtered = records.filter((record: AttemptRecord) => now - record.timestamp < maxAge);
       if (filtered.length === 0) {
@@ -134,14 +134,14 @@ class SecurityManager {
       }
     });
 
-    // Clean up blocked IPs
+    // Remove expired IP blocks.
     Array.from(this.blockedIPs.entries()).forEach(([ip, blockedUntil]) => {
       if (now > blockedUntil) {
         this.blockedIPs.delete(ip);
       }
     });
 
-    // Clean up blocked users
+    // Remove expired user blocks.
     Array.from(this.blockedUsers.entries()).forEach(([userId, blockedUntil]) => {
       if (now > blockedUntil) {
         this.blockedUsers.delete(userId);
@@ -154,7 +154,7 @@ class SecurityManager {
   public isBlocked(ip: string, userId?: string): { blocked: boolean; reason?: string; unblockTime?: Date } {
     const now = Date.now();
 
-    // Check IP block
+    // Check for IP-based blocking.
     const ipBlockTime = this.blockedIPs.get(ip);
     if (ipBlockTime && now < ipBlockTime) {
       return {
@@ -164,7 +164,7 @@ class SecurityManager {
       };
     }
 
-    // Check user block
+    // Check for user-based blocking.
     if (userId) {
       const userBlockTime = this.blockedUsers.get(userId);
       if (userBlockTime && now < userBlockTime) {
@@ -184,13 +184,13 @@ class SecurityManager {
     action: keyof SecurityConfig['rateLimits'] | string,
     userId?: string
   ): { allowed: boolean; retryAfter?: number; reason?: string } {
-    // Map string actions to rate limit categories
+    // Map action strings to rate limit categories.
     const rateLimitAction = this.mapActionToRateLimit(action);
     const rule = SECURITY_CONFIG.rateLimits[rateLimitAction];
     const now = Date.now();
     const windowStart = now - rule.windowMs;
 
-    // Check if blocked
+    // Check for active blocking.
     const blockStatus = this.isBlocked(ip, userId);
     if (blockStatus.blocked) {
       return {
@@ -200,12 +200,12 @@ class SecurityManager {
       };
     }
 
-    // Count recent attempts for this IP and action
+    // Count recent attempts for this IP and action.
     const ipKey = `${ip}:${rateLimitAction}`;
     const ipAttempts = this.attempts.get(ipKey) || [];
     const recentIPAttempts = ipAttempts.filter(attempt => attempt.timestamp > windowStart);
 
-    // Count recent attempts for this user and action (if userId provided)
+    // Count recent attempts for this user and action, if provided.
     let recentUserAttempts: AttemptRecord[] = [];
     if (userId) {
       const userKey = `${userId}:${rateLimitAction}`;
@@ -213,12 +213,12 @@ class SecurityManager {
       recentUserAttempts = userAttempts.filter(attempt => attempt.timestamp > windowStart);
     }
 
-    // Check if rate limit exceeded
+    // Determine whether the rate limit is exceeded.
     const maxReached = recentIPAttempts.length >= rule.maxAttempts ||
       (userId && recentUserAttempts.length >= rule.maxAttempts);
 
     if (maxReached) {
-      // Block the IP and/or user
+      // Block the IP and/or user.
       this.blockedIPs.set(ip, now + rule.blockDurationMs);
       if (userId) {
         this.blockedUsers.set(userId, now + rule.blockDurationMs);
@@ -238,19 +238,19 @@ class SecurityManager {
   private mapActionToRateLimit(action: string): keyof SecurityConfig['rateLimits'] {
     if (action === 'login' || action.includes('login')) return 'login';
     if (action === 'passwordChange' || action.includes('password')) return 'passwordChange';
-    return 'adminActions'; // Default for admin operations
+    return 'adminActions'; // Default category for administrative operations.
   }
 
   public recordAttempt(action: string, ip: string, userId?: string, success: boolean = false): void {
     const now = Date.now();
 
-    // Record IP attempt
+    // Record an IP-level attempt.
     const ipKey = `${ip}:${action}`;
     const ipAttempts = this.attempts.get(ipKey) || [];
     ipAttempts.push({ timestamp: now, ip, action });
     this.attempts.set(ipKey, ipAttempts);
 
-    // Record user attempt if provided
+    // Record a user-level attempt when provided.
     if (userId) {
       const userKey = `${userId}:${action}`;
       const userAttempts = this.attempts.get(userKey) || [];
@@ -258,7 +258,7 @@ class SecurityManager {
       this.attempts.set(userKey, userAttempts);
     }
 
-    // If failed attempt, check for brute force patterns
+    // On failure, evaluate brute force patterns.
     if (!success) {
       this.detectBruteForce(ip, userId, action);
     }
@@ -271,7 +271,7 @@ class SecurityManager {
     const window = 15 * 60 * 1000; // 15 minutes
     const windowStart = now - window;
 
-    // Check IP-based brute force
+    // Check for IP-based brute force patterns.
     const ipKey = `${ip}:${action}`;
     const ipAttempts = this.attempts.get(ipKey) || [];
     const recentFailedIP = ipAttempts.filter(
@@ -279,11 +279,11 @@ class SecurityManager {
     ).length;
 
     if (recentFailedIP >= SECURITY_CONFIG.maxFailedAttempts.perIP) {
-      this.blockedIPs.set(ip, now + (60 * 60 * 1000)); // Block for 1 hour
+      this.blockedIPs.set(ip, now + (60 * 60 * 1000)); // Block for 1 hour.
       console.warn(`IP ${ip} blocked due to brute force detection`);
     }
 
-    // Check user-based brute force
+    // Check for user-based brute force patterns.
     if (userId) {
       const userKey = `${userId}:${action}`;
       const userAttempts = this.attempts.get(userKey) || [];
@@ -292,7 +292,7 @@ class SecurityManager {
       ).length;
 
       if (recentFailedUser >= SECURITY_CONFIG.maxFailedAttempts.perUser) {
-        this.blockedUsers.set(userId, now + (30 * 60 * 1000)); // Block for 30 minutes
+        this.blockedUsers.set(userId, now + (30 * 60 * 1000)); // Block for 30 minutes.
         console.warn(`User ${userId} blocked due to brute force detection`);
       }
     }
@@ -328,7 +328,7 @@ class SecurityManager {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
       crypto.getRandomValues(array);
     } else {
-      // Fallback for environments without crypto.getRandomValues
+      // Fallback for environments without crypto.getRandomValues.
       for (let i = 0; i < array.length; i++) {
         array[i] = Math.floor(Math.random() * 256);
       }
@@ -369,9 +369,9 @@ class SecurityManager {
   }
 }
 
-// Utility functions for use in API routes
+// Utility functions for API routes.
 export function getClientIP(request: Request): string {
-  // In production, this should extract from X-Forwarded-For or similar headers
+  // In production, prefer X-Forwarded-For or equivalent headers.
   return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
          request.headers.get('x-real-ip') || 
          'unknown';
@@ -397,6 +397,6 @@ export function createSecurityResponse(
   );
 }
 
-// Export singleton instance
+// Export the singleton instance.
 export const securityManager = SecurityManager.getInstance();
 export default SecurityManager;

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""
-Stop File Watcher Service
-A simple script to stop the file watcher service
+"""Stop the file watcher service.
+
+Provides a simple entry point to stop the file watcher service.
 """
 
 import os
@@ -10,14 +10,14 @@ import signal
 import time
 from pathlib import Path
 
-# Add backend to path for logger_service
+# Add the backend path for logger_service.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger
 
 logger = get_logger(__name__)
 
 def stop_file_watcher():
-    """Stop the file watcher service"""
+    """Stop the file watcher service."""
     script_dir = Path(__file__).parent
     pid_file = script_dir / "file_watcher.pid"
     
@@ -32,20 +32,20 @@ def stop_file_watcher():
         logger.info(f" Stopping file watcher (PID: {pid})...")
         
         try:
-            # Try graceful shutdown first
+            # Attempt graceful shutdown first.
             os.kill(pid, signal.SIGTERM)
             
-            # Wait a bit for graceful shutdown
+            # Wait briefly for graceful shutdown.
             time.sleep(2)
             
-            # Check if still running
+            # Check whether the process is still running.
             try:
                 os.kill(pid, 0)
                 logger.info("Process still running, forcing shutdown")
                 os.kill(pid, signal.SIGKILL)
                 time.sleep(1)
             except OSError:
-                pass  # Process already stopped
+                pass  # Process already stopped.
             
             logger.info("File watcher stopped successfully")
             
@@ -56,7 +56,7 @@ def stop_file_watcher():
                 logger.error(f"❌ Error stopping process: {e}")
                 return False
         
-        # Remove PID file
+        # Remove the PID file.
         pid_file.unlink()
         logger.debug(f"   PID file removed: {pid_file}")
         
@@ -67,7 +67,7 @@ def stop_file_watcher():
         return False
 
 def main():
-    """Main function"""
+    """Main entry point."""
     logger.info(" File Watcher Service Stopper")
     logger.info("=" * 40)
     

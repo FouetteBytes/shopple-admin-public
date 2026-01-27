@@ -21,7 +21,7 @@ This platform serves as the backend for [Shopple](https://github.com/FouetteByte
 ---
 
 ## Table of Contents
-
+- [Screenshots](#screenshots)
 - [What This Project Does](#what-this-project-does)
 - [Key Capabilities](#key-capabilities)
 - [Infrastructure Highlights](#infrastructure-highlights)
@@ -30,8 +30,71 @@ This platform serves as the backend for [Shopple](https://github.com/FouetteByte
 - [Technology Stack](#technology-stack)
 - [Getting Started](#getting-started)
 - [Deployment Options](#deployment-options)
-- [Screenshots](#screenshots)
 - [Related Projects](#related-projects)
+
+---
+
+## Screenshots
+
+<div align="center">
+
+### Dashboard
+<img src="assets/screenshots/dashboard.png" width="800" alt="Dashboard" />
+<br/><br/>
+
+### Products
+<img src="assets/screenshots/products.png" width="800" alt="Products" />
+<br/><br/>
+
+### AI Classification 1
+<img src="assets/screenshots/classification1.png" width="800" alt="AI Classification" />
+<br/><br/>
+
+### AI Classification 2
+<img src="assets/screenshots/classification2.png" width="800" alt="AI Classification" />
+<br/><br/>
+
+### Web Crawlers
+<img src="assets/screenshots/crawler1.png" width="800" alt="Web Crawler" />
+<br/><br/>
+
+### Web Crawlers
+<img src="assets/screenshots/crawler1_1.png" width="800" alt="Web Crawler" />
+<br/><br/>
+
+### Web Crawlers in Action
+<img src="assets/screenshots/crawler2.png" width="800" alt="Web Crawler" />
+<br/><br/>
+
+### Web Crawler results
+<img src="assets/screenshots/crawler3.png" width="800" alt="Web Crawler" />
+<br/><br/>
+
+### Product Upload(Management)
+<img src="assets/screenshots/prod_upload1.png" width="800" alt="Settings" />
+<br/><br/>
+
+### Product Analysis(Duplicate Detection)
+<img src="assets/screenshots/prod_upload2.png" width="800" alt="Settings" />
+<br/><br/>
+
+### Product Creation Handling(Manual Review)
+<img src="assets/screenshots/prod_upload3.png" width="800" alt="Settings" />
+<br/><br/>
+
+### System Audit
+<img src="assets/screenshots/audit.png" width="800" alt="Settings" />
+<br/><br/>
+
+### Settings
+<img src="assets/screenshots/settings.png" width="800" alt="Settings" />
+<br/><br/>
+
+### Log Viewer
+<img src="assets/screenshots/logs.png" width="800" alt="Log Viewer" />
+<br/><br/>
+
+</div>
 
 ---
 
@@ -429,26 +492,7 @@ open http://localhost/dashboards  # Logs
 
 ### Environment Configuration
 
-Create `.env` with these required variables:
-
-```env
-# Firebase (required)
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_CLIENT_EMAIL=your-service-account@...
-FIREBASE_PRIVATE_KEY=your-private-key
-
-# Security (required)
-KEYSTORE_SECRET=<generate with: openssl rand -base64 32>
-SECRET_KEY=<generate with: python -c "import secrets; print(secrets.token_hex(32))">
-
-# Firebase Client (required for frontend)
-NEXT_PUBLIC_FIREBASE_API_KEY=AIza...
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
-NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abc123
-```
+Create `.env` with these required variables refered in the .env.example file
 
 ---
 
@@ -498,25 +542,6 @@ docker-compose -f docker-compose.release.yml up -d
 
 ---
 
-## Screenshots
-
-<div align="center">
-
-| **Dashboard** | **Products** |
-|:---:|:---:|
-| <img src="assets/screenshots/dashboard.png" width="400" /> | <img src="assets/screenshots/products.png" width="400" /> |
-
-| **AI Classification** | **Web Crawler** |
-|:---:|:---:|
-| <img src="assets/screenshots/classification.png" width="400" /> | <img src="assets/screenshots/crawler.png" width="400" /> |
-
-| **Settings** | **Log Viewer** |
-|:---:|:---:|
-| <img src="assets/screenshots/settings.png" width="400" /> | <img src="assets/screenshots/logs.png" width="400" /> |
-
-</div>
-
----
 
 ## Repository Layout
 

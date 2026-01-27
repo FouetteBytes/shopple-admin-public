@@ -286,9 +286,9 @@ export const productRequestsApi = {
 
 
   async get(id: string, options?: { signal?: AbortSignal }): Promise<ProductRequestDetail> {
-    // Add a timeout to prevent hanging forever
+    // Add a timeout to prevent indefinite waits.
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15-second timeout.
     
     try {
       const response = await fetch(`${API_BASE_URL}/api/product-requests/${id}`, {

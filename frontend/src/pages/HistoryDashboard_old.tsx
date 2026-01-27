@@ -22,7 +22,7 @@ import {
 import MarketInsightsPanel from '@/components/pricing/MarketInsightsPanel';
 import { API_BASE_URL } from '@/lib/api';
 
-// Interface for enhanced product data
+// Interface for enhanced product data.
 interface EnhancedProduct {
   id: string;
   name: string;
@@ -135,7 +135,7 @@ const HistoryDashboard: React.FC = () => {
       </PageNavbar>
 
       <div className="space-y-6">
-        {/* Product Selection Section */}
+        {/* Product selection section. */}
         <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 shadow-lg p-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-10 w-10 bg-blue-500 rounded-xl flex items-center justify-center">
@@ -147,7 +147,7 @@ const HistoryDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Search and Select */}
+          {/* Search and select. */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Search Products</label>
@@ -180,7 +180,7 @@ const HistoryDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Selected Product Info */}
+          {/* Selected product information. */}
           {selectedProductData && (
             <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
               <div className="grid md:grid-cols-4 gap-4">
@@ -205,7 +205,7 @@ const HistoryDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Loading State */}
+        {/* Loading state. */}
         {loading && (
           <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-12">
             <div className="flex flex-col items-center justify-center">
@@ -216,7 +216,7 @@ const HistoryDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Market Insights Panel - Only show when data is available */}
+        {/* Market insights panel (rendered only when data is available). */}
         {!loading && historyData && historyData.price_history && Object.keys(historyData.price_history).length > 0 && (
           <MarketInsightsPanel 
             priceHistory={historyData.price_history}
@@ -225,7 +225,7 @@ const HistoryDashboard: React.FC = () => {
           />
         )}
 
-        {/* No Data State */}
+        {/* No data state. */}
         {!loading && selectedProduct && (!historyData || !historyData.price_history || Object.keys(historyData.price_history).length === 0) && (
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-12">
             <div className="text-center">
@@ -243,7 +243,7 @@ const HistoryDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Welcome State - No product selected */}
+        {/* Welcome state (no product selected). */}
         {!selectedProduct && !loading && (
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-200 p-12">
             <div className="text-center">

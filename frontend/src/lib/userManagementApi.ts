@@ -2,7 +2,7 @@ import { API_BASE_URL } from './api';
 
 export interface BanUserRequest {
   reason?: string;
-  expiresAt?: string; // ISO string
+  expiresAt?: string; // ISO 8601 string.
 }
 
 async function postRequest(path: string, body?: any) {

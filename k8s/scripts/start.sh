@@ -2,33 +2,33 @@
 set -e
 
 # -----------------------------------------------------------------------------
-# Shopple Admin - Kubernetes Startup Script
+# Shopple Admin - Kubernetes startup script
 #
 # Purpose:
 #   Complete cluster deployment: builds Docker images, cleans old deployments,
-#   creates/updates secrets, deploys manifests, and sets up Ingress Controller.
+#   creates or updates secrets, deploys manifests, and sets up the Ingress controller.
 #
 # Usage:
-#   bash k8s/scripts/start.sh                    # Full fresh deployment (default: --no-cache)
-#   bash k8s/scripts/start.sh --skip-build       # Deploy without rebuilding images
-#   bash k8s/scripts/start.sh --quick            # Quick restart (no build, no clean)
-#   bash k8s/scripts/start.sh --with-cache       # Build with Docker cache (faster)
-#   DEPLOY_MODE=cloud bash k8s/scripts/start.sh  # Cloud deployment
+#   bash k8s/scripts/start.sh                    # Full fresh deployment (default: --no-cache).
+#   bash k8s/scripts/start.sh --skip-build       # Deploy without rebuilding images.
+#   bash k8s/scripts/start.sh --quick            # Quick restart (no build, no clean).
+#   bash k8s/scripts/start.sh --with-cache       # Build with Docker cache (faster).
+#   DEPLOY_MODE=cloud bash k8s/scripts/start.sh  # Cloud deployment.
 #
 # Options:
-#   --skip-build    Skip Docker image builds (use existing images)
-#   --quick         Quick restart: skip build and keep existing pods
-#   --no-cache      Force rebuild all images without cache (default)
-#   --with-cache    Allow Docker cache for faster builds
+#   --skip-build    Skip Docker image builds (use existing images).
+#   --quick         Quick restart: skip build and keep existing pods.
+#   --no-cache      Force rebuild all images without cache (default).
+#   --with-cache    Allow Docker cache for faster builds.
 #
 # Environment:
-#   DEPLOY_MODE     "local" (default) or "cloud"
+#   DEPLOY_MODE     "local" (default) or "cloud".
 # -----------------------------------------------------------------------------
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$PROJECT_ROOT"
 
-# Parse arguments
+# Parse arguments.
 SKIP_BUILD="false"
 QUICK_MODE="false"
 USE_CACHE="false"
@@ -51,15 +51,15 @@ for arg in "$@"; do
   esac
 done
 
-# Load environment variables from .env
+# Load environment variables from .env.
 if [ -f .env ]; then
   echo " Loading environment from .env..."
   while IFS='=' read -r key value; do
-    # Skip comments and empty lines
+    # Skip comments and empty lines.
     if [[ $key =~ ^# ]] || [[ -z $key ]]; then
       continue
     fi
-    # Only export valid shell identifiers
+    # Only export valid shell identifiers.
     if [[ $key =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
         export "$key"="$value"
     fi
@@ -99,7 +99,7 @@ if [ "$QUICK_MODE" = "false" ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# STEP 1: Build Docker Images
+# STEP 1: Build Docker images
 # ---------------------------------------------------------------------------
 if [ "$SKIP_BUILD" = "false" ]; then
   echo ""
@@ -134,12 +134,12 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# STEP 2: Create Kubernetes Secrets
+# STEP 2: Create Kubernetes secrets
 # ---------------------------------------------------------------------------
 echo ""
 echo " Creating Kubernetes secrets from .env..."
 
-# Clean up .env for Kubernetes Secret (remove duplicates, handle quotes)
+# Clean up .env for the Kubernetes Secret (remove duplicates, handle quotes).
 awk -F= '!/^#/ && !/^$/ {
     idx = index($0, "=")
     if (idx > 0) {
@@ -162,17 +162,17 @@ END { for (k in map) print k"="map[k] }' .env > k8s/.env.k8s
 kubectl delete secret shopple-secrets --ignore-not-found
 kubectl create secret generic shopple-secrets --from-env-file=k8s/.env.k8s
 
-# Clean up temp secret file
+# Clean up the temporary secret file.
 rm k8s/.env.k8s
 echo "   ✅ Secrets created"
 
 echo " Deploying to Kubernetes..."
 
-# Get current project root
+# Get the current project root.
 echo " Project Root: $PROJECT_ROOT"
 
 # ---------------------------------------------------------------------------
-# STEP 1: Install NGINX Ingress Controller (local mode only)
+# STEP 1: Install the NGINX Ingress Controller (local mode only)
 # ---------------------------------------------------------------------------
 if [ "$DEPLOY_MODE" = "local" ]; then
   echo " Checking NGINX Ingress Controller..."
@@ -191,11 +191,11 @@ if [ "$DEPLOY_MODE" = "local" ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# STEP 2: Apply Kubernetes Manifests
+# STEP 2: Apply Kubernetes manifests
 # ---------------------------------------------------------------------------
 for file in "$PROJECT_ROOT"/k8s/*.yaml; do
   echo "Applying $file..."
-  # Use sed to replace ${PROJECT_ROOT} with the actual path
+  # Use sed to replace ${PROJECT_ROOT} with the actual path.
   sed "s|\${PROJECT_ROOT}|$PROJECT_ROOT|g" "$file" | kubectl apply -f -
 done
 
@@ -205,17 +205,17 @@ echo "✅ Deployment Complete!"
 echo "=============================================="
 
 # ---------------------------------------------------------------------------
-# STEP 3: Initialize Backend Data Volume
+# STEP 3: Initialize the backend data volume
 # ---------------------------------------------------------------------------
 echo ""
 echo " Initializing backend data volume..."
 
-# Wait for backend pod to be ready
+# Wait for the backend pod to be ready.
 kubectl wait --for=condition=ready pod -l app=backend --timeout=120s 2>/dev/null || true
 
 BACKEND_POD=$(kubectl get pods -l app=backend -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
 if [ -n "$BACKEND_POD" ]; then
-  # Check if allowed_models.json exists in the PVC
+  # Check whether allowed_models.json exists in the PVC.
   if ! kubectl exec "$BACKEND_POD" -c backend -- test -f /app/backend/data/allowed_models.json 2>/dev/null; then
     echo "    Copying allowed_models.json to persistent volume..."
     if [ -f "$PROJECT_ROOT/backend/data/allowed_models.json" ]; then

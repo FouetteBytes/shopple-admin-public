@@ -12,11 +12,11 @@ spec:
       labels:
         app: backend
     spec:
-      serviceAccountName: shopple-backend  # For K8s API access (service monitoring)
+      serviceAccountName: shopple-backend  # Required for Kubernetes API access (service monitoring).
       containers:
       - name: backend
         image: shopple-backend:latest
-        imagePullPolicy: IfNotPresent # Uses local Docker image
+        imagePullPolicy: IfNotPresent # Uses the local Docker image.
         ports:
         - containerPort: 5001
         envFrom:
@@ -33,9 +33,9 @@ spec:
           value: "/app"
         - name: K8S_NAMESPACE
           value: "default"
-        # Database/Service URLs must reference K8s Service names, not localhost.
+        # Database and service URLs must reference Kubernetes Service names, not localhost.
         # Override environment values here if service names differ.
-        # The 'opensearch' service name matches the docker-compose hostname.
+        # The opensearch service name matches the Docker Compose hostname.
         volumeMounts:
         - name: logs-volume
           mountPath: /app/backend/logs
@@ -48,7 +48,7 @@ spec:
         - name: crawler-output
           mountPath: /app/crawler/output
 
-      # Sidecar for logging (optional, keeps architecture same as compose)
+      # Logging sidecar (optional; matches the Compose architecture).
       - name: fluent-bit
         image: fluent/fluent-bit:latest
         imagePullPolicy: IfNotPresent
@@ -60,7 +60,7 @@ spec:
       
       volumes:
       - name: logs-volume
-        emptyDir: {} 
+        emptyDir: {}
       - name: data-volume
         persistentVolumeClaim:
           claimName: backend-data

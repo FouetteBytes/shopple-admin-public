@@ -1,34 +1,34 @@
 # =============================================================================
-# KUBERNETES PERSISTENT VOLUME CLAIMS (PVCs)
+# Kubernetes PersistentVolumeClaims (PVCs)
 # =============================================================================
 # 
 # Defines PersistentVolumeClaims (PVCs) used by containers to retain data
 # across pod restarts and deployments.
 #
-# WHY DO WE NEED THIS?
-# --------------------
-# - Container filesystems are ephemeral; data is lost on restart
-# - PVCs provide persistent storage that pods can mount
-# - Data stored in PVCs survives restarts and updates
+# Purpose
+# -------
+# - Container filesystems are ephemeral; data is lost on restart.
+# - PVCs provide persistent storage that pods can mount.
+# - Data stored in PVCs survives restarts and updates.
 #
-# Working Principle:
-# -------------
+# Working principle
+# -----------------
 #   Container                    PVC (Storage)
 #   ┌─────────────┐             ┌─────────────┐
 #   │  Backend    │────mounts───│ backend-data│  (1Gi)
 #   │  Container  │             │  /app/data  │
 #   └─────────────┘             └─────────────┘
 #
-# LOCAL vs CLOUD:
-# ---------------
-# - Local (Docker Desktop/Minikube): Uses the workstation disk
-# - Cloud (GKE/EKS/AKS): Uses managed cloud storage (e.g., Google Persistent Disk)
+# Local vs. cloud
+# --------------
+# - Local (Docker Desktop/Minikube): uses the workstation disk.
+# - Cloud (GKE/EKS/AKS): uses managed cloud storage (e.g., Google Persistent Disk).
 #
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# BACKEND DATA STORAGE
-# Stores: notes.json, user data, API key cache
+# Backend data storage
+# Stores: notes.json, user data, API key cache.
 # -----------------------------------------------------------------------------
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -38,15 +38,15 @@ metadata:
     app: backend
 spec:
   accessModes:
-    - ReadWriteOnce      # Only one pod can write at a time
+    - ReadWriteOnce      # Only one pod can write at a time.
   resources:
     requests:
-      storage: 1Gi       # 1 gigabyte of storage
+      storage: 1Gi       # 1 gigabyte of storage.
 
 ---
 # -----------------------------------------------------------------------------
-# CRAWLER OUTPUT STORAGE
-# Stores: Scraped product data (JSON/CSV files)
+# Crawler output storage
+# Stores: scraped product data (JSON/CSV files).
 # -----------------------------------------------------------------------------
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -59,12 +59,12 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi       # 5 gigabytes 
+      storage: 5Gi       # 5 gigabytes.
 
 ---
 # -----------------------------------------------------------------------------
-# CRAWLER CACHE STORAGE
-# Stores: Temporary crawl data, HTTP cache
+# Crawler cache storage
+# Stores: temporary crawl data and HTTP cache.
 # -----------------------------------------------------------------------------
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -81,8 +81,8 @@ spec:
 
 ---
 # -----------------------------------------------------------------------------
-# CRAWLER JOBS STORAGE
-# Stores: Job queue files, scheduled tasks
+# Crawler jobs storage
+# Stores: job queue files and scheduled tasks.
 # -----------------------------------------------------------------------------
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -99,8 +99,8 @@ spec:
 
 ---
 # -----------------------------------------------------------------------------
-# CRAWLER LOGS STORAGE
-# Stores: Crawler execution logs (before shipping to OpenSearch)
+# Crawler logs storage
+# Stores: crawler execution logs (before shipping to OpenSearch).
 # -----------------------------------------------------------------------------
 apiVersion: v1
 kind: PersistentVolumeClaim

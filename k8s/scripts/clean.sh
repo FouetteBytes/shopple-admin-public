@@ -2,24 +2,24 @@
 set -e
 
 # -----------------------------------------------------------------------------
-# Shopple Admin - Kubernetes Cleanup Script
+# Shopple Admin - Kubernetes cleanup script
 #
 # Purpose:
-#   Removes Kubernetes resources and (optionally) deletes persistent data,
+#   Removes Kubernetes resources and optionally deletes persistent data,
 #   PVCs, and Docker images. Use with care in development environments.
 #
 # Usage:
-#   bash k8s/scripts/clean.sh                    # Clean deployments only
-#   bash k8s/scripts/clean.sh --purge-data       # Also delete local hostPath data
-#   bash k8s/scripts/clean.sh --purge-pvc        # Also delete PersistentVolumeClaims
-#   bash k8s/scripts/clean.sh --purge-images     # Also remove Docker images
-#   bash k8s/scripts/clean.sh --purge-all        # Complete cleanup (data + PVC + images)
+#   bash k8s/scripts/clean.sh                    # Clean deployments only.
+#   bash k8s/scripts/clean.sh --purge-data       # Also delete local hostPath data.
+#   bash k8s/scripts/clean.sh --purge-pvc        # Also delete PersistentVolumeClaims.
+#   bash k8s/scripts/clean.sh --purge-images     # Also remove Docker images.
+#   bash k8s/scripts/clean.sh --purge-all        # Complete cleanup (data + PVC + images).
 #
 # Options:
-#   --purge-data    Deletes local hostPath data directories (opensearch-data)
-#   --purge-pvc     Deletes PersistentVolumeClaims (loses all stored data!)
-#   --purge-images  Removes local Docker images for Shopple services
-#   --purge-all     Combines all purge options (complete reset)
+#   --purge-data    Deletes local hostPath data directories (opensearch-data).
+#   --purge-pvc     Deletes PersistentVolumeClaims (loses stored data).
+#   --purge-images  Removes local Docker images for Shopple services.
+#   --purge-all     Combines all purge options (complete reset).
 # -----------------------------------------------------------------------------
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -59,7 +59,7 @@ echo "=============================================="
 echo ""
 
 # ---------------------------------------------------------------------------
-# STEP 1: Delete Kubernetes Deployments & Services
+# STEP 1: Delete Kubernetes deployments and services
 # ---------------------------------------------------------------------------
 echo " Deleting Kubernetes resources..."
 
@@ -86,7 +86,7 @@ if [ "$PURGE_PVC" = "true" ]; then
   # Delete all PVCs in the default namespace.
   kubectl delete pvc --all --ignore-not-found 2>/dev/null || true
   
-  # Also delete any leftover PVs
+  # Delete any leftover PVs.
   kubectl delete pv --all --ignore-not-found 2>/dev/null || true
   
   echo "   ✅ PVCs deleted"
@@ -102,13 +102,13 @@ if [ "$PURGE_DATA" = "true" ]; then
   echo ""
   echo "⚠️  Purging local persistent data..."
   
-  # Remove OpenSearch data directory
+  # Remove the OpenSearch data directory.
   if [ -d "$PROJECT_ROOT/opensearch-data" ]; then
     rm -rf "$PROJECT_ROOT/opensearch-data"
     echo "   ✅ Deleted opensearch-data"
   fi
   
-  # Remove any other local data directories that might exist
+  # Remove any other local data directories that might exist.
   if [ -d "$PROJECT_ROOT/backend-data" ]; then
     rm -rf "$PROJECT_ROOT/backend-data"
     echo "   ✅ Deleted backend-data"

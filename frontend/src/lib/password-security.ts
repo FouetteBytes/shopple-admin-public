@@ -1,6 +1,6 @@
 /**
- * Password Security Utilities
- * Implements strong password policies and validation
+ * Password security utilities.
+ * Implements strong password policies and validation.
  */
 
 export interface PasswordPolicy {
@@ -45,14 +45,14 @@ export function validatePassword(
   const errors: string[] = [];
   let score = 0;
 
-  // Length check
+  // Validate length.
   if (password.length < policy.minLength) {
     errors.push(`Password must be at least ${policy.minLength} characters long`);
   } else {
     score += Math.min(password.length - policy.minLength, 8);
   }
 
-  // Character type requirements
+  // Validate character class requirements.
   if (policy.requireUppercase && !/[A-Z]/.test(password)) {
     errors.push('Password must contain at least one uppercase letter');
   } else if (/[A-Z]/.test(password)) {
@@ -80,7 +80,7 @@ export function validatePassword(
     }
   }
 
-  // Forbidden patterns
+  // Check for forbidden patterns.
   const lowerPassword = password.toLowerCase();
   for (const pattern of policy.forbiddenPatterns) {
     if (lowerPassword.includes(pattern.toLowerCase())) {
@@ -89,24 +89,24 @@ export function validatePassword(
     }
   }
 
-  // Additional complexity checks
+  // Apply additional complexity checks.
   if (password.length >= 16) score += 3;
   if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\?]{2,}/.test(password)) score += 2;
   if (/\d{2,}/.test(password)) score += 1;
 
-  // Repetitive character penalty
+  // Apply repetitive character penalties.
   if (/(.)\1{2,}/.test(password)) {
     errors.push('Password cannot contain more than 2 consecutive identical characters');
     score -= 3;
   }
 
-  // Sequential character penalty
+  // Apply sequential character penalties.
   if (/012|123|234|345|456|567|678|789|890|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz/i.test(password)) {
     errors.push('Password cannot contain sequential characters');
     score -= 2;
   }
 
-  // Determine strength
+  // Determine strength.
   let strength: PasswordValidationResult['strength'];
   if (score < 5) strength = 'weak';
   else if (score < 10) strength = 'medium';
@@ -122,7 +122,7 @@ export function validatePassword(
 }
 
 /**
- * Generate a strong password suggestion
+ * Generate a strong password suggestion.
  */
 export function generateStrongPassword(length: number = 16): string {
   const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -132,24 +132,24 @@ export function generateStrongPassword(length: number = 16): string {
   
   let password = '';
   
-  // Ensure at least one character from each required category
+  // Ensure at least one character from each required category.
   password += uppercase[Math.floor(Math.random() * uppercase.length)];
   password += lowercase[Math.floor(Math.random() * lowercase.length)];
   password += numbers[Math.floor(Math.random() * numbers.length)];
   password += specialChars[Math.floor(Math.random() * specialChars.length)];
   
-  // Fill the rest with random characters from all categories
+  // Fill the remaining characters from all categories.
   const allChars = uppercase + lowercase + numbers + specialChars;
   for (let i = password.length; i < length; i++) {
     password += allChars[Math.floor(Math.random() * allChars.length)];
   }
   
-  // Shuffle the password to avoid predictable patterns
+  // Shuffle the password to reduce predictable patterns.
   return password.split('').sort(() => Math.random() - 0.5).join('');
 }
 
 /**
- * Check if password meets minimum security requirements
+ * Check whether a password meets minimum security requirements.
  */
 export function isPasswordSecure(password: string): boolean {
   return validatePassword(password).isValid;

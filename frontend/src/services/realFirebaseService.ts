@@ -1,8 +1,8 @@
-// Real Firebase service to get actual operations data
+// Firebase service for collecting operational usage metrics.
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, limit, orderBy, getDocs, enableNetwork, disableNetwork } from 'firebase/firestore';
 
-// Firebase configuration for the configured project.
+// Firebase configuration for the active project.
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -33,14 +33,14 @@ class RealFirebaseService {
     return RealFirebaseService.instance;
   }
 
-  // Get real Firebase operations statistics
+  // Retrieve Firebase operations statistics.
   async getRealOperationsStats() {
     try {
       if (!this.db) {
         throw new Error('Firebase not initialized');
       }
 
-      // Get recent documents from various collections to estimate operations
+      // Retrieve recent documents to estimate operation volumes.
       const collections = ['users', 'products', 'orders', 'notes', 'activities', 'logs'];
       let totalDocs = 0;
       const stats = {
@@ -63,13 +63,13 @@ class RealFirebaseService {
           const docCount = snapshot.size;
           totalDocs += docCount;
           
-          // Estimate operations based on document counts and timestamps
+          // Estimate operations based on document counts and timestamps.
           stats.collections[collectionName] = docCount;
           
-          // For reads: estimate based on document access patterns
-          stats.reads += docCount * 2; // Assume each doc is read twice on average
+          // Estimate reads based on document access patterns.
+          stats.reads += docCount * 2; // Assume each document is read twice on average.
           
-          // For writes: estimate based on recent document creation
+          // Estimate writes based on recent document creation.
           const recentDocs = snapshot.docs.filter(doc => {
             const data = doc.data();
             const createdAt = data.createdAt?.toDate?.() || new Date(data.createdAt || Date.now());
@@ -78,11 +78,11 @@ class RealFirebaseService {
           });
           
           stats.writes += recentDocs.length;
-          stats.updates += Math.floor(recentDocs.length * 0.3); // Assume 30% of writes are updates
+          stats.updates += Math.floor(recentDocs.length * 0.3); // Assume 30% of writes are updates.
 
         } catch (collectionError: any) {
           console.warn(`Could not access collection ${collectionName}:`, collectionError?.message || 'Unknown error');
-          // Collection might not exist or no permissions
+          // The collection may not exist or permissions may be missing.
           stats.collections[collectionName] = 0;
         }
       }
@@ -97,7 +97,7 @@ class RealFirebaseService {
     } catch (error: any) {
       console.error('Failed to get real Firebase stats:', error);
       
-      // Return fallback stats if Firebase is not accessible
+      // Return fallback stats when Firebase is not accessible.
       return {
         reads: 0,
         writes: 0,
@@ -112,14 +112,14 @@ class RealFirebaseService {
     }
   }
 
-  // Test Firebase connection
+  // Test Firebase connectivity.
   async testConnection() {
     try {
       if (!this.db) {
         return { connected: false, error: 'Firebase not initialized' };
       }
 
-      // Try to read from a simple collection
+      // Attempt a read from a basic collection.
       const testQuery = query(collection(this.db, 'users'), limit(1));
       await getDocs(testQuery);
       
@@ -133,7 +133,7 @@ class RealFirebaseService {
     }
   }
 
-  // Get Firebase project info
+  // Get Firebase project metadata.
   getProjectInfo() {
     return {
       projectId: firebaseConfig.projectId,

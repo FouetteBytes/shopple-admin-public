@@ -34,7 +34,7 @@ import { PageHero } from '@/components/shared/PageHero';
 
 import { API_BASE_URL } from '@/lib/api';
 
-// Dynamically import chart components with no SSR
+// Dynamically import chart components without SSR.
 const PriceIntelligenceChart = dynamic(
   () => import('@/components/pricing/PriceIntelligenceChart'),
   { ssr: false },
@@ -44,7 +44,7 @@ const TestChart = dynamic(
   { ssr: false },
 );
 
-// Define interfaces for price data
+// Define interfaces for price data.
 interface EnhancedProduct {
   id: string;
   name: string;
@@ -61,13 +61,13 @@ const HistoryDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // New State for Glass Components
+  // State for glass components.
   const [activeTab, setActiveTab] = useState<'products' | 'insights'>('products');
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBrand, setSelectedBrand] = useState('all');
 
-  // Use SWR for fetching available products
+  // Use SWR to fetch available products.
   const fetcher = (url: string) => fetch(url).then(r => r.json());
   
   const { data: productsData, mutate: refreshProducts } = useSWR(
@@ -77,7 +77,7 @@ const HistoryDashboard: React.FC = () => {
       refreshInterval: autoRefresh ? 30000 : 0,
       revalidateOnFocus: false,
       dedupingInterval: 60000,
-      keepPreviousData: true, // Keep showing old data while fetching new data
+      keepPreviousData: true, // Keep showing old data while fetching new data.
     }
   );
 
@@ -88,7 +88,7 @@ const HistoryDashboard: React.FC = () => {
     return [];
   }, [productsData]);
 
-  // Derived stats
+  // Derived statistics.
   const stats = useMemo(() => {
     const totalProducts = availableProducts.length;
     const totalPrices = availableProducts.reduce((acc, p) => acc + p.price_data.length, 0);
@@ -119,12 +119,12 @@ const HistoryDashboard: React.FC = () => {
   const handleProductSelect = (productId: string) => {
     setSelectedProduct(productId);
     fetchPriceHistory(productId);
-    setActiveTab('insights'); // Switch to insights tab on selection
+    setActiveTab('insights'); // Switch to the insights tab on selection.
   };
 
   const filteredProducts = useMemo(() => {
     return availableProducts.filter(product => {
-      // Text Search
+      // Text search.
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
         const matchesSearch = 
@@ -134,12 +134,12 @@ const HistoryDashboard: React.FC = () => {
         if (!matchesSearch) return false;
       }
 
-      // Category Filter
+      // Category filter.
       if (selectedCategory !== 'all' && product.category?.toLowerCase() !== selectedCategory) {
         return false;
       }
 
-      // Brand Filter
+      // Brand filter.
       if (selectedBrand !== 'all' && product.brand_name?.toLowerCase() !== selectedBrand) {
         return false;
       }
@@ -204,7 +204,7 @@ const HistoryDashboard: React.FC = () => {
             ]}
           />
 
-        {/* Filter Bar */}
+        {/* Filter bar. */}
         <GlassFilterBar
           searchPlaceholder="Search products by name, brand, or category..."
           searchValue={searchTerm}
@@ -216,7 +216,7 @@ const HistoryDashboard: React.FC = () => {
           lastRefreshedLabel="Just now"
         />
 
-        {/* Tabs */}
+        {/* Tabs. */}
         <GlassSubTabs
           activeKey={activeTab}
           onChange={(key) => setActiveTab(key as 'products' | 'insights')}
@@ -238,7 +238,7 @@ const HistoryDashboard: React.FC = () => {
           ]}
         />
 
-        {/* Content Area */}
+        {/* Content area. */}
         <AnimatePresence mode="wait" initial={false}>
           {activeTab === 'products' ? (
             <motion.div
@@ -259,7 +259,7 @@ const HistoryDashboard: React.FC = () => {
                       : 'border-white/60 bg-white/80 hover:bg-white hover:border-primary/30'
                   }`}
                 >
-                  {/* Selection Indicator */}
+                  {/* Selection indicator. */}
                   {selectedProduct === product.id && (
                     <div className='absolute -top-2 -right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-md z-10'>
                       <span className='text-white text-xs'>✓</span>
@@ -267,7 +267,7 @@ const HistoryDashboard: React.FC = () => {
                   )}
                   
                   <div className='flex items-center gap-4'>
-                    {/* Product Image */}
+                    {/* Product image. */}
                     <div className='relative flex-shrink-0'>
                       {product.image_url ? (
                         <img 
@@ -283,14 +283,14 @@ const HistoryDashboard: React.FC = () => {
                           <Shop size={24} className='text-gray-400' />
                         </div>
                       )}
-                      {/* Price Count Badge */}
+                      {/* Price count badge. */}
                       <div className='absolute -bottom-2 -right-2 bg-white text-xs px-2 py-0.5 rounded-full font-medium shadow-sm border border-gray-100 flex items-center gap-1'>
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                         {product.price_data.length}
                       </div>
                     </div>
                     
-                    {/* Product Info */}
+                    {/* Product information. */}
                     <div className='flex-1 min-w-0'>
                       <p className='font-semibold text-gray-800 truncate text-sm mb-1 group-hover:text-primary transition-colors'>
                         {product.name}
@@ -345,7 +345,7 @@ const HistoryDashboard: React.FC = () => {
                 </div>
               ) : loading ? (
                 <div className='space-y-6 animate-pulse'>
-                  {/* Product Info Skeleton */}
+                  {/* Product info skeleton. */}
                   <div className='bg-white rounded-3xl p-6 shadow-sm border border-gray-100'>
                     <div className='flex items-start gap-6'>
                       <div className='w-24 h-24 bg-gray-200 rounded-2xl'></div>
@@ -369,7 +369,7 @@ const HistoryDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Chart Skeleton */}
+                  {/* Chart skeleton. */}
                   <div className='h-96 bg-white rounded-3xl border border-gray-100 p-6'>
                     <div className='flex items-center gap-3 mb-8'>
                       <div className='h-10 w-10 bg-gray-200 rounded-xl'></div>
@@ -387,7 +387,7 @@ const HistoryDashboard: React.FC = () => {
                 </div>
               ) : historyData ? (
                 <>
-                  {/* Product Header Card */}
+                  {/* Product header card. */}
                   <div className='bg-white rounded-3xl p-6 shadow-sm border border-gray-100'>
                     <div className='flex items-start gap-6'>
                       <div className='relative flex-shrink-0'>
@@ -429,7 +429,7 @@ const HistoryDashboard: React.FC = () => {
                           </button>
                         </div>
                         
-                        {/* Quick Stats Row */}
+                        {/* Quick stats row. */}
                         {historyData.price_analysis && (
                           <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mt-2'>
                             <div className='p-3 bg-green-50 rounded-xl border border-green-100'>
@@ -454,7 +454,7 @@ const HistoryDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Charts Section */}
+                  {/* Charts section. */}
                   {historyData.price_history && Object.keys(historyData.price_history).length > 0 ? (
                     <PriceIntelligenceChart 
                       priceHistory={historyData.price_history}
@@ -475,7 +475,7 @@ const HistoryDashboard: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Current Prices Grid */}
+                  {/* Current prices grid. */}
                   <div className='bg-white rounded-3xl p-6 shadow-sm border border-gray-100'>
                     <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                       <Building4 size={20} className="text-primary" />
@@ -512,7 +512,7 @@ const HistoryDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Historical Price Records by Store */}
+                  {/* Historical price records by store. */}
                   {historyData.price_history && Object.keys(historyData.price_history).length > 0 && (
                     <div className='space-y-6'>
                       <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">

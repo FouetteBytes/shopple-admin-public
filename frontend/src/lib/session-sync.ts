@@ -1,4 +1,4 @@
-// Session synchronization system for real-time user management
+// Session synchronization system for real-time user management.
 export class SessionSync {
   private static instance: SessionSync;
   private eventSource: EventSource | null = null;
@@ -17,7 +17,7 @@ export class SessionSync {
     return SessionSync.instance;
   }
 
-  // Initialize session sync with callbacks
+  // Initialize session synchronization with callbacks.
   initialize(
     onSessionInvalidated: () => void,
     onUserBlocked: (reason: string) => void
@@ -27,7 +27,7 @@ export class SessionSync {
     this.connect();
   }
 
-  // Connect to server-sent events
+  // Connect to server-sent events.
   private connect() {
     if (this.eventSource) {
       this.eventSource.close();
@@ -57,7 +57,7 @@ export class SessionSync {
         this.handleReconnect();
       };
 
-      // Handle specific event types
+      // Register handlers for specific event types.
       this.eventSource.addEventListener('session-invalidated', (event) => {
         console.log('Session invalidated by admin');
         this.onSessionInvalidated?.();
@@ -99,7 +99,7 @@ export class SessionSync {
         this.onSessionInvalidated?.();
         break;
       case 'ping':
-        // Keep-alive ping, no action needed
+        // Keep-alive ping; no action required.
         break;
       default:
         console.log('Unknown session sync message:', data);
@@ -119,7 +119,7 @@ export class SessionSync {
     }
   }
 
-  // Disconnect from session sync
+  // Disconnect from session synchronization.
   disconnect() {
     if (this.eventSource) {
       this.eventSource.close();
@@ -128,12 +128,12 @@ export class SessionSync {
     this.reconnectAttempts = 0;
   }
 
-  // Check if connected
+  // Check connection status.
   isConnected(): boolean {
     return this.eventSource?.readyState === EventSource.OPEN;
   }
 
-  // Send heartbeat to maintain connection
+  // Send a heartbeat to maintain the connection.
   async sendHeartbeat() {
     try {
       await fetch('/api/auth/heartbeat', {

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -----------------------------------------------------------------------------
-# Shopple Admin - Kubernetes Stop Script
+# Shopple Admin - Kubernetes stop script
 #
 # Purpose:
 #   Stops all Kubernetes resources for the Shopple Admin stack. Data volumes are
@@ -13,23 +13,23 @@
 
 echo " Stopping Shopple Admin Kubernetes resources..."
 
-# Delete all deployments
+# Delete all deployments.
 echo "Deleting deployments..."
 kubectl delete deployment backend frontend crawler worker opensearch-dashboards --ignore-not-found=true
 
-# Delete statefulsets
+# Delete statefulsets.
 echo "Deleting statefulsets..."
 kubectl delete statefulset opensearch --ignore-not-found=true
 
-# Delete services (except kubernetes default service)
+# Delete services (except the Kubernetes default service).
 echo "Deleting services..."
 kubectl delete service backend frontend opensearch opensearch-dashboards --ignore-not-found=true
 
-# Delete ingress if exists
+# Delete ingress if it exists.
 echo "Deleting ingress..."
 kubectl delete ingress shopple-ingress --ignore-not-found=true
 
-# Delete configmaps
+# Delete configmaps.
 echo "Deleting configmaps..."
 kubectl delete configmap fluentbit-config --ignore-not-found=true
 
