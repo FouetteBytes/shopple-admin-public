@@ -435,7 +435,7 @@ Create `.env` with these required variables:
 # Firebase (required)
 FIREBASE_PROJECT_ID=your-project-id
 FIREBASE_CLIENT_EMAIL=your-service-account@...
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_PRIVATE_KEY=your-private-key
 
 # Security (required)
 KEYSTORE_SECRET=<generate with: openssl rand -base64 32>
