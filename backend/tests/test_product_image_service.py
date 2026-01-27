@@ -1,14 +1,12 @@
-"""
-Test script for Product Image Service with GitHub Actions Integration
-=====================================================================
+"""Test script for Product Image Service with GitHub Actions integration.
 
 Tests the Firebase Storage integration for product images:
-1. Image download from external URLs
-2. Upload to Firebase Storage
-3. Image update with cleanup
-4. Image deletion
+1. Image download from external URLs.
+2. Upload to Firebase Storage.
+3. Image update with cleanup.
+4. Image deletion.
 
-Outputs test results in JSON format for GitHub Actions workflow.
+Outputs test results in JSON format for the GitHub Actions workflow.
 """
 
 import sys
@@ -17,16 +15,16 @@ import json
 import time
 from datetime import datetime
 
-# Add backend to path
+# Add backend to the path.
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from backend.features.products.service.product_image_service import ProductImageService
 
 class ImageServiceTestRunner:
-    """Test runner with result tracking for CI/CD"""
+    """Test runner with result tracking for CI/CD."""
     
     def __init__(self, output_dir='test_output/images'):
-        # Resolve output directory relative to backend/ (parent of tests/)
+        # Resolve the output directory relative to backend/ (parent of tests/).
         backend_dir = os.path.dirname(os.path.dirname(__file__))
         self.output_dir = os.path.join(backend_dir, output_dir)
         
@@ -46,11 +44,11 @@ class ImageServiceTestRunner:
         }
         self.service = ProductImageService()
         
-        # Create output directory
+        # Create the output directory.
         os.makedirs(self.output_dir, exist_ok=True)
     
     def run_test(self, test_name, test_func):
-        """Run a single test and track results"""
+        """Run a single test and track results."""
         print(f"\n{'='*80}")
         print(f"[TEST] {test_name}")
         print('='*80)
@@ -85,7 +83,7 @@ class ImageServiceTestRunner:
                 print(f"   Duration: {duration:.2f}s")
                 print(f"   Error: {test_result['error']}")
             
-            # Store additional data
+            # Store additional data.
             if 'data' in result:
                 test_result['data'] = result['data']
                 
@@ -105,7 +103,7 @@ class ImageServiceTestRunner:
         return test_result
     
     def test_1_process_new_image(self):
-        """Test 1: Process new product image"""
+        """Test 1: Process a new product image."""
         test_product_id = "test_keells_rice_redkekulu_1kg"
         test_source_url = "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic2336.jpg"
         
@@ -118,7 +116,7 @@ class ImageServiceTestRunner:
         )
         
         if success:
-            # Store image URL for Slack notification
+            # Store the image URL for Slack notification.
             self.test_results['images']['original'] = firebase_url
             
             return {
@@ -137,10 +135,10 @@ class ImageServiceTestRunner:
             }
     
     def test_2_skip_existing_image(self):
-        """Test 2: Skip re-upload of existing Firebase image"""
+        """Test 2: Skip re-upload of an existing Firebase image."""
         test_product_id = "test_keells_rice_redkekulu_1kg"
         
-        # Use Firebase URL as source (should skip)
+        # Use the Firebase URL as the source (should skip).
         firebase_url = self.test_results['images']['original']
         if not firebase_url:
             return {
@@ -172,7 +170,7 @@ class ImageServiceTestRunner:
             }
     
     def test_3_update_product_image(self):
-        """Test 3: Update image with new source"""
+        """Test 3: Update the image with a new source."""
         test_product_id = "test_keells_rice_redkekulu_1kg"
         old_firebase_url = self.test_results['images']['original']
         new_source_url = "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic10679.jpg"
@@ -194,7 +192,7 @@ class ImageServiceTestRunner:
         )
         
         if success:
-            # Store updated image URL for Slack notification
+            # Store the updated image URL for Slack notification.
             self.test_results['images']['updated'] = new_firebase_url
             
             return {
@@ -214,7 +212,7 @@ class ImageServiceTestRunner:
             }
     
     def test_4_delete_product_image(self):
-        """Test 4: Verify delete functionality (without actually deleting for Slack notification)"""
+        """Test 4: Verify delete flow without deleting before Slack notification."""
         test_product_id = "test_keells_rice_redkekulu_1kg"
         firebase_url = self.test_results['images']['updated'] or self.test_results['images']['original']
         
@@ -228,8 +226,8 @@ class ImageServiceTestRunner:
         print(f"Firebase URL to verify: {firebase_url}")
         print(f"⚠️ Note: Actual deletion deferred to cleanup step (after Slack notification)")
         
-        # Verify the image exists (without deleting)
-        # The cleanup step will delete it after Slack notification
+        # Verify the image exists without deleting it.
+        # The cleanup step will delete it after Slack notification.
         try:
             # Verify that the URL parses and references a test image.
             if 'test_' in firebase_url and 'products/images/' in firebase_url:
@@ -254,7 +252,7 @@ class ImageServiceTestRunner:
             }
     
     def test_5_invalid_url_handling(self):
-        """Test 5: Handle invalid URL gracefully"""
+        """Test 5: Handle invalid URL gracefully."""
         test_product_id = "test_invalid_url"
         invalid_url = "not-a-valid-url-at-all"
         
@@ -283,14 +281,14 @@ class ImageServiceTestRunner:
             }
     
     def run_all_tests(self):
-        """Run all tests in sequence"""
+        """Run all tests in sequence."""
         print("\n" + "="*80)
         print("PRODUCT IMAGE SERVICE - AUTOMATED TEST SUITE")
         print("="*80)
         
         start_time = time.time()
         
-        # Run tests in order (some depend on previous results)
+        # Run tests in order (some depend on previous results).
         self.run_test("Test 1: Process New Product Image", self.test_1_process_new_image)
         self.run_test("Test 2: Skip Existing Firebase Image", self.test_2_skip_existing_image)
         self.run_test("Test 3: Update Product Image", self.test_3_update_product_image)
@@ -300,16 +298,16 @@ class ImageServiceTestRunner:
         total_duration = time.time() - start_time
         self.test_results['summary']['duration'] = round(total_duration, 2)
         
-        # Print summary
+        # Print the summary.
         self.print_summary()
         
-        # Save results to JSON
+        # Save results to JSON.
         self.save_results()
         
         return self.test_results['summary']['failed'] == 0
     
     def print_summary(self):
-        """Print test summary"""
+        """Print the test summary."""
         summary = self.test_results['summary']
         
         print("\n" + "="*80)
@@ -328,7 +326,7 @@ class ImageServiceTestRunner:
             print("❌ SOME TESTS FAILED - Check logs for details")
     
     def save_results(self):
-        """Save test results to JSON file"""
+        """Save test results to a JSON file."""
         results_file = os.path.join(self.output_dir, 'test_results_summary.json')
         
         with open(results_file, 'w', encoding='utf-8') as f:
@@ -339,17 +337,17 @@ class ImageServiceTestRunner:
 
 
 def main():
-    """Main test execution"""
+    """Main test execution."""
     try:
         runner = ImageServiceTestRunner()
         success = runner.run_all_tests()
         
-        # Exit with appropriate code for CI/CD
+        # Exit with the appropriate code for CI/CD.
         sys.exit(0 if success else 1)
         
     except KeyboardInterrupt:
         print("\n\n⚠️ Test interrupted by user")
-        sys.exit(130)  # Standard exit code for Ctrl+C
+        sys.exit(130)  # Standard exit code for Ctrl+C.
         
     except Exception as e:
         print(f"\n\n❌ Test suite failed with exception: {e}")

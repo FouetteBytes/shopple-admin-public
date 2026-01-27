@@ -452,7 +452,7 @@ class ProductController(BaseController):
                 cache_file = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'cache', 'product_cache.pkl')
                 matcher = IntelligentProductMatcher(cache_file=cache_file, similarity_threshold=0.75)
                 
-                # Only refresh cache if empty or very stale - don't block on DB query
+                # Only refresh cache if empty or very stale; do not block on DB query.
                 if len(matcher.product_cache) == 0:
                     yield f"data: {json.dumps({'type': 'log', 'message': '⏳ Loading product cache from database...'})}\n\n"
                     matcher.refresh_cache_from_db(db)

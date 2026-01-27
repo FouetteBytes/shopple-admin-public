@@ -38,6 +38,10 @@ This platform serves as the backend for [Shopple](https://github.com/FouetteByte
 
 <div align="center">
 
+### Login
+<img src="assets/screenshots/login.png" width="800" alt="Dashboard" />
+<br/><br/>
+
 ### Dashboard
 <img src="assets/screenshots/dashboard.png" width="800" alt="Dashboard" />
 <br/><br/>
@@ -84,6 +88,10 @@ This platform serves as the backend for [Shopple](https://github.com/FouetteByte
 
 ### System Audit
 <img src="assets/screenshots/audit.png" width="800" alt="Settings" />
+<br/><br/>
+
+### Product Classification Cache
+<img src="assets/screenshots/cache.png" width="800" alt="Settings" />
 <br/><br/>
 
 ### Settings

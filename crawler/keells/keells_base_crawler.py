@@ -1,23 +1,21 @@
-"""
-Keells Base Crawler - Reusable crawler for all Keells categories
+"""Keells base crawler for all Keells categories.
 
-This base crawler implements the common pagination logic for all Keells categories.
-Each specific crawler only needs to provide:
-1. URL
-2. Category name for output filename
-
+Implements the common pagination logic for all Keells categories.
+Each specific crawler must provide:
+1. URL.
+2. Category name for the output filename.
 """
 
 import os
 import sys
 
-# Add backend to path for logger_service
+# Add the backend path for logger_service.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
 from services.system.logger_service import get_logger, log_error
 
 logger = get_logger(__name__)
 
-# Fix Windows encoding issues
+# Fix Windows encoding issues.
 if sys.platform.startswith('win'):
     os.environ['PYTHONIOENCODING'] = 'utf-8'
     sys.stdout.reconfigure(encoding='utf-8', errors='ignore')
@@ -38,12 +36,12 @@ from crawl4ai import (
 )
 from dotenv import load_dotenv
 
-# Load environment variables
+# Load environment variables.
 load_dotenv()
 
 
 class Product(BaseModel):
-    """Product model for Keells products"""
+    """Product model for Keells products."""
     product_name: str = Field(..., description="The full name of the product")
     price: str = Field(..., description="The price of the product, including currency")
     image_url: Optional[str] = Field(None, description="The URL of the product image")
@@ -62,20 +60,19 @@ class KeellsBaseCrawler:
     """
     
     def __init__(self, url: str, category: str, test_mode: bool = False):
-        """
-        Initialize the base crawler
-        
+        """Initialize the base crawler.
+
         Args:
-            url: The Keells category URL (e.g., "https://www.keellssuper.com/beverages")
-            category: Category name for output file (e.g., "beverages")
-            test_mode: If True, saves to test_output folder
+            url: The Keells category URL (e.g., "https://www.keellssuper.com/beverages").
+            category: Category name for the output file (e.g., "beverages").
+            test_mode: If True, save to the test_output folder.
         """
         self.url = url
         self.category = category
         self.test_mode = test_mode
         self.session_id = f"keells_{category}_session_{uuid.uuid4().hex}"
         
-        # Get max items from environment
+        # Get max items from the environment.
         _env_max = os.getenv("MAX_ITEMS")
         try:
             self.max_items = int(_env_max) if (_env_max and int(_env_max) > 0) else None
@@ -104,7 +101,7 @@ class KeellsBaseCrawler:
             log_fn(safe_message)
     
     def _get_browser_config(self) -> BrowserConfig:
-        """Configure browser based on environment"""
+        """Configure the browser based on the environment."""
         is_ci = os.getenv("CI") == "true" or os.getenv("GITHUB_ACTIONS") == "true"
         user_headless_mode = os.getenv("HEADLESS_MODE", "").lower() == "true"
         force_managed_browser = os.getenv("FORCE_MANAGED_BROWSER", "").lower() == "true"

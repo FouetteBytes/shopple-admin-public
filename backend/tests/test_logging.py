@@ -1,6 +1,4 @@
-"""
-Test script to verify the logging system is working correctly.
-"""
+"""Test script to verify the logging system is working correctly."""
 import os
 import json
 from datetime import datetime
@@ -10,7 +8,7 @@ from services.system.logger_service import get_logger, log_product_operation, lo
 logger = get_logger("test_logging")
 
 def test_basic_logging():
-    """Test basic logging functionality"""
+    """Test basic logging functionality."""
     print("\n=== Testing Basic Logging ===")
     
     logger.debug("This is a debug message")
@@ -22,7 +20,7 @@ def test_basic_logging():
     print("✅ Basic logging test complete")
 
 def test_structured_logging():
-    """Test structured logging with extra context"""
+    """Test structured logging with extra context."""
     print("\n=== Testing Structured Logging ===")
     
     logger.info("User action", extra={
@@ -41,7 +39,7 @@ def test_structured_logging():
     print("✅ Structured logging test complete")
 
 def test_helper_functions():
-    """Test logging helper functions"""
+    """Test logging helper functions."""
     print("\n=== Testing Helper Functions ===")
     
     # Test product operation logging.
@@ -76,7 +74,7 @@ def test_helper_functions():
     print("✅ Helper functions test complete")
 
 def verify_log_files():
-    """Verify log files were created"""
+    """Verify log files were created."""
     print("\n=== Verifying Log Files ===")
     
     logs_dir = os.path.join(os.path.dirname(__file__), "logs")
@@ -135,7 +133,7 @@ def verify_log_files():
     return True
 
 def test_fluent_bit_compatibility():
-    """Test that JSON logs are Fluent Bit compatible"""
+    """Test that JSON logs are Fluent Bit compatible."""
     print("\n=== Testing Fluent Bit Compatibility ===")
     
     json_log = os.path.join(os.path.dirname(__file__), "logs", "shopple_admin.json.log")

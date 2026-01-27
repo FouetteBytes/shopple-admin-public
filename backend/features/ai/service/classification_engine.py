@@ -427,7 +427,8 @@ VARIETY: Chicken Kochchi Bites"""
         check_cancel()
         
         if progress_callback:
-            progress_callback("Starting enhanced model cascade...", "Enhanced Cascade")# ULTRA-INTELLIGENT REASONING PROMPT - Think, Don't Memorize
+            # Enhanced reasoning prompt.
+            progress_callback("Starting enhanced model cascade...", "Enhanced Cascade")
         prompt = f"""You are an expert product analyst. Analyze this product name intelligently: "{product_name}"
 
 THINK STEP BY STEP - Do not just follow examples; reason through the product:
@@ -686,25 +687,25 @@ VARIETY: [your reasoned answer or None]"""
                 result[field_name] = found_value
               # Enhanced product_name handling - keep descriptive name, remove size
             if not result.get('product_name') or result['product_name'] == 'Unknown':
-                # Remove size info from original name to get clean descriptive product name
-                clean_name = re.sub(r'\s*\d+\s*[gGkKmMlLsS]+\b', '', original_name)  # Remove 20g, 1kg, 10S etc
-                clean_name = re.sub(r'\s*\([^)]*[0-9]+[^)]*\)\s*', '', clean_name)  # Only remove size-related parentheses like (5U), (10 pieces)
-                clean_name = re.sub(r'\s*bulk\s*kg\s*', '', clean_name, flags=re.IGNORECASE)  # Remove "bulk kg"
-                clean_name = re.sub(r'\s+', ' ', clean_name).strip()  # Clean up extra spaces
+                # Remove size info from the original name to keep a descriptive product name.
+                clean_name = re.sub(r'\s*\d+\s*[gGkKmMlLsS]+\b', '', original_name)  # Remove 20g, 1kg, 10S, etc.
+                clean_name = re.sub(r'\s*\([^)]*[0-9]+[^)]*\)\s*', '', clean_name)  # Only remove size-related parentheses like (5U) and (10 pieces).
+                clean_name = re.sub(r'\s*bulk\s*kg\s*', '', clean_name, flags=re.IGNORECASE)  # Remove "bulk kg".
+                clean_name = re.sub(r'\s+', ' ', clean_name).strip()  # Clean up extra spaces.
                 result['product_name'] = clean_name
             else:
-                # Also clean the AI-provided product name - but preserve descriptive parentheses
+                # Also clean the AI-provided product name while preserving descriptive parentheses.
                 ai_name = result['product_name']
                 clean_name = re.sub(r'\s*\d+\s*[gGkKmMlLsS]+\b', '', ai_name)
-                clean_name = re.sub(r'\s*\([^)]*[0-9]+[^)]*\)\s*', '', clean_name)  # Only remove size-related parentheses
-                clean_name = re.sub(r'\s*bulk\s*kg\s*', '', clean_name, flags=re.IGNORECASE)  # Remove "bulk kg"
+                clean_name = re.sub(r'\s*\([^)]*[0-9]+[^)]*\)\s*', '', clean_name)  # Only remove size-related parentheses.
+                clean_name = re.sub(r'\s*bulk\s*kg\s*', '', clean_name, flags=re.IGNORECASE)  # Remove "bulk kg".
                 clean_name = re.sub(r'\s+', ' ', clean_name).strip()
                 result['product_name'] = clean_name
 
-            # MINIMAL CORRECTIONS - Only fix obvious AI errors, preserve correct AI responses
+            # MINIMAL CORRECTIONS - Only fix obvious AI errors and preserve correct AI responses.
             logger.debug(f"Before corrections - Brand: '{result.get('brand_name')}', Product: '{result.get('product_name')}', Variety: '{result.get('variety')}'")
             
-            # Only apply corrections if there are genuine errors - don't override correct AI responses
+            # Only apply corrections if there are genuine errors; do not override correct AI responses.
             corrected_result = self.corrections.apply_minimal_corrections(result, original_name)
             
             logger.debug(f"After corrections - Brand: '{corrected_result.get('brand_name')}', Product: '{corrected_result.get('product_name')}', Variety: '{corrected_result.get('variety')}'")

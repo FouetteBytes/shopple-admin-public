@@ -1,8 +1,7 @@
-"""
-Keells Beverages Crawler
+"""Keells beverages crawler.
 
 Uses the base crawler to scrape beverages from Keells.
-Only needs to specify the URL and category name!
+Only the URL and category name are required.
 """
 
 import asyncio
@@ -10,12 +9,11 @@ from keells_base_crawler import crawl_keells_category
 
 
 async def main(test_mode: bool = False):
-    '''
-    Crawl Keells Beverages category
-    
+    """Crawl the Keells beverages category.
+
     Args:
-        test_mode: If True, saves output to test folder instead of production folder
-    '''
+        test_mode: If True, save output to the test folder instead of production.
+    """
     url = "https://www.keellssuper.com/beverages"
     category = "beverages"
     

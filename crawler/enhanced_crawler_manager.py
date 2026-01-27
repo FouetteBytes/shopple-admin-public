@@ -1,6 +1,6 @@
-"""
-Enhanced Crawler Manager with Firebase Storage Integration
-Combines local storage with cloud storage capabilities
+"""Enhanced crawler manager with Firebase Storage integration.
+
+Combines local storage with cloud storage capabilities.
 """
 
 import asyncio
@@ -17,13 +17,13 @@ import threading
 import queue
 import logging
 
-# Add backend to path for logger_service
+# Add the backend path for logger_service.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger, log_error
 
 logger = get_logger(__name__)
 
-# Firebase Storage Manager (will be imported when available)
+# Firebase Storage Manager (imported when available).
 try:
     from firebase_storage_manager import get_storage_manager
     FIREBASE_AVAILABLE = True
@@ -32,24 +32,24 @@ except ImportError:
     logger.warning("Firebase Storage not available. Install requirements: pip install -r requirements-firebase.txt")
 
 class EnhancedCrawlerManager:
-    """
-    Advanced Crawler Management System with Firebase Storage Integration
-    Supports parallel execution, real-time progress monitoring, and cloud storage
+    """Crawler management system with Firebase Storage integration.
+
+    Supports parallel execution, real-time progress monitoring, and cloud storage.
     """
     
     def __init__(self, use_firebase: bool = True):
-        # Load environment variables
+        # Load environment variables.
         try:
             from dotenv import load_dotenv
             load_dotenv()
         except ImportError:
-            pass  # dotenv not available, continue without it
+            pass  # dotenv not available; continue without it.
             
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
         self.crawler_dir = self.base_dir
         self.output_dir = os.path.join(self.base_dir, "output")
         
-        # Storage configuration
+        # Storage configuration.
         self.use_firebase = use_firebase and FIREBASE_AVAILABLE
         self.storage_manager = None
         
@@ -61,24 +61,24 @@ class EnhancedCrawlerManager:
                 log_error(logger, e, {"context": "Firebase Storage initialization"})
                 self.use_firebase = False
         
-        # Ensure output directories exist
+        # Ensure output directories exist.
         os.makedirs(os.path.join(self.output_dir, "keells"), exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, "cargills"), exist_ok=True)
         
-        # Storage configuration file
+        # Storage configuration file.
         self.config_file = os.path.join(self.base_dir, "storage_config.json")
         self.storage_config = self._load_storage_config()
         
-        # Active crawler tracking
+        # Active crawler tracking.
         self.active_crawlers = {}
         self.crawler_results = {}
         self.crawler_logs = {}
         
-        # Threading for concurrent execution
+        # Threading for concurrent execution.
         self.executor = ThreadPoolExecutor(max_workers=8)
         self.progress_queues = {}
         
-        # Available crawlers configuration
+        # Available crawlers configuration.
         self.available_crawlers = {
             "keells": {
                 "vegetables": {
@@ -204,9 +204,9 @@ class EnhancedCrawlerManager:
         logger.info("Firebase Storage", extra={"enabled": self.use_firebase})
     
     def _load_storage_config(self) -> Dict[str, Any]:
-        """Load storage configuration"""
+        """Load storage configuration."""
         default_config = {
-            "storage_mode": "both",  # "local", "firebase", "both"
+            "storage_mode": "both",  # "local", "firebase", "both".
             "auto_upload": True,
             "keep_local_days": 7,
             "max_local_files": 50,

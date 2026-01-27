@@ -1,15 +1,13 @@
-"""
-Pytest configuration for crawler tests
-"""
+"""Pytest configuration for crawler tests."""
 import sys
 import os
 from pathlib import Path
 
-# Add crawler directory to path
+# Add the crawler directory to the path.
 crawler_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(crawler_dir))
 sys.path.insert(0, str(crawler_dir / "keells"))
 
-# Fix Windows encoding
+# Set Windows encoding for subprocess output.
 if sys.platform.startswith('win'):
     os.environ['PYTHONIOENCODING'] = 'utf-8'

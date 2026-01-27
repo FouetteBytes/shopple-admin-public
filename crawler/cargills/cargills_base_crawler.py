@@ -1,26 +1,25 @@
-"""
-Cargills Base Crawler
-Single source of truth for all Cargills category crawlers
+"""Cargills base crawler.
+
+Single source of truth for all Cargills category crawlers.
 
 This base crawler handles:
-1. Angular-based dynamic content loading
-2. Infinite scroll pagination
-3. Product extraction from Angular scope or DOM fallback
-4. Progress tracking
-5. Timestamped file outputs
-6. Test mode support
-
+1. Angular-based dynamic content loading.
+2. Infinite scroll pagination.
+3. Product extraction from Angular scope or DOM fallback.
+4. Progress tracking.
+5. Timestamped file outputs.
+6. Test mode support.
 """
 import os
 import sys
 
-# Add backend to path for logger_service
+# Add the backend path for logger_service.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
 from services.system.logger_service import get_logger, log_error
 
 logger = get_logger(__name__)
 
-# Fix Windows encoding issues
+# Fix Windows encoding issues.
 if sys.platform.startswith('win'):
     os.environ['PYTHONIOENCODING'] = 'utf-8'
     sys.stdout.reconfigure(encoding='utf-8', errors='ignore')
@@ -35,7 +34,7 @@ from typing import Optional, List, Dict, Any
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, BrowserConfig
 
 
-# --- Product Model ---
+# --- Product model ---
 class Product(BaseModel):
     product_name: str = Field(..., description="The full name of the product including unit size")
     price: str = Field(..., description="The price of the product")
@@ -49,20 +48,19 @@ class CargillsBaseCrawler:
     """
     
     def __init__(self, url: str, category: str, test_mode: bool = False):
-        """
-        Initialize the Cargills crawler
-        
+        """Initialize the Cargills crawler.
+
         Args:
-            url: Category URL (e.g., "https://cargillsonline.com/Product/Beverages?IC=Mw==&NC=QmV2ZXJhZ2Vz")
-            category: Category name (e.g., "beverages", "dairy", "frozen_foods")
-            test_mode: If True, saves to test_output folder
+            url: Category URL (e.g., "https://cargillsonline.com/Product/Beverages?IC=Mw==&NC=QmV2ZXJhZ2Vz").
+            category: Category name (e.g., "beverages", "dairy", "frozen_foods").
+            test_mode: If True, save to the test_output folder.
         """
         self.url = url
         self.category = category
         self.test_mode = test_mode
         self.session_id = f"cargills_{category}_session_{uuid.uuid4().hex}"
         
-        # Get MAX_ITEMS from environment (passed by crawler manager or test)
+        # Get MAX_ITEMS from the environment (set by the crawler manager or tests).
         _env_max = os.getenv("MAX_ITEMS")
         try:
             self.max_items = int(_env_max) if (_env_max and int(_env_max) > 0) else None
@@ -72,7 +70,7 @@ class CargillsBaseCrawler:
         self.all_raw_products = []
         self.all_products = []
         
-        # Determine output directory based on test mode
+        # Determine the output directory based on test mode.
         base_crawler_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         if test_mode:
             self.output_dir = os.path.join(base_crawler_dir, "test_output", "cargills", category)
@@ -109,7 +107,7 @@ class CargillsBaseCrawler:
             log_fn(safe_message)
     
     def _get_browser_config(self) -> BrowserConfig:
-        """Get browser configuration based on environment"""
+        """Get browser configuration based on the environment."""
         is_ci = os.getenv('CI') == 'true' or os.getenv('GITHUB_ACTIONS') == 'true'
         force_managed_browser = os.getenv('FORCE_MANAGED_BROWSER', '').lower() == 'true'
 

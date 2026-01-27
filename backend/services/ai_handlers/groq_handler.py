@@ -146,7 +146,7 @@ class GroqHandler:
             key_id: Specific key ID to add instruction to (if None, adds to all)
         """
         if key_id:
-            # Add to specific key
+            # Add to the specific key.
             if key_id in self.conversation_histories and not self.conversation_histories[key_id]:
                 self.conversation_histories[key_id].append({
                     "role": "system",
@@ -154,7 +154,7 @@ class GroqHandler:
                 })
                 logger.debug("Groq: System instruction added", extra={"key_id": key_id})
         else:
-            # Add to all keys that don't have system instruction yet
+            # Add to all keys that do not have a system instruction yet.
             for kid in self.conversation_histories.keys():
                 if not self.conversation_histories[kid]:  # Only add if not already present
                     self.conversation_histories[kid].append({

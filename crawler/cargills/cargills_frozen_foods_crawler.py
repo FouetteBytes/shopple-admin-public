@@ -1,13 +1,13 @@
-"""
-Cargills Frozen Foods Crawler
-Uses the base crawler for consistent crawling behavior
+"""Cargills frozen foods crawler.
+
+Uses the base crawler for consistent crawling behavior.
 """
 
 import os
 import sys
 import asyncio
 
-# Add backend to path for logger_service
+# Add the backend path for logger_service.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'backend'))
 from services.system.logger_service import get_logger
 
@@ -17,11 +17,10 @@ from cargills_base_crawler import crawl_cargills_category
 
 
 async def main(test_mode: bool = False):
-    """
-    Crawl Cargills Frozen Foods category
-    
+    """Crawl the Cargills frozen foods category.
+
     Args:
-        test_mode: If True, saves to test_output folder
+        test_mode: If True, save to the test_output folder.
     """
     url = "https://cargillsonline.com/Product/Frozen-Food?IC=OA==&NC=RnJvemVuIEZvb2Q="
     category = "frozen_foods"

@@ -28,7 +28,7 @@ class ProductBatchService:
     
     def _get_matcher(self) -> IntelligentProductMatcher:
         
-        project_root = os.getcwd() # Assumes current working directory is project root
+        project_root = os.getcwd()  # Assumes the current working directory is the project root.
         cache_file = os.path.join(project_root, 'cache', 'product_cache.pkl')
         
         matcher = IntelligentProductMatcher(
@@ -37,7 +37,7 @@ class ProductBatchService:
             exact_match_threshold=0.95,
             cache_ttl_hours=24
         )
-        # Only refresh cache if empty - don't block on DB query if cache is populated
+        # Only refresh cache if empty; do not block on DB query if the cache is populated.
         if len(matcher.product_cache) == 0:
             logger.info("Product cache empty, refreshing from database")
             matcher.refresh_cache_from_db(self.db)
@@ -64,7 +64,7 @@ class ProductBatchService:
             "similarity_threshold": matcher.similarity_threshold if hasattr(matcher, 'similarity_threshold') else 'N/A'
         })
         
-        # Preview data structure
+        # Preview data structure.
         preview_data = {
             'new_products': [],
             'duplicate_matches': [],
@@ -81,7 +81,7 @@ class ProductBatchService:
         
         valid_products = []
         
-        # Pass 1: Validation
+        # Pass 1: validation.
         logger.info("Pass 1: Validating product entries")
         for index, product_data in enumerate(products):
             preview_data['stats']['processed'] += 1
@@ -109,7 +109,7 @@ class ProductBatchService:
             "invalid_count": preview_data['stats']['invalid_count']
         })
         
-        # Pass 2: Duplicate Detection using Redis-cached products
+        # Pass 2: duplicate detection using Redis-cached products.
         logger.info("Pass 2: Detecting duplicates against cached products")
         for index, product_data in valid_products:
             try:

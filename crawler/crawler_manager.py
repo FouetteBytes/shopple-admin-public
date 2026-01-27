@@ -11,12 +11,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import queue
 
-# Add backend to path for logger_service
+# Add the backend path for logger_service.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger
 from cache.sqlite_store import CrawlerCacheStore
 
-# Try to import FirebaseStorageManager
+# Attempt to import FirebaseStorageManager.
 try:
     from firebase_storage_manager import FirebaseStorageManager
     FIREBASE_AVAILABLE = True
@@ -26,9 +26,10 @@ except ImportError:
 logger = get_logger(__name__)
 
 class CrawlerManager:
-    """
-    Advanced Crawler Management System for Dynamic Dashboard Integration
-    Supports parallel execution, real-time progress monitoring, and intelligent results aggregation
+    """Crawler management system for dashboard integration.
+
+    Supports parallel execution, real-time progress monitoring, and results
+    aggregation.
     """
     
     def __init__(self):
@@ -38,7 +39,7 @@ class CrawlerManager:
         self.cache_dir = os.path.join(self.base_dir, "cache")
         self.cache_store = CrawlerCacheStore(self.cache_dir)
         
-        # Initialize Firebase Storage Manager if available
+        # Initialize Firebase Storage Manager if available.
         self.firebase_manager = None
         if FIREBASE_AVAILABLE:
             try:
@@ -47,45 +48,45 @@ class CrawlerManager:
             except Exception as e:
                 logger.warning(f"Failed to initialize Firebase Storage Manager: {e}")
         
-        # Ensure output directories exist
+        # Ensure output directories exist.
         os.makedirs(os.path.join(self.output_dir, "keells"), exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, "cargills"), exist_ok=True)
         os.makedirs(self.cache_dir, exist_ok=True)
         
-        # Detect Python executable from environment or virtual environment
+        # Detect the Python executable from the environment or virtual environment.
         self.python_executable = self._get_python_executable()
         self.default_max_items = int(os.getenv("CRAWLER_DEFAULT_MAX_ITEMS", "50"))
         
-        # Active crawler tracking
+        # Active crawler tracking.
         self.active_crawlers = {}
         self.crawler_results = {}
-        self.cleared_results = set()  # Track cleared result IDs
+        self.cleared_results = set()  # Track cleared result IDs.
         self.cleared_activities = set()
         self.crawler_logs = {}
         
-        # Lazy loading flags
+        # Lazy-loading flags.
         self._results_synced = False
         
-        # Load persistent results (lightweight - just JSON files)
+        # Load persistent results (lightweight JSON files only).
         self._load_persistent_results()
         self._load_cleared_results()
         self._load_cleared_activities()
         
-        # Don't sync with files on startup - do it lazily when needed
+        # Do not sync with files on startup; sync lazily when needed.
         # self._sync_results_with_files()
         
-        # Threading for concurrent execution
-        # Reduced max_workers for Docker stability (Playwright is memory intensive)
+        # Threading for concurrent execution.
+        # Reduce max_workers for Docker stability (Playwright is memory intensive).
         self.executor = ThreadPoolExecutor(max_workers=8)
         self.progress_queues = {}
         
-        # Job Queue Directory (for Docker separation)
+        # Job queue directory (for Docker separation).
         self.jobs_dir = os.path.join(self.base_dir, "jobs")
         self.logs_dir = os.path.join(self.base_dir, "logs")
         os.makedirs(self.jobs_dir, exist_ok=True)
         os.makedirs(self.logs_dir, exist_ok=True)
         
-        # Available crawlers configuration
+        # Available crawlers configuration.
         self.available_crawlers = {
             "keells": {
                 "vegetables": {
@@ -222,19 +223,19 @@ class CrawlerManager:
         2. Virtual environment Python (PROJECT_ROOT/.venv/bin/python)
         3. Current Python interpreter (sys.executable)
         """
-        # Check if explicitly set in environment
+        # Check whether explicitly set in the environment.
         env_python = os.getenv('PYTHON_EXECUTABLE')
         if env_python and os.path.exists(env_python):
             logger.debug("Using Python from PYTHON_EXECUTABLE", extra={"python_path": env_python})
             return env_python
         
-        # Try to find virtual environment
+        # Look for a virtual environment.
         project_root = os.getenv('PROJECT_ROOT')
         if not project_root:
-            # Auto-detect project root (go up from crawler directory)
+            # Auto-detect project root (walk up from the crawler directory).
             project_root = os.path.dirname(self.base_dir)
         
-        # Check for .venv in project root
+        # Check for .venv in the project root.
         venv_paths = [
             os.path.join(project_root, '.venv', 'bin', 'python'),  # Unix/macOS
             os.path.join(project_root, '.venv', 'Scripts', 'python.exe'),  # Windows
@@ -245,12 +246,12 @@ class CrawlerManager:
                 logger.debug("Using Python from virtual environment", extra={"venv_path": venv_path})
                 return venv_path
         
-        # Fallback to current Python
+        # Fall back to the current Python interpreter.
         logger.debug("Using current Python interpreter", extra={"python_path": sys.executable})
         return sys.executable
     
     def _load_persistent_results(self):
-        """Load persistent results from SQLite cache"""
+        """Load persistent results from the SQLite cache."""
         try:
             self.crawler_results = self.cache_store.load_results()
             logger.info(
@@ -262,7 +263,7 @@ class CrawlerManager:
             self.crawler_results = {}
     
     def _save_persistent_results(self):
-        """Save results to persistent SQLite cache"""
+        """Save results to the persistent SQLite cache."""
         try:
             self.cache_store.replace_all_results(self.crawler_results)
             logger.info(
@@ -273,9 +274,9 @@ class CrawlerManager:
             logger.warning(f"Error saving persistent results: {e}", extra={"error": str(e)})
     
     def _create_result_entry(self, crawler_id: str, store: str, category: str, output_file: Optional[str], items: List[Any], firebase_url: Optional[str] = None, cloud_path: Optional[str] = None, count: Optional[int] = None):
-        """Create a persistent result entry for a completed crawler"""
+        """Create a persistent result entry for a completed crawler."""
         try:
-            # Create result entry
+            # Create the result entry.
             result_entry = {
                 "crawler_id": crawler_id,
                 "store": store,
@@ -312,11 +313,11 @@ class CrawlerManager:
             self._results_synced = True
     
     def _sync_results_with_files(self):
-        """Sync results with existing files - create missing result entries"""
+        """Sync results with existing files and create missing result entries."""
         try:
             logger.debug("Syncing results with existing files")
             
-            # Find all output files in the new structure: crawler/output/[store]/[category]/
+            # Find all output files in the new structure: crawler/output/[store]/[category]/.
             for store in ["keells", "cargills"]:
                 store_path = os.path.join(self.output_dir, store)
                 if os.path.exists(store_path):
@@ -327,12 +328,12 @@ class CrawlerManager:
                                 if file.endswith('.json'):
                                     file_path = os.path.join(category_path, file)
                                     
-                                    # Create a synthetic crawler_id
-                                    # Use file modification time for uniqueness
+                                    # Create a synthetic crawler_id.
+                                    # Use file modification time for uniqueness.
                                     file_mtime = os.path.getmtime(file_path)
                                     synthetic_id = f"{store}_{category}_{int(file_mtime)}"
                                     
-                                    # Check if we already have a result for this file
+                                    # Check whether we already have a result for this file.
                                     existing_result = None
                                     for result_id, result in self.crawler_results.items():
                                         if (result.get('store') == store and 
@@ -342,10 +343,10 @@ class CrawlerManager:
                                             break
                                     
                                     if not existing_result:
-                                        # Check if this specific file was cleared (by file path)
+                                        # Check whether this file was cleared (by file path).
                                         file_path_key = f"file:{file_path}"
                                         if file_path_key not in self.cleared_results and synthetic_id not in self.cleared_results:
-                                            # Create result entry from file only if not cleared
+                                            # Create a result entry from the file only if not cleared.
                                             try:
                                                 with open(file_path, 'r', encoding='utf-8') as f:
                                                     items = json.load(f)
@@ -358,23 +359,23 @@ class CrawlerManager:
                                         else:
                                             logger.debug(f"Skipping cleared result: {synthetic_id} (file was cleared)", extra={"synthetic_id": synthetic_id})
                 
-                # Also check legacy structure: crawler/output/[store]/[store_category].json
+                # Also check legacy structure: crawler/output/[store]/[store_category].json.
                 legacy_store_path = os.path.join(self.output_dir, store)
                 if os.path.exists(legacy_store_path):
                     for file in os.listdir(legacy_store_path):
                         if file.endswith('.json') and not os.path.isdir(os.path.join(legacy_store_path, file)):
                             file_path = os.path.join(legacy_store_path, file)
                             
-                            # Extract category from filename
+                            # Extract category from the filename.
                             file_base = file.replace('.json', '')
                             if '_' in file_base and file_base.startswith(store + '_'):
                                 category = file_base[len(store) + 1:]
                                 
-                                # Create a synthetic crawler_id
+                                # Create a synthetic crawler_id.
                                 file_mtime = os.path.getmtime(file_path)
                                 synthetic_id = f"{store}_{category}_{int(file_mtime)}"
                                 
-                                # Check if we already have a result for this file
+                                # Check whether we already have a result for this file.
                                 existing_result = None
                                 for result_id, result in self.crawler_results.items():
                                     if (result.get('store') == store and 
@@ -521,18 +522,15 @@ class CrawlerManager:
         headless_mode: bool = False,
         limit_mode: Optional[str] = None,
     ) -> str:
-        """
-        Start a single crawler
-        Returns: crawler_id for tracking
-        """
+        """Start a single crawler and return a tracking ID."""
         if store not in self.available_crawlers or category not in self.available_crawlers[store]:
             raise ValueError(f"Crawler not found: {store}/{category}")
         
         crawler_config = self.available_crawlers[store][category]
         crawler_id = f"{store}_{category}_{int(time.time())}"
         
-        # Initialize crawler tracking
-        # Copy config so we don't mutate the global template
+        # Initialize crawler tracking.
+        # Copy config to avoid mutating the global template.
         runtime_config = dict(crawler_config)
         normalized_limit_mode = (limit_mode or ("custom" if max_items is not None else "default")).strip().lower()
         override_max: Optional[int] = None
@@ -571,7 +569,7 @@ class CrawlerManager:
         self.crawler_logs[crawler_id] = []
         self.progress_queues[crawler_id] = queue.Queue()
         
-        # Submit to thread pool
+        # Submit to the thread pool.
         future = self.executor.submit(self._run_crawler, crawler_id, store, category, effective_max, headless_mode)
         self.active_crawlers[crawler_id]["future"] = future
         
@@ -779,21 +777,21 @@ class CrawlerManager:
         return self.start_crawlers_batch(specs, mode=mode)
     
     def stop_crawler(self, crawler_id: str) -> bool:
-        """Stop a specific crawler"""
+        """Stop a specific crawler."""
         if crawler_id not in self.active_crawlers:
             return False
         
         try:
-            # Get the process and terminate it forcefully
+            # Get the process and terminate it.
             process = self.active_crawlers[crawler_id].get("process")
-            if process and process.poll() is None:  # Process is still running
+            if process and process.poll() is None:  # Process is still running.
                 import signal
                 try:
-                    # Try graceful termination first
+                    # Attempt graceful termination first.
                     process.terminate()
                     time.sleep(1)
                     
-                    # If still running, force kill
+                    # If still running, force kill.
                     if process.poll() is None:
                         process.kill()
                         time.sleep(0.5)
@@ -802,7 +800,7 @@ class CrawlerManager:
                 except Exception as pe:
                     self._log(crawler_id, f"[WARNING] Process termination error: {pe}")
             
-            # Cancel the future if possible
+            # Cancel the future if possible.
             future = self.active_crawlers[crawler_id].get("future")
             if future and not future.done():
                 future.cancel()
@@ -819,7 +817,7 @@ class CrawlerManager:
             return False
     
     def stop_all_crawlers(self) -> int:
-        """Stop all active crawlers"""
+        """Stop all active crawlers."""
         stopped_count = 0
         for crawler_id in list(self.active_crawlers.keys()):
             if self.stop_crawler(crawler_id):
@@ -827,7 +825,7 @@ class CrawlerManager:
         return stopped_count
     
     def get_active_crawler_count(self) -> int:
-        """Get count of truly active (running) crawlers only"""
+        """Return the count of active (running) crawlers."""
         active_count = 0
         for crawler_data in self.active_crawlers.values():
             if crawler_data.get("status") in ["starting", "running"]:
@@ -844,8 +842,8 @@ class CrawlerManager:
             start_time = datetime.fromisoformat(crawler_data["start_time"])
             time_since_start = (datetime.now() - start_time).total_seconds()
             
-            # Remove stopped/failed crawlers after 10 minutes
-            # Do NOT remove completed crawlers - they should persist for user visibility
+            # Remove stopped/failed crawlers after 10 minutes.
+            # Do not remove completed crawlers; keep them for user visibility.
             if status in ["stopped", "failed"] and time_since_start > 600:  # 10 minutes
                 crawler_ids_to_remove.append(crawler_id)
                 cleanup_count += 1
@@ -866,7 +864,7 @@ class CrawlerManager:
             self.active_crawlers[crawler_id]["status"] = "running"
             self._log(crawler_id, "[INFO] Initializing crawler...")
             
-            # Build file path
+            # Build the file path.
             crawler_file = self.available_crawlers[store][category]["file"]
             crawler_path = os.path.join(self.crawler_dir, store, crawler_file)
             
@@ -877,7 +875,7 @@ class CrawlerManager:
             self._log(crawler_id, f"[FILE] Running: {crawler_file} ({mode_indicator})")
             self.active_crawlers[crawler_id]["progress"] = 10
             
-            # Set up environment with proper encoding
+            # Set up the environment with proper encoding.
             env = os.environ.copy()
             env['PYTHONIOENCODING'] = 'utf-8'
             env['PYTHONLEGACYWINDOWSFSENCODING'] = '1'
@@ -886,18 +884,18 @@ class CrawlerManager:
             if headless_mode:
                 env["HEADLESS_MODE"] = "true"
             
-            # Start crawler process with proper encoding handling
+            # Start crawler process with proper encoding handling.
             self.active_crawlers[crawler_id]["current_step"] = "Launching crawler"
             self.active_crawlers[crawler_id]["progress"] = 20
             
-            # Start crawler process
-            # If running in Docker backend, we must offload to the crawler container via Job Queue
-            # We detect this by checking if we are in the backend container (no browsers)
-            # A simple heuristic: check if we can import playwright (or just always use queue if configured)
+            # Start the crawler process.
+            # If running in the Docker backend, offload to the crawler container via Job Queue.
+            # Detect this by checking whether we are in the backend container (no browsers).
+            # Heuristic: check whether Playwright can be imported (or always use the queue if configured).
             
             use_job_queue = os.getenv('USE_JOB_QUEUE', 'false').lower() == 'true'
             
-            # Initialize output lines for both modes
+            # Initialize output lines for both modes.
             output_lines = []
             error_lines = []
 
@@ -916,11 +914,11 @@ class CrawlerManager:
                 self.active_crawlers[crawler_id]["current_step"] = "Job dispatched to worker"
                 self.active_crawlers[crawler_id]["progress"] = 30
                 
-                # Monitor the log file created by the worker
+                # Monitor the log file created by the worker.
                 log_file = os.path.join(self.logs_dir, f"{crawler_id}.log")
                 self._log(crawler_id, f" Waiting for log file: {log_file}")
                 
-                # Wait for log file to appear
+                # Wait for the log file to appear.
                 retries = 0
                 while not os.path.exists(log_file) and retries < 60:  # Increased wait time to 30s
                     time.sleep(0.5)
@@ -933,8 +931,8 @@ class CrawlerManager:
                 else:
                     self._log(crawler_id, "✅ Log file found, starting tail...")
                 
-                # Tail the log file with proper handling for Docker volume delays
-                # Use unbuffered reads and track file position manually
+                # Tail the log file with handling for Docker volume delays.
+                # Use unbuffered reads and track file position manually.
                 last_position = 0
                 job_finished = False
                 
@@ -943,20 +941,19 @@ class CrawlerManager:
                         break
                     
                     try:
-                        # Open file, seek to last position, read new content
+                        # Open file, seek to last position, and read new content.
                         with open(log_file, 'r', encoding='utf-8') as f:
                             f.seek(last_position)
                             new_content = f.read()
                             
                             if new_content:
-                                # Process each line
+                                # Process each line.
                                 for line in new_content.split('\n'):
                                     if line.strip():
                                         output_lines.append(line.strip())
                                         self._parse_crawler_output(crawler_id, line.strip())
                                         
-                                        # Log important lines (or all lines when enabled) in real-time
-                                        # This matches the behavior of local execution
+                                    
                                         log_all_output = os.getenv('CRAWLER_STREAM_ALL_LOGS', 'false').lower() == 'true'
                                         important_keywords = ["products", "found", "crawl", "complete", "error", "phase", "scroll", "save", "init", "config", "page", "progress"]
                                         
@@ -965,13 +962,13 @@ class CrawlerManager:
                                         if should_log_line:
                                             self._log(crawler_id, line.strip())
                                 
-                                # Update position
+                                # Update position.
                                 last_position = f.tell()
                             
-                            # Check if job is finished
+                            # Check whether the job is finished.
                             if not os.path.exists(job_file):
                                 job_finished = True
-                                # Give it one more chance to read any final content
+                                # Allow one more read for final content.
                                 time.sleep(0.2)
                                 f.seek(last_position)
                                 final_content = f.read()
@@ -985,13 +982,13 @@ class CrawlerManager:
                         self._log(crawler_id, f"[WARNING] Error reading log: {e}")
                     
                     if not job_finished:
-                        time.sleep(0.2)  # Poll every 200ms for new content
+                        time.sleep(0.2)  # Poll every 200 ms for new content.
                 
-                # Job finished
-                process = None # No local process
+                # Job finished.
+                process = None  # No local process.
                 
             else:
-                # Local execution (legacy or dev mode)
+                # Local execution (legacy or development mode).
                 process = subprocess.Popen(
                     [self.python_executable, crawler_path],
                     stdout=subprocess.PIPE,
@@ -1001,20 +998,20 @@ class CrawlerManager:
                     cwd=os.path.dirname(crawler_path)
                 )
                 
-                # Store process reference for termination
+                # Store process reference for termination.
                 self.active_crawlers[crawler_id]["process"] = process
                 
                 self._log(crawler_id, " Crawler process started")
                 self.active_crawlers[crawler_id]["progress"] = 30
                 
-                # Monitor progress with robust encoding handling and real-time updates
+                # Monitor progress with robust encoding handling and real-time updates.
                 
                 log_all_output = os.getenv('CRAWLER_STREAM_ALL_LOGS', 'false').lower() == 'true'
                 important_keywords = ["products", "found", "crawl", "complete", "error", "phase", "scroll", "save", "init", "config", "page", "progress"]
 
-                # Read output in real-time with UTF-8 decoding
+                # Read output in real time with UTF-8 decoding.
                 while True:
-                    # Check if crawler should be stopped
+                    # Check whether the crawler should be stopped.
                     if self.active_crawlers[crawler_id]["status"] == "stopped":
                         break
                         
@@ -1023,25 +1020,25 @@ class CrawlerManager:
                         break
                     if output_bytes:
                         try:
-                            # Try UTF-8 first, fallback to latin-1 if needed
+                            # Attempt UTF-8 first; fall back to Latin-1 if needed.
                             output_text = output_bytes.decode('utf-8', errors='replace').strip()
                         except UnicodeDecodeError:
                             output_text = output_bytes.decode('latin-1', errors='replace').strip()
                         
                         if output_text:
                             output_lines.append(output_text)
-                            # Parse for progress and log immediately for real-time sync
+                            # Parse for progress and log immediately for real-time sync.
                             self._parse_crawler_output(crawler_id, output_text)
-                            # Log important lines (or all lines when enabled) in real-time
+                            # Log important lines (or all lines when enabled) in real time.
                             lowercase_line = output_text.lower()
                             should_log_line = log_all_output or any(keyword in lowercase_line for keyword in important_keywords)
                             if should_log_line:
                                 self._log(crawler_id, output_text)
                 
-                # Wait for completion
+                # Wait for completion.
                 process.wait()
                 
-                # Capture any remaining stderr with proper encoding
+                # Capture any remaining stderr with proper encoding.
                 stderr_bytes = process.stderr.read()
                 if stderr_bytes:
                     try:
@@ -1054,24 +1051,23 @@ class CrawlerManager:
                     error_lines.append(stderr_text)
                     self._log(crawler_id, f"[WARNING] Errors: {stderr_text}")
             
-            # Check results - look in the new output directory structure
-            # New structure: crawler/output/[store]/[category]/[file].json
-            # Support both timestamped (keells_beverages_20251103_001843.json) and non-timestamped files
+            # Check results in the new output directory structure.
+            
             output_category_dir = os.path.join(self.output_dir, store, category)
             
-            # Look for any file matching the pattern in the output directory
+            # Look for any file matching the pattern in the output directory.
             final_output_file = None
             if os.path.exists(output_category_dir):
-                # Get all JSON files in the directory that match the pattern
+                # Get all JSON files in the directory that match the pattern.
                 import glob
                 pattern = os.path.join(output_category_dir, f"{store}_{category}*.json")
                 matching_files = glob.glob(pattern)
                 if matching_files:
-                    # Use the most recent file (highest timestamp)
+                    # Use the most recent file (highest timestamp).
                     final_output_file = max(matching_files, key=os.path.getmtime)
                     self._log(crawler_id, f"[FILE] Found output: {os.path.basename(final_output_file)}")
             
-            # Fallback to legacy structures if not found
+            # Fall back to legacy structures if not found.
             if not final_output_file:
                 new_output_file = os.path.join(self.output_dir, store, category, f"{store}_{category}.json")
                 crawler_script_dir = os.path.join(self.crawler_dir, store)
@@ -1085,12 +1081,12 @@ class CrawlerManager:
             
             if final_output_file:
                 try:
-                    # Read the results first
+                    # Read the results first.
                     with open(final_output_file, 'r', encoding='utf-8') as f:
                         results = json.load(f)
                     items_count = len(results)
 
-                    # Handle Firebase Upload if enabled
+                    # Handle Firebase upload if enabled.
                     firebase_url = None
                     cloud_path = None
                     
@@ -1117,11 +1113,11 @@ class CrawlerManager:
                             cloud_path = upload_result.get("cloud_path")
                             self._log(crawler_id, f"✅ Upload successful: {cloud_path}")
                             
-                            # Delete local file after successful upload
+                            # Delete the local file after a successful upload.
                             try:
                                 os.remove(final_output_file)
                                 self._log(crawler_id, "️ Deleted local temporary file")
-                                final_output_file = None # Indicate file is no longer local
+                                final_output_file = None  # Indicate the file is no longer local.
                             except Exception as cleanup_error:
                                 self._log(crawler_id, f"⚠️ Failed to remove local file: {cleanup_error}")
                         else:
@@ -1135,14 +1131,14 @@ class CrawlerManager:
                     
                     self._log(crawler_id, f"✅ Completed! Found {items_count} items")
                     
-                    # Store results
-                    # Create persistent result entry
+                    # Store results.
+                    # Create a persistent result entry.
                     self._create_result_entry(crawler_id, store, category, final_output_file, results, firebase_url, cloud_path)
                     
                     return self.crawler_results[crawler_id]
 
                 except Exception as e:
-                    # File exists but couldn't be read
+                    # File exists but could not be read.
                     self.active_crawlers[crawler_id]["status"] = "failed"
                     self.active_crawlers[crawler_id]["progress"] = 0
                     error_msg = f"Could not read output file: {str(e)}"
@@ -1150,7 +1146,7 @@ class CrawlerManager:
                     return {"error": error_msg}
             
             else:
-                # Failed
+                # Failed.
                 self.active_crawlers[crawler_id]["status"] = "failed"
                 self.active_crawlers[crawler_id]["progress"] = 0
                 
@@ -1539,7 +1535,7 @@ class CrawlerManager:
                     max_stability = int(match.group(2))
                     self.active_crawlers[crawler_id]["current_step"] = f"Checking stability {current_stability}/{max_stability}"
             
-            # AI Processing patterns (both crawlers)
+            # AI processing patterns (both crawlers).
             elif "[EXTRACT]" in output_line and "Completed for" in output_line:
                 # Parse: "[EXTRACT]. ■ Completed for https://... | Time: 13.881864500002848s"
                 match = re.search(r'Time: ([\d.]+)s', output_line)
@@ -1551,7 +1547,7 @@ class CrawlerManager:
                     self.active_crawlers[crawler_id]["current_step"] = "AI extraction completed"
                     self.active_crawlers[crawler_id]["progress"] = 93
                     
-            # Error handling patterns
+            # Error handling patterns.
             elif "Error" in output_line and "extraction" in output_line:
                 self.active_crawlers[crawler_id]["current_step"] = "⚠️ Error during extraction"
                 
@@ -1561,58 +1557,58 @@ class CrawlerManager:
             elif "Retrying" in output_line:
                 self.active_crawlers[crawler_id]["current_step"] = " Retrying operation"
                 
-            # General completion indicators
+            # General completion indicators.
             elif "============================================================" in output_line:
-                # This often indicates completion section
-                pass  # Don't update status for separator lines
+                # This often indicates the completion section.
+                pass  # Do not update status for separator lines.
                 
             elif "Preview of extracted products:" in output_line:
                 self.active_crawlers[crawler_id]["current_step"] = "Showing preview of results"
                 
-            # Price and product name indicators for preview
+            # Price and product name indicators for preview.
             elif "Price:" in output_line and "Image:" in output_line:
-                # This indicates product preview lines, keep current status
+                # This indicates product preview lines; keep current status.
                 pass
                 
         except Exception as e:
-            # If parsing fails, log the error but don't crash
+            # If parsing fails, log the error without crashing.
             logger.debug(f"Error parsing crawler output: {e}", extra={"error": str(e), "output_line": output_line})
             pass
                     
         except Exception as e:
-            # Don't let parsing errors break the crawler
+            # Prevent parsing errors from breaking the crawler.
             pass
     
     def _log(self, crawler_id: str, message: str):
-        """Add a log entry for a crawler with encoding safety"""
+        """Add a log entry for a crawler with encoding safety."""
         timestamp = datetime.now().strftime("%H:%M:%S")
         
-        # Ensure message is safe for logging (remove problematic unicode)
+        # Ensure the message is safe for logging (remove problematic unicode).
         try:
             safe_message = str(message).encode('ascii', errors='replace').decode('ascii')
         except Exception:
-            safe_message = repr(message)  # Fallback to repr if all else fails
+            safe_message = repr(message)  # Fall back to repr if all else fails.
         
-        # Check if message is already a formatted log line from subprocess
-        # Pattern: [YYYY-MM-DD HH:MM:SS] LEVEL [logger_name] message | extra_data
+        # Check if the message is already a formatted log line from the subprocess.
+        # Pattern: [YYYY-MM-DD HH:MM:SS] LEVEL [logger_name] message | extra_data.
         import re
         log_pattern = r'^\[\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\]\s+\w+\s+\[[\w._]+\]\s+'
         
         if re.match(log_pattern, safe_message):
-            # This is already a formatted log from the subprocess - don't re-log it
-            # Just store it in crawler logs for UI display
+            
+            # Store crawler logs for UI display.
             log_entry = f"[{timestamp}] {safe_message}"
             if crawler_id not in self.crawler_logs:
                 self.crawler_logs[crawler_id] = []
             self.crawler_logs[crawler_id].append(log_entry)
             
-            # Keep only last 50 log entries
+            # Keep only the last 50 log entries.
             if len(self.crawler_logs[crawler_id]) > 50:
                 self.crawler_logs[crawler_id] = self.crawler_logs[crawler_id][-50:]
-            # Skip re-logging to avoid duplicate log entries
+            # Skip re-logging to avoid duplicate log entries.
             return
         
-        # Normal logging for non-formatted messages
+        # Normal logging for non-formatted messages.
         log_entry = f"[{timestamp}] {safe_message}"
         
         if crawler_id not in self.crawler_logs:
@@ -1620,7 +1616,7 @@ class CrawlerManager:
         
         self.crawler_logs[crawler_id].append(log_entry)
         
-        # Keep only last 50 log entries
+        # Keep only the last 50 log entries.
         if len(self.crawler_logs[crawler_id]) > 50:
             self.crawler_logs[crawler_id] = self.crawler_logs[crawler_id][-50:]
 
@@ -1630,19 +1626,19 @@ class CrawlerManager:
                 extra={"crawler_id": crawler_id, "crawler_log_timestamp": timestamp}
             )
         except Exception:
-            # Avoid breaking the crawler flow if logging fails
+            # Avoid breaking the crawler flow if logging fails.
             pass
     
     def get_crawler_results(self, crawler_id: str) -> Optional[Dict[str, Any]]:
-        """Get results for a completed crawler"""
+        """Get results for a completed crawler."""
         return self.crawler_results.get(crawler_id)
     
     def get_all_results(self) -> Dict[str, Any]:
         """Get all completed crawler results, including those synced from files, excluding cleared activities"""
-        # Ensure results are synced on first access
+        # Ensure results are synced on first access.
         self._ensure_results_synced()
         
-        # Filter out cleared activities
+        # Filter out cleared activities.
         if not hasattr(self, 'cleared_activities'):
             self.cleared_activities = set()
         
@@ -1655,22 +1651,22 @@ class CrawlerManager:
         return filtered_results
     
     def list_output_files(self) -> Dict[str, List[str]]:
-        """List all available output files by store"""
+        """List all available output files by store."""
         output_files = {"keells": [], "cargills": []}
         
         for store in ["keells", "cargills"]:
-            # Check both locations: crawler/store/output/store/ and crawler/output/store/
+            # Check both locations: crawler/store/output/store/ and crawler/output/store/.
             crawler_output_dir = os.path.join(self.crawler_dir, store, "output", store)
             main_output_dir = os.path.join(self.output_dir, store)
             
             for directory in [crawler_output_dir, main_output_dir]:
                 if os.path.exists(directory):
-                    # Check direct files in store directory
+                    # Check direct files in the store directory.
                     for file in os.listdir(directory):
                         if file.endswith('.json') and file not in output_files[store]:
                             output_files[store].append(file)
                     
-                    # Also check subdirectories (categories)
+                    # Also check subdirectories (categories).
                     for category in os.listdir(directory):
                         category_path = os.path.join(directory, category)
                         if os.path.isdir(category_path):
@@ -1681,8 +1677,8 @@ class CrawlerManager:
         return output_files
     
     def load_output_file(self, store: str, filename: str) -> Optional[Dict[str, Any]]:
-        """Load a specific output file from any of the possible locations"""
-        # Try both possible locations
+        """Load a specific output file from any possible location."""
+        # Check both possible locations.
         crawler_output_path = os.path.join(self.crawler_dir, store, "output", store, filename)
         main_output_path = os.path.join(self.output_dir, store, filename)
         
@@ -1692,7 +1688,7 @@ class CrawlerManager:
         elif os.path.exists(main_output_path):
             file_path = main_output_path
         else:
-            # Also check subdirectories (categories)
+            # Also check subdirectories (categories).
             main_output_dir = os.path.join(self.output_dir, store)
             if os.path.exists(main_output_dir):
                 for category in os.listdir(main_output_dir):
@@ -1721,15 +1717,15 @@ class CrawlerManager:
             return {"error": f"Failed to load file: {str(e)}"}
     
     def delete_output_file(self, store: str, filename: str) -> Dict[str, Any]:
-        """Delete a specific output file from all possible locations"""
-        # Try both possible locations
+        """Delete a specific output file from all possible locations."""
+        # Check both possible locations.
         crawler_output_path = os.path.join(self.crawler_dir, store, "output", store, filename)
         main_output_path = os.path.join(self.output_dir, store, filename)
         
         deleted_files = []
         errors = []
         
-        # Try to delete from both locations
+        # Delete from both locations.
         for file_path in [crawler_output_path, main_output_path]:
             if os.path.exists(file_path):
                 try:
@@ -1754,7 +1750,7 @@ class CrawlerManager:
         }
     
     def aggregate_results(self, crawler_ids: List[str]) -> Dict[str, Any]:
-        """Aggregate results from multiple crawlers"""
+        """Aggregate results from multiple crawlers."""
         all_items = []
         summary = {
             "total_items": 0,

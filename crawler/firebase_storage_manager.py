@@ -1,6 +1,6 @@
-"""
-Firebase Storage Manager for Crawler Data
-Handles cloud storage operations for crawler JSON files
+"""Firebase Storage manager for crawler data.
+
+Handles cloud storage operations for crawler JSON files.
 """
 
 import json
@@ -15,13 +15,13 @@ import firebase_admin
 from firebase_admin import credentials, storage
 import logging
 
-# Add backend to path for logger_service
+# Add the backend path for logger_service.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger, log_error
 
 logger = get_logger(__name__)
 
-# Load environment variables
+# Load environment variables.
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -29,36 +29,33 @@ except ImportError:
     logger.warning("python-dotenv not available, environment variables must be set manually")
 
 class FirebaseStorageManager:
-    """
-    Manages Firebase Storage operations for crawler data
-    """
+    """Manage Firebase Storage operations for crawler data."""
     
     def __init__(self, service_account_path: str = None, bucket_name: str = None):
-        """
-        Initialize Firebase Storage Manager
-        
+        """Initialize the Firebase Storage manager.
+
         Args:
-            service_account_path: Path to service account JSON file
-            bucket_name: Firebase Storage bucket name
+            service_account_path: Path to the service account JSON file.
+            bucket_name: Firebase Storage bucket name.
         """
         self.bucket_name = bucket_name or os.getenv('FIREBASE_STORAGE_BUCKET')
         
-        # If bucket name is not provided, try to derive it from project ID
+        # If the bucket name is not provided, derive it from the project ID.
         if not self.bucket_name:
             project_id = os.getenv('FIREBASE_PROJECT_ID')
             if project_id:
                 self.bucket_name = f"{project_id}.firebasestorage.app"
             else:
-                # Fallback for backward compatibility or local testing if needed, 
-                # but ideally should be set in env
+                # Fallback for backward compatibility or local testing.
+                # Prefer setting this in the environment.
                 self.bucket_name = 'shopple-7a67b.firebasestorage.app'
                 
         self.logger = logging.getLogger(__name__)
         
-        # Initialize Firebase Admin SDK if not already initialized
+        # Initialize the Firebase Admin SDK if not already initialized.
         if not firebase_admin._apps:
             if os.getenv('FIREBASE_PRIVATE_KEY'):
-                # Use environment variables
+                # Use environment variables.
                 project_id = os.getenv('FIREBASE_PROJECT_ID')
                 client_email = os.getenv('FIREBASE_CLIENT_EMAIL')
                 private_key = os.getenv('FIREBASE_PRIVATE_KEY')
@@ -85,7 +82,7 @@ class FirebaseStorageManager:
                 'storageBucket': self.bucket_name
             })
         
-        # Get storage bucket with explicit name
+        # Get the storage bucket with the explicit name.
         self.bucket = storage.bucket(self.bucket_name)
         self.logger.info(f"Firebase Storage Manager initialized with bucket: {self.bucket_name}")
 
@@ -126,30 +123,29 @@ class FirebaseStorageManager:
                           store: str, 
                           category: str, 
                           metadata: Dict[str, Any] = None) -> Dict[str, Any]:
-        """
-        Upload crawler data to Firebase Storage
-        
+        """Upload crawler data to Firebase Storage.
+
         Args:
-            local_file_path: Path to local JSON file
-            store: Store name (e.g., 'keells', 'cargills')
-            category: Category name (e.g., 'vegetables', 'dairy')
-            metadata: Additional metadata to store
-            
+            local_file_path: Path to a local JSON file.
+            store: Store name (e.g., "keells", "cargills").
+            category: Category name (e.g., "vegetables", "dairy").
+            metadata: Additional metadata to store.
+
         Returns:
-            Dictionary with upload results
+            Dictionary with upload results.
         """
         try:
-            # Preserve original filename instead of generating new timestamp
+            # Preserve the original filename instead of generating a timestamp.
             original_filename = os.path.basename(local_file_path)
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             
-            # Create cloud file path using original filename
+            # Create the cloud file path using the original filename.
             cloud_path = f"crawler-data/{store}/{category}/{original_filename}"
             
-            # Create blob and upload
+            # Create the blob and upload.
             blob = self.bucket.blob(cloud_path)
             
-            # Add metadata
+            # Add metadata.
             if metadata:
                 blob.metadata = {
                     'store': store,
@@ -160,13 +156,13 @@ class FirebaseStorageManager:
                     **metadata
                 }
             
-            # Upload file
+            # Upload the file.
             blob.upload_from_filename(local_file_path)
             
-            # Get file size
+            # Get the file size.
             file_size = os.path.getsize(local_file_path)
             
-            # Update file index using original filename
+            # Update the file index using the original filename.
             self._update_file_index(store, category, original_filename, cloud_path, file_size, metadata)
             
             result = {

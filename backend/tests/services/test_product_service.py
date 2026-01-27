@@ -130,7 +130,7 @@ def test_update_product_with_id_change(product_service, mock_product_repo):
 def test_delete_product_success(product_service, mock_product_repo, mock_image_service):
     product_id = "test_product"
     
-    # Mock repo finds product.
+    # Mock repository finds product.
     mock_product_repo.find_by_id.return_value = {"image_url": "http://test.com/image.jpg"}
     
     # Mock image deletion success.
@@ -149,7 +149,7 @@ def test_delete_product_success(product_service, mock_product_repo, mock_image_s
 def test_delete_product_not_found(product_service, mock_product_repo):
     product_id = "test_product"
     
-    # Mock repo does not find product.
+    # Mock repository does not find product.
     mock_product_repo.find_by_id.return_value = None
     
     with pytest.raises(ValueError, match="Product not found"):

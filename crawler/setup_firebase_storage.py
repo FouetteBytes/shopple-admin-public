@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""
-Firebase Storage Setup Script for Product Classifier Crawler
-Installs required dependencies and sets up Firebase Storage integration
+"""Firebase Storage setup script for the product classifier crawler.
+
+Installs required dependencies and sets up Firebase Storage integration.
 """
 
 import os
@@ -10,14 +10,14 @@ import subprocess
 import json
 from pathlib import Path
 
-# Add backend to path for logger_service
+# Add the backend path for logger_service.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger, log_error
 
 logger = get_logger(__name__)
 
 def run_command(command, description):
-    """Run a command and handle errors"""
+    """Run a command and handle errors."""
     print(f" {description}...")
     try:
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
@@ -29,7 +29,7 @@ def run_command(command, description):
         return False
 
 def check_python_version():
-    """Check if Python version is compatible"""
+    """Check whether the Python version is compatible."""
     version = sys.version_info
     if version.major < 3 or (version.major == 3 and version.minor < 8):
         logger.error("❌ Python 3.8 or higher is required")
@@ -39,7 +39,7 @@ def check_python_version():
     return True
 
 def install_firebase_dependencies():
-    """Install Firebase Storage dependencies"""
+    """Install Firebase Storage dependencies."""
     requirements = [
         "firebase-admin>=6.4.0",
         "google-cloud-storage>=2.10.0",
@@ -53,20 +53,20 @@ def install_firebase_dependencies():
     return True
 
 def create_env_template():
-    """Create environment template file"""
-    env_template = """# Firebase Storage Configuration for Crawler
-# Copy these values from your Firebase project settings
+    """Create the environment template file."""
+    env_template = """# Firebase Storage configuration for the crawler.
+# Copy these values from your Firebase project settings.
 
-# Firebase Project Configuration
-FIREBASE_PROJECT_ID=shopple-7a67b
+# Firebase project configuration.
+FIREBASE_PROJECT_ID=
 FIREBASE_CLIENT_EMAIL=firebase-adminsdk-fbsvc@shopple-7a67b.iam.gserviceaccount.com
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\n...your-private-key...\\n-----END PRIVATE KEY-----\\n"
 
-# Firebase Storage Bucket
+# Firebase Storage bucket.
 FIREBASE_STORAGE_BUCKET=shopple-7a67b.firebasestorage.app
 
-# Optional: Custom configuration
-CRAWLER_STORAGE_MODE=both  # local, firebase, both
+# Optional: custom configuration.
+CRAWLER_STORAGE_MODE=both  # local, firebase, both.
 CRAWLER_AUTO_UPLOAD=true
 CRAWLER_KEEP_LOCAL_DAYS=7
 CRAWLER_MAX_LOCAL_FILES=50
@@ -85,7 +85,7 @@ CRAWLER_MAX_LOCAL_FILES=50
         return False
 
 def test_firebase_connection():
-    """Test Firebase connection"""
+    """Test the Firebase connection."""
     logger.info(" Testing Firebase Storage connection...")
     
     test_script = '''
@@ -163,7 +163,7 @@ except Exception as e:
         return False
 
 def setup_storage_directories():
-    """Create necessary storage directories"""
+    """Create necessary storage directories."""
     base_dir = Path(__file__).parent
     directories = [
         base_dir / "output" / "keells",
@@ -183,7 +183,7 @@ def setup_storage_directories():
     return True
 
 def create_storage_config():
-    """Create default storage configuration"""
+    """Create the default storage configuration."""
     config = {
         "storage_mode": "both",
         "auto_upload": True,
