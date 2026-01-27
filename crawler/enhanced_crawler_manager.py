@@ -224,7 +224,7 @@ class EnhancedCrawlerManager:
         return default_config
     
     def save_storage_config(self, config: Dict[str, Any]):
-        """Save storage configuration"""
+        """Save storage configuration."""
         try:
             with open(self.config_file, 'w') as f:
                 json.dump(config, f, indent=2)
@@ -233,16 +233,14 @@ class EnhancedCrawlerManager:
         except Exception as e:
             logger.error(f"Failed to save storage config: {e}")
     
-    def run_crawler_with_storage(self, store: str, category: str, 
+    def run_crawler_with_storage(self, store: str, category: str,
                                 max_items: Optional[int] = None) -> Dict[str, Any]:
-        """
-        Run crawler and handle storage based on configuration
-        """
+        """Run a crawler and handle storage based on configuration."""
         try:
-            # Generate unique crawler ID
+            # Generate a unique crawler ID.
             crawler_id = f"{store}_{category}_{int(time.time())}"
             
-            # Initialize crawler tracking
+            # Initialize crawler tracking.
             self.active_crawlers[crawler_id] = {
                 "status": "starting",
                 "progress": 0,
@@ -252,11 +250,11 @@ class EnhancedCrawlerManager:
                 "config": {"max_items": max_items}
             }
             
-            # Run the crawler
+            # Run the crawler.
             result = self._execute_crawler(store, category, max_items)
             
             if result["success"]:
-                # Handle storage based on configuration
+                # Handle storage based on configuration.
                 storage_result = self._handle_file_storage(
                     result["output_file"], store, category, result["metadata"]
                 )

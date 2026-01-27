@@ -231,7 +231,7 @@ class FileStorageManager:
         return os.path.join(os.path.dirname(__file__), "output")
     
 def main():
-    """Test the enhanced file management."""
+    """Run validation for enhanced file management."""
     logger.info("️  Testing Enhanced File Management")
     logger.info("=" * 50)
     

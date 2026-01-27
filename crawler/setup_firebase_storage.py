@@ -92,7 +92,7 @@ def test_firebase_connection():
 import os
 from pathlib import Path
 
-# Load environment variables
+# Load environment variables.
 try:
     from dotenv import load_dotenv
     env_file = Path(__file__).parent / ".env.crawler"
@@ -103,12 +103,12 @@ try:
 except ImportError:
     logger.warning("⚠️  python-dotenv not installed")
 
-# Test Firebase initialization
+# Test Firebase initialization.
 try:
     import firebase_admin
     from firebase_admin import credentials, storage
     
-    # Check if required environment variables exist
+    # Check if required environment variables exist.
     required_vars = ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY']
     missing_vars = [var for var in required_vars if not os.getenv(var)]
     
@@ -117,7 +117,7 @@ try:
         print("   Please update .env.crawler with your Firebase configuration")
         exit(1)
     
-    # Initialize Firebase (if not already initialized)
+    # Initialize Firebase (if not already initialized).
     if not firebase_admin._apps:
         cred = credentials.Certificate({
             "type": "service_account",
@@ -129,7 +129,7 @@ try:
             'storageBucket': os.getenv('FIREBASE_STORAGE_BUCKET')
         })
     
-    # Test storage bucket access
+    # Test storage bucket access.
     bucket = storage.bucket()
     logger.info(f"✅ Successfully connected to Firebase Storage: {bucket.name}")
     logger.info(" Firebase Storage setup is complete!")
@@ -153,7 +153,7 @@ except Exception as e:
         if result.stderr:
             print(result.stderr)
         
-        # Clean up test file
+        # Clean up the test file.
         test_file.unlink()
         
         return result.returncode == 0
@@ -207,30 +207,30 @@ def create_storage_config():
         return False
 
 def main():
-    """Main setup function"""
+    """Main setup function."""
     logger.info(" Firebase Storage Setup for Product Classifier Crawler")
     print("=" * 60)
     
-    # Check Python version
+    # Check the Python version.
     if not check_python_version():
         return False
     
-    # Install dependencies
+    # Install dependencies.
     if not install_firebase_dependencies():
         logger.error("❌ Failed to install Firebase dependencies")
         return False
     
-    # Create directories
+    # Create directories.
     if not setup_storage_directories():
         logger.error("❌ Failed to setup storage directories")
         return False
     
-    # Create environment template
+    # Create the environment template.
     if not create_env_template():
         logger.error("❌ Failed to create environment template")
         return False
     
-    # Create storage configuration
+    # Create the storage configuration.
     if not create_storage_config():
         logger.error("❌ Failed to create storage configuration")
         return False
