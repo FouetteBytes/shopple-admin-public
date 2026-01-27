@@ -52,7 +52,7 @@ class ResourceMonitorService:
             
         containers = []
         try:
-            # Filter for our specific containers
+            # Filter to monitored containers.
             target_containers = ['shopple-backend', 'shopple-crawler', 'shopple-worker']
             
             for container in self.docker_client.containers.list():

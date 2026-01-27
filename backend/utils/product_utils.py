@@ -149,7 +149,7 @@ def parse_size_string(size_str):
         normalized_unit = unit_mapping.get(unit, unit)
         return value, normalized_unit
     
-    # Handle just numbers (assume pieces)
+    # Handle numeric-only values (assume pieces).
     number_match = re.search(r'(\d+(?:\.\d+)?)', size_str)
     if number_match:
         return float(number_match.group(1)), "pieces"

@@ -26,12 +26,10 @@ class IntelligentProductCache:
     def __init__(self, cache_dir: str = None):
         # Set default cache directory
         if cache_dir is None:
-            # Fallback to a safe relative path or project root 'cache' folder
-            # Try to find PROJECT_ROOT or fallback
+              # Resolve the cache directory relative to the project root when not configured.
             project_root = os.environ.get('PROJECT_ROOT')
             if not project_root:
-                 # Fallback: assume we are in backend/features/products/service/matcher/legacy_cache.py
-                 # Root is 6 levels up to get of backend/
+                  # Derive the project root from the module location.
                  current_dir = os.path.abspath(__file__) # .../backend/features/products/service/matcher/legacy_cache.py
                  backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(current_dir))))) 
                  # backend_dir is .../backend
@@ -284,8 +282,7 @@ class IntelligentProductCache:
                 'cache_timestamp': entry.get('timestamp', entry.get('last_updated'))
             }
             
-        # Try finding by original_name scan (slow but needed if keys vary)
-        # Ideally, we should use efficient lookup. For now, normalized input name match
+        # Scan original_name for legacy entries when keys differ.
         norm_input = self._normalize_name(product_name)
         
         # Fuzzy match logic - also check 'name' field for legacy entries

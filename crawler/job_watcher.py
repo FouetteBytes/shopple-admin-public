@@ -102,8 +102,7 @@ class JobHandler(FileSystemEventHandler):
             env.update(env_vars)
             env['PYTHONUNBUFFERED'] = '1'
             
-            # Run the crawler
-            # We redirect stdout/stderr to a log file that the backend can read
+            # Run the crawler and redirect stdout/stderr to a backend-readable log file.
             log_dir = os.path.join(self.base_dir, 'logs')
             os.makedirs(log_dir, exist_ok=True)
             log_file = os.path.join(log_dir, f"{crawler_id}.log")
@@ -128,9 +127,7 @@ class JobHandler(FileSystemEventHandler):
         except Exception as e:
             logger.error(f"Failed to process job {job_file}: {e}")
         finally:
-            # We don't remove from active_threads here because we did it by filtering is_alive()
-            # But strictly speaking, we are finishing now
-            # The next loop iteration in other threads will clean us up
+            # Thread cleanup occurs via the is_alive() filter in the next loop iteration.
             
             filename = os.path.basename(job_file)
             with self.processing_lock:

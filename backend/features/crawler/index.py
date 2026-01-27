@@ -73,8 +73,7 @@ def stream_crawler_progress(crawler_id):
             # Continue without auth for backward compatibility
             pass
     
-    # Checking availability directly or via service? Service preferred but for generator loop...
-    # We will use get_crawler_manager() inside generator to minimize latency logic in controller
+    # Use get_crawler_manager() within the generator to keep controller overhead minimal.
     from services.system.initialization import is_crawler_available
     if not is_crawler_available():
          return Response(json.dumps({'error': 'Crawler system not available'}), mimetype='application/json', status=503)

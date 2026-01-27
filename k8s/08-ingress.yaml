@@ -4,9 +4,8 @@
 #
 # WHY INGRESS?
 # ------------
-# Instead of each service having its own LoadBalancer (expensive in cloud),
-# we use ONE LoadBalancer (the Ingress Controller) that routes traffic to
-# all services based on the URL path or hostname.
+# Instead of a LoadBalancer per service, a single Ingress Controller routes
+# traffic to services based on URL path or hostname.
 #
 # ARCHITECTURE:
 # -------------
@@ -41,7 +40,7 @@
 # CLOUD DEPLOYMENT:
 # -----------------
 # The Ingress Controller automatically provisions a cloud LoadBalancer.
-# Update the 'host' field below with your domain (e.g., app.example.com)
+# Update the 'host' field below with the desired domain (e.g., app.example.com)
 #
 # ===========================================================================
 
@@ -63,7 +62,7 @@ spec:
   rules:
   # ---------------------------------------------------------------------------
   # LOCAL DEVELOPMENT (no hostname - matches any)
-  # For cloud: change to your domain like "app.example.com"
+  # For cloud deployments, set the host to the target domain (e.g., app.example.com)
   # ---------------------------------------------------------------------------
   - http:
       paths:

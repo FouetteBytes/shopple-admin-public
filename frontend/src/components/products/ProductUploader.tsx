@@ -720,7 +720,7 @@ export const ProductUploader: React.FC<ProductUploaderProps> = ({ onDatabaseChan
     setIsConfirming(true);
 
     try {
-      // Here you would typically send the pendingProducts to the server for final creation
+      // Send pending products to the server for final creation.
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/confirm`, {
         method: 'POST',
         headers: {

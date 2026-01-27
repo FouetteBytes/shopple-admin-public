@@ -8,11 +8,8 @@ logger = get_logger(__name__)
 
 class CategoryRepository(BaseRepository[Dict[str, Any]]):
     def __init__(self):
-        super().__init__() # Initializes self.db if BaseRepository does it, or we do it here.
-        # BaseRepository in this project seems to not auto-init db based on previous read? 
-        # Actually in ProductRepository it didn't call super().__init__ but did `self.cache = ...`.
-        # Let's check BaseRepository.
-        pass
+        # Initialize any base repository state.
+        super().__init__()
 
     @property
     def db(self):

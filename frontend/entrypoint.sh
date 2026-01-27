@@ -9,7 +9,7 @@ echo "window.__ENV__ = {" >> ./public/env-config.js
 
 # Read each line in .env file
 # Each line represents key=value pairs
-# We only care about NEXT_PUBLIC_ variables for the frontend
+# Only expose NEXT_PUBLIC_ variables to the frontend.
 printenv | grep NEXT_PUBLIC_ | while read -r line; do
   # Split env var by character `=`
   if printf '%s\n' "$line" | grep -q -e '='; then
@@ -18,7 +18,7 @@ printenv | grep NEXT_PUBLIC_ | while read -r line; do
   fi
 
   # Read value of current variable
-  # Since we are iterating printenv, varvalue IS the value.
+  # printenv yields key=value pairs; use the parsed value.
   value="$varvalue"
   
   # Append configuration property to JS file

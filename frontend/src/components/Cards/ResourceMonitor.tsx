@@ -57,7 +57,7 @@ export default function ResourceMonitor() {
                 const data = await res.json()
                 if (data.success) {
                     setStats(data)
-                    // Only update local concurrency state from server if we're not currently editing it
+                    // Update concurrency from server only when not editing locally.
                     if (!showConfig) {
                         setConcurrency(data.crawler_config?.max_concurrent_crawlers || 2)
                     }

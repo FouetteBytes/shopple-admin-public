@@ -35,8 +35,7 @@ spec:
         env:
         - name: HEADLESS_MODE
           value: "true"
-        # Crawler needs to write output files. 
-        # For local dev, we bind mount the local output folder so you can see results.
+        # Crawler writes output files to persistent volumes.
         volumeMounts:
         - name: crawler-output
           mountPath: /app/crawler/output

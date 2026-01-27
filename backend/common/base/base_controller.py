@@ -21,14 +21,9 @@ class BaseController:
         :param status: HTTP status code (default 200).
         :return: Flask JSON response.
         """
-        # Maintain backward compatibility where 'success' key is manually added in some places,
-        # but the request asks for standard response. 
-        # For now, we wrap 'data' if it's not already a dict with success flag, 
-        # or just return the data structure as expected by frontend (Zero API change).
-        # However, the user template says: return { success: true, data };
-        # "Zero API contract changes" is a strict constraint.
-        # Existing API returns: jsonify({'success': True, ...}) or direct dicts.
-        # The prompt template is illustrative. I must adapt it to PRESERVE current API.
+        # Preserve backward-compatible response shapes while standardizing success handling.
+        # If callers already include a `success` field, return the payload unchanged.
+        # Otherwise wrap the payload in a `{ success: true, data: ... }` envelope to avoid API changes.
         
         # If the data is already a dict and has 'success' key, return as is.
         if isinstance(data, dict) and 'success' in data:

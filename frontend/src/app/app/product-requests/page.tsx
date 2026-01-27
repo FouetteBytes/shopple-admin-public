@@ -360,8 +360,8 @@ export default function ProductRequestsPage() {
         }
         setLastRefreshedAt(new Date());
 
-        // Auto-select first item only if nothing is selected AND we have items
-        // Use a ref to avoid dependency on selectedId which would cause re-fetches
+        // Auto-select the first item only when no item is selected and the list is non-empty.
+        // Use a ref to avoid selectedId dependencies that trigger re-fetches.
         setSelectedId((currentSelected) => {
           if (!currentSelected && listResponse.items.length > 0) {
             // Trigger detail fetch for first item

@@ -123,8 +123,7 @@ def set_keys(updates: Dict[str, Optional[str]]) -> Dict[str, str]:
 
     Returns masked status snapshot.
     """
-    # Ensure keys are loaded from disk before we update, otherwise _MEM_CACHE might be partial (all None)
-    # and we would overwrite the disk with empty values for other providers.
+    # Load keys from disk before updating to avoid overwriting other providers with empty values.
     load_keys_from_disk()
 
     with _LOCK:

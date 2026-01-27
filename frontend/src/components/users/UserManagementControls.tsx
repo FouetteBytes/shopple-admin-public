@@ -29,9 +29,7 @@ export const UserManagementControls: React.FC<UserManagementControlsProps> = ({ 
   const handleBan = async () => {
     const finalReason = banReason === 'custom' ? customReason : banReason;
     
-    // If "No Reason" is selected (empty string) or custom is empty, we allow it if that's the intent.
-    // But if "Custom" is selected and empty, we might want to warn or just send empty.
-    // The backend defaults to "Violation of terms" if empty.
+    // Allow empty reasons; the backend defaults to "Violation of terms" when unset.
     
     setIsLoading(true);
     try {

@@ -298,7 +298,7 @@ export default function ApiKeysModal({ open, onClose }: { open: boolean; onClose
   useEffect(() => {
     if (!open) return;
     
-    // If we have cached data, don't show loading - just refresh in background
+    // Use cached data immediately and refresh in the background.
     const hasCachedData = !!getCachedData<KeysStatus>(CACHE_KEYS.STATUS);
     if (!hasCachedData) {
       setLoading(true);

@@ -231,7 +231,7 @@ class ImageServiceTestRunner:
         # Verify the image exists (without deleting)
         # The cleanup step will delete it after Slack notification
         try:
-            # Just verify we can parse the URL and it's a test image
+            # Verify that the URL parses and references a test image.
             if 'test_' in firebase_url and 'products/images/' in firebase_url:
                 return {
                     'success': True,

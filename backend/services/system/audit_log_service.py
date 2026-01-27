@@ -37,8 +37,7 @@ class AuditLogService:
         self.password = os.getenv('OPENSEARCH_PASSWORD', 'admin')
         self.index_name = 'shopple-logs' # Matches FluentBit output
 
-        # Initialize Client
-        # Note: In a real cluster we use HTTPS and verify certs
+        # Initialize client (production deployments should enable TLS and cert verification).
         self.client = OpenSearch(
             hosts=[{'host': self.host, 'port': self.port}],
             http_auth=(self.username, self.password) if self.username else None,
@@ -70,17 +69,12 @@ class AuditLogService:
             logger.warning("Audit Service: OpenSearch is not available")
             return {"logs": [], "total": 0, "available": False}
         
-        # Build Bool Query
-        # Removed the mandatory "AUDIT_EVENT" match to show ALL logs by default if no filters are applied.
-        # This helps the admin see everything when the page loads.
+        # Build the query and default to all structured logs when no filters are applied.
         must_clauses = [
              {"exists": {"field": "timestamp"}} # Basic sanity check, ensuring it's a log entry
         ]
         
-        # If user explicitly wants "AUDIT_EVENT" types only, we could add a toggle,
-        # but the request is to "show available all the logs".
-        # However, to keep it somewhat clean, we might want to filter out very noisy debug logs if successful,
-        # but let's default to showing everything that looks like a structured log.
+        # Consider adding an optional filter for AUDIT_EVENT only if needed.
         
         if user_email:
             must_clauses.append({"match_phrase": {"user_email": user_email}}) # Changed from audit_user_email to generic user_email field often used in logs

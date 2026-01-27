@@ -17,7 +17,7 @@ class UserRepository(BaseRepository[User]):
 
     def find_by_id(self, id: str) -> Optional[User]:
         # Implementation for full entity loading if needed in future
-        # Currently we prioritize existing behavior (no read before write for bans)
+        # Preserve existing behavior (no read-before-write for bans).
         if not self.collection:
             return None
             

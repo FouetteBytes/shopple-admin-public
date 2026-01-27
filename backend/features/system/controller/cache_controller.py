@@ -91,7 +91,5 @@ class CacheController(BaseController):
              return jsonify({'success': False, 'error': str(e)}), 500
 
     def debug_cache_keys(self):
-        # Mapped to debug_cache usually or separate logic? 
-        # Legacy had both. I'll reuse debug_cache logic or split if distinct.
-        # Logic in service::debug_cache handles basics.
+        # Reuse the existing cache debug handler for key inspection.
         return self.debug_cache()

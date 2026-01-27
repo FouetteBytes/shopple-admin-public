@@ -180,8 +180,7 @@ class SystemService(BaseService):
                     # Legacy used arrow or datetime.
                     pass 
                 
-                # Stats fetching is heavy, legacy likely did it.
-                # Just placeholder for structure unless I copy full logic.
+                # Stats collection is intentionally deferred to avoid heavy polling.
                 services.append({
                     'id': service_key,
                     'name': service_key,

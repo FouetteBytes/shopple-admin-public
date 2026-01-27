@@ -2,15 +2,10 @@
 Keells Base Crawler - Reusable crawler for all Keells categories
 
 This base crawler implements the common pagination logic for all Keells categories.
-Each specific crawler (beverages, groceries, etc.) only needs to provide:
+Each specific crawler only needs to provide:
 1. URL
 2. Category name for output filename
 
-Benefits:
-- Single source of truth for crawling logic
-- Easy to update all crawlers when website structure changes
-- Consistent progress indicators across all crawlers
-- Less code duplication
 """
 
 import os
@@ -249,7 +244,7 @@ class KeellsBaseCrawler:
                     const imgEl = card.querySelector('.product-card-image-containerV2 img');
                     const image_url = imgEl ? imgEl.src : null;
                     
-                    // Only add if we have required fields
+                    // Add only entries with required fields.
                     if (product_name && price) {
                         products.push({
                             product_name,
@@ -346,7 +341,7 @@ class KeellsBaseCrawler:
                 self.all_products.extend(page_products)
                 self._emit_status(f"[PROGRESS] Total items found: {len(self.all_products)}", extra={"total_products": len(self.all_products)})
                 
-                # Check if we've reached the item limit
+                # Stop when the configured item limit is reached.
                 if self.max_items and len(self.all_products) >= self.max_items:
                     self._emit_status(f"[COMPLETE] ✅ Reached target of {self.max_items} items. Stopping extraction.", extra={"target": self.max_items})
                     break

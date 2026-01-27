@@ -370,7 +370,7 @@ class ProductIndexService:
                             break
                 
                 # Strategy 4: N-gram fuzzy matching (for typos/variations)
-                if len(candidates) < 50:  # Only if we have few candidates
+                if len(candidates) < 50:  # Apply only when candidate count is low.
                     ngrams = generate_ngrams(f"{name} {brand}", self.NGRAM_SIZE)
                     ngram_counts: Dict[str, int] = {}
                     
@@ -522,8 +522,8 @@ class ProductIndexService:
         """Clear all product indexes. Use with caution!"""
         try:
             if self.is_available():
-                # Get all keys with our prefix and delete them
-                # Note: Upstash doesn't support SCAN, so we use pattern delete carefully
+                # Delete main keys for this prefix.
+                # Upstash does not support SCAN; avoid pattern deletes.
                 self._client.delete(self.DATA_KEY)
                 self._client.delete(self.META_COUNT)
                 self._client.delete(self.META_SYNC)

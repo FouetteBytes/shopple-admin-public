@@ -97,14 +97,12 @@ class IntelligentProductMatcher:
                 # Try to load the pickle blob from Redis
                 redis_data = self.redis_cache._client.get(self.cache_file) # type: ignore
                 if redis_data:
-                    # Redis returns string (because we stored base64 string) or bytes? 
-                    # Upstash python client usually returns bytes if not decoded, but since we sent a string...
-                    # Let's assume it handles string well if we sent a string.
+                    # Redis responses may be bytes or strings depending on client configuration.
                     try:
                         decoded_data = base64.b64decode(redis_data)
                         cached_data = pickle.loads(decoded_data)
                     except Exception:
-                         # Fallback for if it was somehow stored as raw bytes (legacy) or plain string?
+                         # Fallback for legacy raw-bytes storage.
                          cached_data = pickle.loads(redis_data) # type: ignore
 
                     logger.info("Loaded product cache from Redis")
@@ -112,7 +110,7 @@ class IntelligentProductMatcher:
                 log_error(logger, e, {"context": "Error loading cache from Redis"})
 
         if not cached_data and os.path.exists(self.cache_file) and not self.use_redis:
-            # Only use file if Not using Redis (or maybe fallback?)
+            # Use the local cache file when Redis is disabled.
             try:
                 with open(self.cache_file, 'rb') as f:
                     cached_data = pickle.load(f)
@@ -186,7 +184,7 @@ class IntelligentProductMatcher:
                 }
                 # Serialize
                 serialized = pickle.dumps(cache_data)
-                # Redis expects string usually with JSON clients, or we can use base64 to be safe 
+                # Redis clients commonly expect string values; base64 ensures safe transport.
                 encoded_str = base64.b64encode(serialized).decode('utf-8')
                 
                 # Store in Redis with the same key
@@ -306,7 +304,7 @@ class IntelligentProductMatcher:
             self.exact_name_brand_size_index = new_exact_name_brand_size_index
             self.brand_name_index = new_brand_name_index
             
-            # Determine if we should use scalable mode
+            # Determine whether to use scalable mode.
             self.scalable_mode = len(new_cache) >= SCALABLE_MODE_THRESHOLD and index_available
             
             # Save to disk/Redis
@@ -333,7 +331,7 @@ class IntelligentProductMatcher:
         new_brand_name_index: Dict
     ) -> None:
         """Process a single product and add to all cache structures."""
-        # Create cache entry - handle both old and new size formats
+        # Create cache entry and handle legacy size formats.
         size_for_comparison = product_data.get('sizeRaw', '') or str(product_data.get('size', ''))
         
         cache_entry = ProductCacheEntry(
@@ -413,7 +411,7 @@ class IntelligentProductMatcher:
         - Accuracy for small datasets (exhaustive search never misses)
         - Scalability for large datasets (1M+ products in milliseconds)
         """
-        # Check if we should use scalable mode
+        # Determine whether to use scalable mode.
         product_count = self.product_index.get_product_count() if self.product_index.is_available() else len(self.product_cache)
         use_scalable = product_count >= SCALABLE_MODE_THRESHOLD and self.product_index.is_available()
         
@@ -746,7 +744,7 @@ class IntelligentProductMatcher:
     def _find_tier3_normalized_matches(self, name: str, brand: str, product_data: Dict) -> List[ProductMatch]:
         """Find normalized exact matches with multi-candidate ranking."""
         matches: List[ProductMatch] = []
-        seen_product_ids = set()  # Track products we've already matched to avoid duplicates
+        seen_product_ids = set()  # Track matched IDs to avoid duplicates.
         
         # Generate search tokens and normalized name
         # search_tokens = generate_search_tokens(name, brand, product_data.get('variety', ''))
@@ -787,13 +785,13 @@ class IntelligentProductMatcher:
                 )
                 matches.append(match)
         
-        # ENHANCEMENT: Also check with packaging variations
+        # Also check packaging variations.
         if brand:
-            # Try matching just the brand name itself (for cases where name = brand)
+            # Attempt brand-only matching when name equals brand.
             brand_normalized = normalize_product_name(brand, remove_packaging=True)
             name_normalized = normalize_product_name(name, remove_packaging=True)
             
-            # If name contains brand or name IS brand, search for all brand variants
+            # If name contains brand or matches brand, search for brand variants.
             if brand_normalized in name_normalized or name_normalized in brand_normalized:
                 if brand_normalized in self.normalized_names:
                     candidate_ids = list(self.normalized_names[brand_normalized])

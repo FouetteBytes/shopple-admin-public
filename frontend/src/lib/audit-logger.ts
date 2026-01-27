@@ -234,7 +234,7 @@ export class AuditLogger {
   }
 
   private getSessionId(): string {
-    // Check if we're in a browser environment
+    // Use sessionStorage when running in a browser environment.
     if (typeof window !== 'undefined' && window.sessionStorage) {
       let sessionId = sessionStorage.getItem('session_id');
       if (!sessionId) {

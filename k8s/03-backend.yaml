@@ -33,9 +33,9 @@ spec:
           value: "/app"
         - name: K8S_NAMESPACE
           value: "default"
-        # Database/Service URLs must point to K8s Service names, not localhost
-        # Assuming you update .env or override here if names differ
-        # But 'opensearch' service name matches the docker-compose hostname
+        # Database/Service URLs must reference K8s Service names, not localhost.
+        # Override environment values here if service names differ.
+        # The 'opensearch' service name matches the docker-compose hostname.
         volumeMounts:
         - name: logs-volume
           mountPath: /app/backend/logs

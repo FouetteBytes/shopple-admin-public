@@ -232,9 +232,9 @@ export class SessionManager {
    * Get all active sessions (simplified version for admin management)
    */
   static async getAllActiveSessions(): Promise<any[]> {
-    // Note: With Firebase session cookies, we don't maintain a sessions store
-    // This would need to be implemented with a database if detailed session tracking is needed
-    // For now, return empty array - real implementation would query a sessions database
+    // Firebase session cookies do not provide a server-side session store.
+    // Implement persistent session tracking in a database if required.
+    // Return an empty array until a backing store is available.
     return [];
   }
 

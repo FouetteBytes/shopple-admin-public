@@ -2,18 +2,16 @@
 # KUBERNETES PERSISTENT VOLUME CLAIMS (PVCs)
 # =============================================================================
 # 
-# WHAT IS THIS FILE?
-# ------------------
-# This file creates "storage buckets" (PVCs) that your containers use to
-# store data that needs to persist even when containers restart.
+# Defines PersistentVolumeClaims (PVCs) used by containers to retain data
+# across pod restarts and deployments.
 #
 # WHY DO WE NEED THIS?
 # --------------------
-# - Containers are temporary - when they restart, data inside is LOST
-# - PVCs are like "external hard drives" that containers can mount
-# - Data in PVCs survives container restarts and updates
+# - Container filesystems are ephemeral; data is lost on restart
+# - PVCs provide persistent storage that pods can mount
+# - Data stored in PVCs survives restarts and updates
 #
-# HOW IT WORKS:
+# Working Principle:
 # -------------
 #   Container                    PVC (Storage)
 #   ┌─────────────┐             ┌─────────────┐
@@ -23,8 +21,8 @@
 #
 # LOCAL vs CLOUD:
 # ---------------
-# - Local (Docker Desktop/Minikube): Uses your laptop's disk
-# - Cloud (GKE/EKS/AKS): Uses cloud storage (e.g., Google Persistent Disk)
+# - Local (Docker Desktop/Minikube): Uses the workstation disk
+# - Cloud (GKE/EKS/AKS): Uses managed cloud storage (e.g., Google Persistent Disk)
 #
 # =============================================================================
 
@@ -61,7 +59,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi       # 5 gigabytes (crawler generates lots of data)
+      storage: 5Gi       # 5 gigabytes 
 
 ---
 # -----------------------------------------------------------------------------

@@ -202,7 +202,7 @@ def test_openrouter_error_handling(handler, allowed_models):
             model_override="invalid/model:free",
             request_timeout=5.0
         )
-        # If we get here, check if response indicates an error
+        # If execution reaches this point, inspect the response for errors.
         print(f"\n⚠️ Response from invalid model: {response[:100] if response else 'None'}")
     except Exception as e:
         # Expected - invalid model should cause error

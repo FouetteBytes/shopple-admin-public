@@ -57,7 +57,7 @@ product_bp.add_url_rule(
 product_bp.add_url_rule(
     '/api/products/<product_id>',
     view_func=product_controller.update_product,
-    methods=['PUT', 'PATCH'] # Added PATCH just in case
+    methods=['PUT', 'PATCH']  # Support partial updates via PATCH.
 )
 
 product_bp.add_url_rule(

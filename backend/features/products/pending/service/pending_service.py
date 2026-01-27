@@ -56,15 +56,8 @@ class PendingService(BaseService):
         pending_id = self.repository.create(pending_data)
         pending_data["id"] = pending_id
         
-        # We need to return the data, but SERVER_TIMESTAMP are placeholders. 
-        # For response, we can either fetch again or use ISO string for 'now'.
-        # The legacy code returned the pending_data with placeholders? No, JSON serialization would fail.
-        # Legacy code: return jsonify({"success": True, "product": pending_data})
-        # Flask jsonify can sometimes handle placeholders or maybe it failed?
-        # Actually legacy code did: "approvedAt": firestore.SERVER_TIMESTAMP
-        # And then returned pending_data. Flask-RESTful JSON encoder might fail on that Sentinel.
-        # But maybe they use a custom encoder.
-        # I'll replace them with strings for the return.
+        # Firestore SERVER_TIMESTAMP sentinels are not JSON-serializable.
+        # Return ISO-8601 strings for response payloads.
         
         response_data = pending_data.copy()
         now_iso = firestore.datetime.datetime.now().isoformat()

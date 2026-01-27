@@ -191,7 +191,7 @@ def main():
     
     if args.daemon:
         logger.info("[INFO] Running file watcher as daemon...")
-        # In production, you might want to use a proper daemon library
+        # Production deployments should use a dedicated daemon supervisor.
         watcher.run()
     else:
         logger.info("[INFO] Running file watcher...")

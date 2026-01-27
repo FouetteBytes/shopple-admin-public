@@ -10,8 +10,6 @@ This base crawler handles:
 5. Timestamped file outputs
 6. Test mode support
 
-Author: Shopple Admin System
-Version: 2.0
 """
 import os
 import sys

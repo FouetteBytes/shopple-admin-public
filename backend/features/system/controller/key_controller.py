@@ -34,14 +34,12 @@ class KeyController(BaseController):
         try:
             data = request.get_json(force=True, silent=True) or {}
             
-            # Smart payload detection
+            # Determine payload shape.
             if 'models' in data and 'defaults' in data:
                 # Full configuration update
                 payload = data
             elif 'models' in data and isinstance(data['models'], dict):
-                # Legacy wrapper but potentially just models
-                # Check if it was meant to be the full payload but missing defaults?
-                # safer to assume it's the wrapped models only if no defaults key
+                # Legacy wrapper containing model settings only.
                 payload = data['models']
             else:
                 # Direct dict

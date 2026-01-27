@@ -192,7 +192,7 @@ export function resolveAvatarPresentation(profile?: AvatarProfileLike | null): A
     showBackground = false;
   }
 
-  // If we have no dedicated background but need one, ensure a default gradient.
+  // Apply a default gradient when a background is required.
   const finalBackgroundStyle = showBackground ? backgroundStyle : {};
 
   return {

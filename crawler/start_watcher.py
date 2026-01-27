@@ -69,7 +69,7 @@ def check_if_running():
         
         # Check if process is still running
         try:
-            os.kill(pid, 0)  # Doesn't actually kill, just checks if process exists
+            os.kill(pid, 0)  # Signal 0 checks for process existence without sending a signal.
             return True
         except OSError:
             # Process doesn't exist, remove stale PID file

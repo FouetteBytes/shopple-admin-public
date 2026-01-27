@@ -83,7 +83,7 @@ if [ "$PURGE_PVC" = "true" ]; then
   echo "⚠️  Deleting PersistentVolumeClaims..."
   echo "   This will DELETE ALL STORED DATA (OpenSearch, backend data, etc.)"
   
-  # Delete all PVCs in default namespace that start with 'shopple' or belong to our apps
+  # Delete all PVCs in the default namespace.
   kubectl delete pvc --all --ignore-not-found 2>/dev/null || true
   
   # Also delete any leftover PVs

@@ -1,14 +1,13 @@
 
-// We are modularizing this manually because the current modularize setting in Emscripten has some issues:
+// This module is manually modularized because the Emscripten MODULARIZE setting has known issues:
 // https://github.com/kripken/emscripten/issues/5820
-// In addition, When you use emcc's modularization, it still expects to export a global object called `Module`,
+// Additionally, emcc's modularization expects a global `Module` export,
 // which is able to be used/called before the WASM is loaded.
 // The modularization below exports a promise that loads and resolves to the actual sql.js module.
 // That way, this module can't be used before the WASM is finished loading.
 
-// We are going to define a function that a user will call to start loading initializing our Sql.js library
-// However, that function might be called multiple times, and on subsequent calls, we don't actually want it to instantiate a new instance of the Module
-// Instead, we want to return the previously loaded module
+// Define a function that callers use to initialize Sql.js.
+// The function may be called multiple times; subsequent calls should reuse the existing module instance.
 
 // TODO: Make this not declare a global if used in the browser
 var initSqlJsPromise = undefined;
@@ -18,23 +17,22 @@ var initSqlJs = function (moduleConfig) {
     if (initSqlJsPromise){
       return initSqlJsPromise;
     }
-    // If we're here, we've never called this function before
+    // First invocation initializes the promise.
     initSqlJsPromise = new Promise(function (resolveModule, reject) {
 
-        // We are modularizing this manually because the current modularize setting in Emscripten has some issues:
+        // Manual modularization avoids issues with the Emscripten MODULARIZE setting:
         // https://github.com/kripken/emscripten/issues/5820
 
         // The way to affect the loading of emcc compiled modules is to create a variable called `Module` and add
         // properties to it, like `preRun`, `postRun`, etc
-        // We are using that to get notified when the WASM has finished loading.
-        // Only then will we return our promise
+        // Use postRun to resolve the promise after WASM loading completes.
 
         // If they passed in a moduleConfig object, use that
         // Otherwise, initialize Module to the empty object
         var Module = typeof moduleConfig !== 'undefined' ? moduleConfig : {};
 
         // EMCC only allows for a single onAbort function (not an array of functions)
-        // So if the user defined their own onAbort function, we remember it and call it
+        // Preserve any user-provided onAbort handler.
         var originalOnAbortFunction = Module['onAbort'];
         Module['onAbort'] = function (errorThatCausedAbort) {
             reject(new Error(errorThatCausedAbort));
@@ -54,21 +52,20 @@ var initSqlJs = function (moduleConfig) {
         // if (typeof module !== 'undefined') {
         //     module['exports'] = Module;
         // }
-        // When that runs, it's going to overwrite our own modularization export efforts in shell-post.js!
+        // This would overwrite the custom modularization export in shell-post.js.
         // The only way to tell emcc not to emit it is to pass the MODULARIZE=1 or MODULARIZE_INSTANCE=1 flags,
-        // but that carries with it additional unnecessary baggage/bugs we don't want either.
-        // So, we have three options:
-        // 1) We undefine `module`
-        // 2) We remember what `module['exports']` was at the beginning of this function and we restore it later
-        // 3) We write a script to remove those lines of code as part of the Make process.
+        // Those flags also introduce additional baggage and bugs.
+        // Three options are available:
+        // 1) Undefine `module`
+        // 2) Cache and restore `module['exports']`
+        // 3) Strip the lines during the build process
         //
-        // Since those are the only lines of code that care about module, we will undefine it. It's the most straightforward
-        // of the options, and has the side effect of reducing emcc's efforts to modify the module if its output were to change in the future.
-        // That's a nice side effect since we're handling the modularization efforts ourselves
+        // Since those lines are the only references to module, undefine it as the simplest option.
+        // This also avoids emcc attempts to modify module output in future builds.
         module = undefined;
 
-        // The emcc-generated code and shell-post.js code goes below,
-        // meaning that all of it runs inside of this promise. If anything throws an exception, our promise will abort
+        // The emcc-generated code and shell-post.js run inside this promise.
+        // Any exception will reject the promise.
 var f;f||=typeof Module != 'undefined' ? Module : {};var aa="object"==typeof window,ba="undefined"!=typeof WorkerGlobalScope,ca="object"==typeof process&&"object"==typeof process.versions&&"string"==typeof process.versions.node&&"renderer"!=process.type;"use strict";
 f.onRuntimeInitialized=function(){function a(g,l){switch(typeof l){case "boolean":dc(g,l?1:0);break;case "number":ec(g,l);break;case "string":fc(g,l,-1,-1);break;case "object":if(null===l)lb(g);else if(null!=l.length){var n=da(l,ea);gc(g,n,l.length,-1);fa(n)}else va(g,"Wrong API use : tried to return a value of an unknown type ("+l+").",-1);break;default:lb(g)}}function b(g,l){for(var n=[],r=0;r<g;r+=1){var t=m(l+4*r,"i32"),y=hc(t);if(1===y||2===y)t=ic(t);else if(3===y)t=jc(t);else if(4===y){y=t;
 t=kc(y);y=lc(y);for(var L=new Uint8Array(t),J=0;J<t;J+=1)L[J]=p[y+J];t=L}else t=null;n.push(t)}return n}function c(g,l){this.Qa=g;this.db=l;this.Oa=1;this.lb=[]}function d(g,l){this.db=l;l=ha(g)+1;this.eb=ia(l);if(null===this.eb)throw Error("Unable to allocate memory for the SQL string");u(g,x,this.eb,l);this.kb=this.eb;this.Za=this.pb=null}function e(g){this.filename="dbfile_"+(4294967295*Math.random()>>>0);if(null!=g){var l=this.filename,n="/",r=l;n&&(n="string"==typeof n?n:ja(n),r=l?ka(n+"/"+l):
@@ -171,10 +168,10 @@ if(0<K)Sa=Yc;else{if(f.preRun)for("function"==typeof f.preRun&&(f.preRun=[f.preR
     }); // The end of the promise being returned
 
   return initSqlJsPromise;
-} // The end of our initSqlJs function
+} // End of initSqlJs
 
-// This bit below is copied almost exactly from what you get when you use the MODULARIZE=1 flag with emcc
-// However, we don't want to use the emcc modularization. See shell-pre.js
+// The block below mirrors the output from MODULARIZE=1.
+// emcc modularization is intentionally not used here (see shell-pre.js).
 if (typeof exports === 'object' && typeof module === 'object'){
     module.exports = initSqlJs;
     // This will allow the module to be used in ES6 or CommonJS

@@ -154,9 +154,8 @@ export async function POST(request: NextRequest) {
 
     // Verify current password by attempting to get a new token
     try {
-      // Note: In a real implementation, you would verify the current password
-      // For now, we'll skip this verification as it requires client-side Firebase Auth
-      // and focus on the new password update using Admin SDK
+      // Current-password verification is omitted because it requires client-side
+      // Firebase Auth; the Admin SDK is used to update the password directly.
       
       // Update password using Firebase Admin SDK
       await updateUserPassword(adminUser.uid, newPassword);

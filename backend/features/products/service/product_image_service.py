@@ -269,23 +269,18 @@ class ProductImageService:
             return False
             
         if 'firebasestorage.googleapis.com' not in image_url:
-            return False # Not our image
+            return False  # Not a Firebase Storage URL managed by this service
             
         try:
-            # Extract path from URL roughly or searching?
-            # Standard way to delete from URL?
-            # Actually URL contains the path encoded.
-            # Example: .../o/products%2Fimages%2F...
+            # Extract the object path from the Firebase Storage URL.
             
             parsed = urlparse(image_url)
             path = unquote(parsed.path)
-            # Path usually starts with /<bucket>/o/<path>
-            # We need the relative path inside bucket.
+            # Paths are of the form /<bucket>/o/<object-path>.
             
-            # Simple heuristic: we know our base path
+            # Use the configured base path when present.
             if self.storage_base_path not in path:
-                # Try to parse it properly
-                # /v0/b/bucket-name/o/path%2Fto%2Ffile
+                # Fallback parsing for /v0/b/<bucket>/o/<path> URLs.
                 parts = path.split('/o/')
                 if len(parts) > 1:
                     blob_path = parts[1]
@@ -293,8 +288,7 @@ class ProductImageService:
                     blob.delete()
                     return True
             else:
-                 # If we can't parse easily, we might skip deleting to be safe, 
-                 # or try to list blobs with prefix
+                 # Delete all images for the product using the known prefix.
                  prefix = f"{self.storage_base_path}/{product_id}/"
                  blobs = list(self.bucket.list_blobs(prefix=prefix))
                  for blob in blobs:

@@ -69,7 +69,7 @@ class ProductSearchService:
                         docs_map[doc.id] = data
             except Exception as e:
                 logger.error(f"Batch fetch failed: {e}")
-                # Fallback to individual fetch if batch fails (or just continue)
+                # Fall back to per-document fetch on batch failure.
 
         results: List[Dict[str, Any]] = []
         for match in raw_matches:

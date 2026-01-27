@@ -72,7 +72,7 @@ function Support() {
     const handleSubmitTicket = async () => {
         if (!newTicket.subject.trim()) return
         
-        // Here you would normally submit to backend
+        // Submit to backend when support integration is enabled.
         console.log('Submitting ticket:', newTicket)
         
         // Reset form

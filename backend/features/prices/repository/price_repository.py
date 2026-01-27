@@ -26,10 +26,7 @@ class PriceRepository(BaseRepository[Dict[str, Any]]):
 
     # --- BaseRepository Implementation ---
     def find_by_id(self, id: str) -> Optional[Dict[str, Any]]:
-        # Map to product doc retrieval or similar?
-        # For strict compliance, implementing as stub or alias to existing logic if applicable.
-        # Since 'id' is ambiguous (product_id vs price_id), we leave as stub for now
-        # to ensure no accidental misuse. 
+        # `id` is ambiguous (product_id vs price_id); return None to avoid unintended use.
         return None
 
     def save(self, entity: Dict[str, Any]) -> Dict[str, Any]:

@@ -403,9 +403,9 @@ class UserService(BaseService):
             })
         online_ids = []
         friend_ids = [f["uid"] for f in friends]
-        if friend_ids:
-             # Just checking first 10 for online status
-             check_ids = friend_ids[:10]
+           if friend_ids:
+               # Limit the online-status lookup to the first 10 IDs.
+               check_ids = friend_ids[:10]
              status_map = self.insights_repository.fetch_status_documents(check_ids)
              for fid, st in status_map.items():
                  if st.get("state") == "online":
@@ -417,19 +417,15 @@ class UserService(BaseService):
         }
 
     def _fetch_ai_sessions(self, user_id: str) -> List[Dict[str, Any]]:
-        # Simplified: Use repository method which returns doc list
+        # Use repository methods to retrieve session documents.
         docs = self.insights_repository.fetch_ai_sessions_from_sources(user_id)
-        # Or look for ai_history first
+        # Prefer AI history sessions when available.
         history = self.insights_repository.fetch_ai_history_sessions(user_id)
         if history:
             sessions = []
             for doc in history:
                 data = doc.to_dict() or {}
-                # transformation login from UserInsightsService unique?
-                # _transform_ai_history_entry? I need that logical.
-                # Assuming generic transformation or I must copy it.
-                # I will implement simplified version to save space or I should have copied it.
-                # I'll implement generic transformation.
+                # Apply a generic transformation for AI history sessions.
                 sessions.append({
                     "id": doc.id,
                     "summary": data.get("summary") or "AI Session",

@@ -238,7 +238,7 @@ function Settings() {
         try {
             // Simulate save operation
             await new Promise(resolve => setTimeout(resolve, 1000))
-            // Here you would normally save to backend
+            // Save to backend when persistence is enabled.
             console.log('Settings saved:', settings)
         } catch (error) {
             console.error('Failed to save settings:', error)

@@ -194,7 +194,7 @@ VARIETY: Chicken Kochchi Bites"""
         
         # Get the comprehensive system prompt
         system_prompt = self._create_standard_system_prompt()
-        # User message is just the product name
+        # User message uses the product name only.
         user_message = product_name
         
         # 1️⃣ Try Groq API
@@ -999,7 +999,7 @@ VARIETY: [your reasoned answer or None]"""
         return ""
 
 if __name__ == "__main__":
-    # Example usage - you can test the classifier here
+    # Example usage for local testing.
     logger.info("Smart Fallback AI Classifier with Intelligent Cache")
     logger.info("Model Cascade: Groq -> OpenRouter -> Gemini -> Cerebras")
     logger.debug("Local models removed - using online APIs only")

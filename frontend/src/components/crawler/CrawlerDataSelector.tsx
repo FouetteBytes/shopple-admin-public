@@ -103,7 +103,7 @@ export default function CrawlerDataSelector({ onDataLoad, onClose }: CrawlerData
             crawler_id: result.crawler_id,
             store: result.store,
             category: result.category,
-            status: 'completed', // Assume completed if we have results
+            status: 'completed', // Infer completion when results exist.
             results: result.items || [],
             count: result.count || (result.items ? result.items.length : 0),
             cloud_path: result.cloud_path,
@@ -125,7 +125,7 @@ export default function CrawlerDataSelector({ onDataLoad, onClose }: CrawlerData
         results = []
       }
       
-      // If we have few results, also fetch from files to populate the list
+      // Fetch output files when result count is low to populate the list.
       if (results.length < 5) {
         try {
           const filesResponse = await crawlerAPI.getOutputFiles()
@@ -135,7 +135,7 @@ export default function CrawlerDataSelector({ onDataLoad, onClose }: CrawlerData
             
             for (const file of filesResponse.files) {
               const key = `${file.store}_${file.category}`
-              // Only add if we don't already have a result for this store/category
+              // Add only when no existing result for this store/category exists.
               if (!existingKeys.has(key)) {
                 const fileResult: CrawlerResult = {
                   crawler_id: `file_${file.store}_${file.category}_${Date.now()}`,

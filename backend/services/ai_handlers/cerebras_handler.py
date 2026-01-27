@@ -215,9 +215,9 @@ class CerebrasHandler:
             if any(prefix in line for prefix in ['PRODUCT_TYPE:', 'BRAND_NAME:', 'PRODUCT_NAME:', 'SIZE:', 'VARIETY:']):
                 classification_lines.append(line)
                 found_classification_start = True
-            # Once we start finding classification lines, stop if we hit other content
+            # After classification begins, stop on non-classification content.
             elif found_classification_start and line and not line.startswith(('PRODUCT_TYPE:', 'BRAND_NAME:', 'PRODUCT_NAME:', 'SIZE:', 'VARIETY:')):
-                # Stop collecting if we hit non-classification content after starting classification
+                # Stop collecting when non-classification content is encountered.
                 break
         
         if classification_lines:
@@ -249,7 +249,7 @@ class CerebrasHandler:
             if any(prefix in line for prefix in ['PRODUCT_TYPE:', 'BRAND_NAME:', 'PRODUCT_NAME:', 'SIZE:', 'VARIETY:']):
                 classification_lines.insert(0, line)  # Insert at beginning to maintain order
             elif classification_lines:
-                # Stop if we found classification lines and hit non-classification content
+                # Stop after classification lines when non-classification content appears.
                 break
         
         if len(classification_lines) >= 3:  # At least 3 fields should be present

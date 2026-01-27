@@ -108,7 +108,7 @@ function CrawlerActivity() {
     const handleSendToClassifier = (result: CrawlerResult) => {
         // Navigate to classifier and set the data
         setActivePage('CLASSIFIER')
-        // You can add logic here to pre-populate the classifier with the crawler results
+        // Optional: pre-populate the classifier with crawler results.
         console.log('Sending to classifier:', result)
     }
 

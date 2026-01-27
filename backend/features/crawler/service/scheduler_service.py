@@ -20,14 +20,14 @@ class SchedulerService(BaseService):
         """Get scheduler with lazy initialization support"""
         global _scheduler_initialization_retried
         
-        # Check actual instances, not just global flags
+        # Check actual instances rather than global flags.
         crawler_manager = get_crawler_manager()
         if not crawler_manager:
             raise Exception('Crawler system not available')
         
         scheduler = get_crawler_scheduler()
         
-        # If scheduler not available and we haven't retried, try re-initializing
+        # Retry initialization once when the scheduler is unavailable.
         if not scheduler and not _scheduler_initialization_retried and not is_services_initializing():
             _scheduler_initialization_retried = True
             logger.info("Attempting lazy initialization of crawler scheduler")

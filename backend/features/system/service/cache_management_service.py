@@ -134,7 +134,7 @@ class CacheManagementService(BaseService):
                 'found_key': None,
                 'entry_exists': False,
                 'entry_data': None,
-                'match_details': {} # Simplified for now
+                'match_details': {}  # Reserved for detailed match metadata
             }
             
             if cache:

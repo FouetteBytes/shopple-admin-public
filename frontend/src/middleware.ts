@@ -15,8 +15,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // For now, we'll let the client-side authentication handle the routing
-  // This middleware can be enhanced later to check authentication tokens
+  // Client-side authentication handles routing; middleware can be extended to enforce tokens.
   return NextResponse.next();
 }
 

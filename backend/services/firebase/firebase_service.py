@@ -157,12 +157,7 @@ class FirebaseService:
     def _resolve_storage_bucket(self):
         """Resolve the Firebase Storage bucket instance safely."""
         try:
-            # Force Mock for now to unblock startup if credentials are dead
-            # return storage.bucket() which hangs
-            # import unittest.mock
-            # mock_bucket = unittest.mock.MagicMock()
-            # mock_bucket.name = "mock-bucket"
-            # return mock_bucket
+            # Use a mock bucket when credentials are unavailable to avoid blocking startup.
 
             bucket_name = os.getenv('FIREBASE_STORAGE_BUCKET')
             logger.info(f"Resolving bucket: {bucket_name}")

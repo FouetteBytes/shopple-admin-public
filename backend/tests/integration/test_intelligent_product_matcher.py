@@ -2,7 +2,7 @@ import pytest
 import sys
 import os
 
-# Add the project root to the path so we can import from backend
+# Add the project root to the path to enable backend imports.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 
 from backend.features.products.service.matcher import IntelligentProductMatcher

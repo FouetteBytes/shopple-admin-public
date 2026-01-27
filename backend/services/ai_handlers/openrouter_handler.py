@@ -227,5 +227,5 @@ class OpenRouterHandler:
             # Return only the classification lines
             return '\n'.join(classification_lines)
         else:
-            # Fallback to original response if we can't parse it
+            # Fall back to the original response when parsing fails.
             return cleaned.strip()

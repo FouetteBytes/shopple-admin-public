@@ -120,7 +120,7 @@ class ProductBatchService:
                     product_id = result['product_id']
                     product_doc = result['product_doc']
                     
-                    # Log what we're searching for
+                    # Log duplicate-search inputs.
                     logger.info("Searching for duplicates", extra={
                         "product_name": product_doc.get('name', ''),
                         "brand": product_doc.get('brand_name', ''),

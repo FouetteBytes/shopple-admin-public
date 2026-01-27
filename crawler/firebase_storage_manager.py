@@ -334,7 +334,7 @@ class FirebaseStorageManager:
                     'moved': True,
                 }
 
-            # Otherwise just update metadata/content in place
+            # Otherwise update metadata and content in place.
             blob.upload_from_string(content_text, content_type='application/json')
             blob.metadata = {k: str(v) for k, v in blob_metadata.items() if v is not None}
             blob.patch()

@@ -34,9 +34,8 @@ class ProxyService(BaseService):
             ct = upstream.headers.get('Content-Type', '')
             # Enforce basic image type validation if header is present
             if ct and not ct.lower().startswith('image/'):
-                # Some servers return text/plain or binary for images, so strict rejection might break things.
-                # However, for security, we usually prefer images only. 
-                # The original code might have had checks. I'll stick to basic fetch.
+                # Some servers return non-image content types for images.
+                # Accept the response to preserve compatibility while relying on size limits.
                 pass
             
             content = upstream.content

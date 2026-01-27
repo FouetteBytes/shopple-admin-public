@@ -229,8 +229,7 @@ def global_auth_middleware():
     if request.method == 'OPTIONS':
         return None
     
-    # For streaming endpoints, we'll let them handle auth internally
-    # because SSE connections need special handling
+    # Streaming endpoints perform authentication internally due to SSE handling.
     if is_streaming_endpoint(request.path):
         logger.debug(
             "Skipping auth check for streaming endpoint (handled internally)",

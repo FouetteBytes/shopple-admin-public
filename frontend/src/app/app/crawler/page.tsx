@@ -4239,7 +4239,7 @@ function WebCrawler() {
 
             // If crawler is loading, don't fetch additional data yet
             if (statusData.loading) {
-                // Keep existing data, just update status
+                // Retain existing data and update status only.
                 return;
             }
 
@@ -4323,7 +4323,7 @@ function WebCrawler() {
                                 const category = parts.slice(1).join('_'); // Handle multi-word categories
                                 const pseudoCrawlerId = `${store}_${category}_file`;
                                 
-                                // Check if we already have a result for this store_category combination
+                                // Check for an existing result for this store/category combination.
                                 // Use the more flexible matching logic here too
                                 const hasExistingResult = Object.keys(filteredResults).some(existingId => {
                                     const existingStore = existingId.split('_')[0];
@@ -4517,12 +4517,12 @@ function WebCrawler() {
                     // Apply filtering to activities using SQLite
                     const filteredActivities = await applyActivityFiltering(sortedActivity);
                     
-                    // Preserve timestamps and ensure we're keeping recent items
-                    // Sort by actual completion time and preserve original timestamps - NEVER UPDATE TO CURRENT TIME
+                    // Preserve timestamps and keep the most recent items.
+                    // Sort by completion time and retain original timestamps.
                     finalActivities = filteredActivities
                         .map(activity => {
-                            // Ensure we preserve the original completion timestamp and don't update it
-                            // Use existing timestamps in priority order, never create new ones
+                            // Preserve the original completion timestamp.
+                            // Use existing timestamps in priority order.
                             const originalTimestamp = activity.completed_at || activity.timestamp || activity.start_time;
                             
                             if (!originalTimestamp) {

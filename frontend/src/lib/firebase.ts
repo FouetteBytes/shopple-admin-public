@@ -3,7 +3,7 @@ import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, setPersistence, browserSessionPersistence, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
-// Firebase configuration - you'll need to replace these with your actual Firebase config
+// Firebase configuration sourced from environment variables.
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -14,8 +14,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// Check if we have the required config before initializing
-// This prevents build errors when env vars are missing during build time
+// Validate required configuration before initializing to avoid build-time errors.
 const isConfigured = !!(firebaseConfig.apiKey && firebaseConfig.projectId);
 
 let app: FirebaseApp;
@@ -30,22 +29,20 @@ if (isConfigured) {
     db = getFirestore(app);
     firebaseConfigured = true;
 
-    // Set persistence to session (will be cleared when browser tab is closed)
-    // For server-side session management, we don't want client-side persistence
+    // Use session persistence for client auth; avoid persistent storage for server-managed sessions.
     if (typeof window !== 'undefined') {
       setPersistence(auth, browserSessionPersistence);
     }
   } catch (error) {
     console.error('Failed to initialize Firebase:', error);
     firebaseConfigured = false;
-    // Initialize with placeholder config for build time - will fail at runtime if used
+    // Initialize with placeholders for build-time compatibility.
     app = initializeApp({ ...firebaseConfig, apiKey: 'placeholder', projectId: 'placeholder' }, 'fallback');
     auth = getAuth(app);
     db = getFirestore(app);
   }
 } else {
-  // For build time when env vars are not available
-  // Initialize with placeholder config - will show warning if used at runtime
+  // Build-time placeholder initialization when env vars are unavailable.
   if (typeof window !== 'undefined') {
     console.warn('Firebase client configuration missing. Client-side Firebase features (notes, real-time updates) will not work.');
   }
@@ -55,7 +52,7 @@ if (isConfigured) {
   db = getFirestore(app);
 }
 
-// Helper function to check if Firebase is properly configured (not just build-time placeholder)
+// Helper to check whether Firebase is configured beyond build-time placeholders.
 export function isFirebaseConfigured(): boolean {
   return firebaseConfigured;
 }

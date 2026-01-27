@@ -74,7 +74,7 @@ def test_update_product_no_id_change(product_service, mock_product_repo):
     mock_product_repo.update_related_prices.return_value = (0, 0)
     
     # Execute
-    # We patch generate_product_id used in product_service
+    # Patch generate_product_id used in product_service
     with patch('backend.features.products.service.product_service.generate_product_id', return_value="brand_product_size"):
         # Prevent cache calls
         with patch.object(product_service, '_update_ai_cache'):
@@ -120,7 +120,7 @@ def test_update_product_with_id_change(product_service, mock_product_repo):
     
     # Check migration calls
     mock_product_repo.migrate_product_document.assert_called_once()
-    # mock_product_repo.migrate_related_prices.assert_called_once() # Called inside _migrate_prices which we patched away
+    # mock_product_repo.migrate_related_prices.assert_called_once()  # Called inside _migrate_prices, which is patched out
     
     # migrate_product_document(self, old_id: str, new_id: str, new_data: Dict[str, Any])
     call_args = mock_product_repo.migrate_product_document.call_args

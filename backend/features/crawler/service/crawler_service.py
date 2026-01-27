@@ -21,7 +21,7 @@ def _ensure_crawler_available():
     
     crawler_manager = get_crawler_manager()
     
-    # If crawler manager not available and we haven't retried, try re-initializing
+    # Retry initialization once when the crawler manager is unavailable.
     if not crawler_manager and not _initialization_retried and not is_services_initializing():
         _initialization_retried = True
         logger.info("Attempting lazy initialization of crawler manager")

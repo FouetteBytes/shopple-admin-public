@@ -53,7 +53,7 @@ class AdminPasswordSecurity {
 
   private loadFromStorage(): void {
     try {
-      // Only load from storage if we're in a browser environment
+      // Load from storage only in browser environments.
       if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
         return;
       }
@@ -77,7 +77,7 @@ class AdminPasswordSecurity {
 
   private saveToStorage(): void {
     try {
-      // Only save to storage if we're in a browser environment
+      // Save to storage only in browser environments.
       if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
         return;
       }
@@ -92,7 +92,7 @@ class AdminPasswordSecurity {
   }
 
   private startCleanupTimer(): void {
-    // Only start timer if we're in a browser environment
+    // Start the cleanup timer only in browser environments.
     if (typeof window === 'undefined') {
       return;
     }

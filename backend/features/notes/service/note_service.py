@@ -20,18 +20,11 @@ class NoteService(BaseService):
         self.note_repository = note_repository
 
     def get_notes(self, user_id: str) -> List[Dict[str, Any]]:
-        # Returning list of dicts to match legacy API response structure which dumps json
-        # Or should we return DTOs? 
-        # Legacy controller does: `jsonify({'notes': notes})` where `notes` is list of dicts.
-        # So I will return list of dicts from here by mapping response DTOs to dicts?
-        # Or just return entities and let controller map?
-        # Template says: `Controller -> return handleResponse(data)`.
-        # Usually Controller maps DTO to response.
-        # But `NoteResponse` has `to_dict`.
+        # Return dictionaries to preserve the legacy API response shape
+        # where controllers serialize lists of note dictionaries.
         
         notes = self.note_repository.find_all_by_user(user_id)
-        # Sort or filter? Legacy code retrieved all.
-        # We need to map to response format.
+        # Map entities to response dictionaries.
         return [to_note_response(n).to_dict() for n in notes]
 
     def create_note(self, user_id: str, request: CreateNoteRequest) -> Dict[str, Any]:

@@ -77,7 +77,7 @@ def initialize_firebase() -> Any:
                     firebase_admin.initialize_app()
                     _firebase_initialized = True
                 except Exception:
-                    # If ADC fails, we must rely on Mock to allow app to start
+                    # If ADC fails, use a mock client to allow startup.
                     logger.warning("Firebase credentials not configured, using mock client")
                     import unittest.mock
                     mock_db = unittest.mock.MagicMock()

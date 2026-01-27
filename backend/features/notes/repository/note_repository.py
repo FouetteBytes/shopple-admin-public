@@ -28,10 +28,7 @@ class NoteRepository(BaseRepository[Note]):
         """
         data = to_dict_from_entity(entity)
         
-        # Convert datetime objects to Firestore timestamps if needed, 
-        # or let Firestore client handle it.
-        # Ensure we don't overwrite server timestamp logic if we want to defer to server.
-        # But here we are passing value from entity.
+        # Firestore client handles datetime serialization; preserve entity timestamps.
         
         doc_ref = self._db().collection('users').document(entity.user_id).collection('notes').document(entity.id)
         doc_ref.set(data, merge=True)
@@ -68,7 +65,7 @@ class NoteRepository(BaseRepository[Note]):
             return False
 
     def get_stats(self, user_id: str) -> Dict[str, Any]:
-        # get_stats relies on find_all_by_user which is safe now.
+        # Use find_all_by_user to compute note statistics.
         notes = self.find_all_by_user(user_id)
         total_notes = len(notes)
         completed_notes = len([n for n in notes if n.completed])

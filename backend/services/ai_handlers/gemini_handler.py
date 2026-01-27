@@ -84,7 +84,7 @@ class GeminiHandler:
             # Create content for Gemini - include minimal history if using memory
             contents = []
             if use_memory and self.conversation_history:
-                # Map our stored history to Gemini Content objects (excluding system here since we send as system_instruction)
+                # Map stored history to Gemini Content objects (system handled via system_instruction).
                 for msg in self.conversation_history:
                     role = msg.get("role")
                     if role == "system":

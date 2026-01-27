@@ -91,7 +91,7 @@ export function ProductDatabaseSearchEnhanced({ taggedProductId, productName, br
     try {
       const matches = await searchCatalogue(term, { limit: 5, brand });
       
-      // Don't fetch prices automatically - just show results immediately
+      // Show results immediately; defer price fetch until expansion.
       const enrichedMatches = matches.map(match => ({
         ...match,
         currentPrices: undefined,

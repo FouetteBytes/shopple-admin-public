@@ -9,23 +9,12 @@ from services.system.logger_service import get_logger
 
 logger = get_logger(__name__)
 
-# Fallback path logic
-# Modified to be workspace-relative since we don't have backend/routes anymore.
-# We want to access backend/static/memoji
-
-# parents[1] = routes
-# parents[2] = backend
-# So original should have been parents[2] / 'static' / 'memoji'?
-# The original code said `parents[1]`. Maybe `backend/routes/static` existed?
-# Or maybe I am miscounting.
-# Let's assume `backend/static/memoji`.
-
-# From `backend/features/users/service/avatar_service.py`:
+# Default asset location is resolved relative to the backend root.
+# Path parents for this module:
 # parents[0] = service
 # parents[1] = features/users
 # parents[2] = features
 # parents[3] = backend
-# So we need parents[3].
 
 class AvatarService(BaseService):
     def __init__(self):
@@ -92,7 +81,7 @@ class AvatarService(BaseService):
             try:
                 font = ImageFont.load_default()
             except Exception:
-                pass # Should not happen
+                pass  # Unexpected, but fall through without a custom font
 
         # Calculate text size (draw.textsize is deprecated in newer Pillow, using textbbox if available or fallback)
         try:
@@ -103,9 +92,9 @@ class AvatarService(BaseService):
             else:
                  text_width, text_height = draw.textsize(letter, font=font)
         except:
-             text_width, text_height = 100, 100 # Fallback
+               text_width, text_height = 100, 100  # Fallback when text measurement fails
              
-        position = ((size - text_width) / 2, (size - text_height) / 2) # Centering might be slightly off with textbbox but acceptable
+        position = ((size - text_width) / 2, (size - text_height) / 2)  # Centered layout
 
         draw.text(position, letter, fill="white", font=font)
 

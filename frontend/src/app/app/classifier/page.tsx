@@ -981,7 +981,7 @@ function Classifier() {
         } catch {}
 
         try {
-            // Tell backend to stop if we have a job id
+            // Request backend stop when a job ID is available.
             if (currentJobIdRef.current) {
                 await classificationAPI.stopClassification(currentJobIdRef.current)
                 addProcessingLog(' Stop requested. Waiting for backend to finalize…', 'info')
@@ -1327,7 +1327,7 @@ function Classifier() {
             }
         }
 
-        // Check if we can determine supermarket from the input data
+        // Attempt to infer supermarket from the input data.
         if (!detectedSupermarket && inputData.length > 0) {
             const firstProduct = inputData[0];
             if (firstProduct.name?.toLowerCase().includes('keells') || 
