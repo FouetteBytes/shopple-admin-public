@@ -262,13 +262,13 @@ class FirebaseService:
             return None
     
     async def get_notes(self, user_id: str = 'default') -> List[Dict[str, Any]]:
-        """Get all notes for a user from Firestore"""
+        """Get all notes for a user from Firestore."""
         if not self.is_connected():
             logger.warning("Firebase not connected, returning empty list")
             return []
         
         try:
-            # Get notes collection for the user
+            # Get notes collection for the user.
             notes_ref = self._db.collection('users').document(user_id).collection('notes')
             docs = notes_ref.order_by('createdAt', direction=firestore.Query.DESCENDING).stream()
             
@@ -277,7 +277,7 @@ class FirebaseService:
                 note_data = doc.to_dict()
                 note_data['id'] = doc.id
                 
-                # Convert Firestore timestamps to ISO strings
+                # Convert Firestore timestamps to ISO strings.
                 if 'createdAt' in note_data and note_data['createdAt']:
                     note_data['createdAt'] = note_data['createdAt'].isoformat()
                 if 'updatedAt' in note_data and note_data['updatedAt']:
@@ -295,16 +295,16 @@ class FirebaseService:
             return []
     
     async def save_note(self, note_data: Dict[str, Any], user_id: str = 'default') -> bool:
-        """Save a note to Firestore"""
+        """Save a note to Firestore."""
         if not self.is_connected():
             logger.warning("Firebase not connected, cannot save note")
             return False
         
         try:
-            # Prepare note data for Firestore
+            # Prepare note data for Firestore.
             firestore_data = note_data.copy()
             
-            # Convert ISO strings to Firestore timestamps
+            # Convert ISO strings to Firestore timestamps.
             if 'createdAt' in firestore_data and isinstance(firestore_data['createdAt'], str):
                 firestore_data['createdAt'] = datetime.fromisoformat(firestore_data['createdAt'].replace('Z', '+00:00'))
             if 'updatedAt' in firestore_data and isinstance(firestore_data['updatedAt'], str):
@@ -312,10 +312,10 @@ class FirebaseService:
             if 'dueDate' in firestore_data and firestore_data['dueDate'] and isinstance(firestore_data['dueDate'], str):
                 firestore_data['dueDate'] = datetime.fromisoformat(firestore_data['dueDate'].replace('Z', '+00:00'))
             
-            # Use the note ID as document ID, or let Firestore generate one
+            # Use the note ID as the document ID, or let Firestore generate one.
             note_id = firestore_data.pop('id', None)
             
-            # Save to Firestore
+            # Save to Firestore.
             notes_ref = self._db.collection('users').document(user_id).collection('notes')
             
             if note_id:

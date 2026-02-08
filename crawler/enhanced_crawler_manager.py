@@ -260,7 +260,7 @@ class EnhancedCrawlerManager:
                 )
                 result["storage"] = storage_result
                 
-                # Update crawler status
+                # Update crawler status.
                 self.active_crawlers[crawler_id]["status"] = "completed"
                 self.active_crawlers[crawler_id]["progress"] = 100
                 
@@ -282,7 +282,7 @@ class EnhancedCrawlerManager:
         Execute the actual crawler script
         """
         try:
-            # Get crawler configuration
+            # Get crawler configuration.
             if store not in self.available_crawlers or category not in self.available_crawlers[store]:
                 return {
                     "success": False,
@@ -292,7 +292,7 @@ class EnhancedCrawlerManager:
             crawler_config = self.available_crawlers[store][category]
             crawler_file = crawler_config["file"]
             
-            # Determine the crawler directory
+            # Determine the crawler directory.
             crawler_path = os.path.join(self.crawler_dir, store, crawler_file)
             
             if not os.path.exists(crawler_path):
@@ -301,12 +301,12 @@ class EnhancedCrawlerManager:
                     "error": f"Crawler file not found: {crawler_path}"
                 }
             
-            # Prepare the command
+            # Prepare the command.
             cmd = [sys.executable, crawler_path]
             if max_items:
                 cmd.extend(["--max-items", str(max_items)])
             
-            # Execute crawler
+            # Execute crawler.
             logger.info("Running crawler", extra={"name": crawler_config["name"]})
             process = subprocess.run(
                 cmd,
@@ -316,16 +316,16 @@ class EnhancedCrawlerManager:
             )
             
             if process.returncode == 0:
-                # Find the output file
+                # Find the output file.
                 expected_output = os.path.join(
                     self.output_dir, store, f"{store}_{category}.json"
                 )
                 
                 if os.path.exists(expected_output):
-                    # Get file info
+                    # Get file info.
                     file_size = os.path.getsize(expected_output)
                     
-                    # Load and count items
+                    # Load and count items.
                     with open(expected_output, 'r', encoding='utf-8') as f:
                         data = json.load(f)
                     
@@ -370,20 +370,20 @@ class EnhancedCrawlerManager:
         }
         
         try:
-            # Always keep local copy initially
+            # Always keep a local copy initially.
             if self.storage_config["storage_mode"] in ["firebase", "both"]:
                 if self.use_firebase and self.storage_manager:
-                    # Upload to Firebase
+                    # Upload to Firebase.
                     firebase_result = self.storage_manager.upload_crawler_data(
                         local_file, store, category, metadata
                     )
                     storage_result["firebase"] = firebase_result
                     
-                    # If Firebase upload successful and mode is "firebase" only
+                    # If Firebase upload is successful and mode is "firebase" only.
                     if (firebase_result["success"] and 
                         self.storage_config["storage_mode"] == "firebase" and
                         not self.storage_config.get("keep_local_backup", False)):
-                        # Remove local file
+                        # Remove the local file.
                         try:
                             os.remove(local_file)
                             storage_result["local"]["success"] = False
@@ -391,7 +391,7 @@ class EnhancedCrawlerManager:
                         except Exception as e:
                             logger.warning(f"Could not remove local file: {e}")
             
-            # Cleanup old local files if configured
+            # Clean up old local files if configured.
             if self.storage_config.get("auto_cleanup", False):
                 self._cleanup_old_files(store, category)
             
@@ -410,7 +410,7 @@ class EnhancedCrawlerManager:
             if not os.path.exists(store_dir):
                 return
             
-            # Get all JSON files for this category
+            # Get all JSON files for this category.
             pattern = f"{store}_{category}"
             files = []
             
@@ -419,10 +419,10 @@ class EnhancedCrawlerManager:
                     file_path = os.path.join(store_dir, file)
                     files.append((file_path, os.path.getmtime(file_path)))
             
-            # Sort by modification time (oldest first)
+            # Sort by modification time (oldest first).
             files.sort(key=lambda x: x[1])
             
-            # Remove old files based on configuration
+            # Remove old files based on configuration.
             max_files = self.storage_config.get("max_local_files", 50)
             keep_days = self.storage_config.get("keep_local_days", 7)
             current_time = time.time()
@@ -430,11 +430,11 @@ class EnhancedCrawlerManager:
             for file_path, mod_time in files:
                 should_remove = False
                 
-                # Check if too many files
+                # Check if too many files.
                 if len(files) > max_files:
                     should_remove = True
                 
-                # Check if too old
+                # Check if too old.
                 days_old = (current_time - mod_time) / (24 * 3600)
                 if days_old > keep_days:
                     should_remove = True
@@ -509,7 +509,7 @@ class EnhancedCrawlerManager:
             total += len(store)
         return total
     
-    # Additional methods for Firebase file management
+    # Additional methods for Firebase file management.
     def download_from_firebase(self, cloud_path: str, local_path: str = None) -> Dict[str, Any]:
         """Download file from Firebase Storage"""
         if not self.use_firebase:
@@ -532,7 +532,7 @@ class EnhancedCrawlerManager:
         return self.storage_manager.delete_crawler_file(cloud_path)
 
 
-# Singleton instance
+# Singleton instance.
 _enhanced_crawler_manager = None
 
 def get_enhanced_crawler_manager(use_firebase: bool = True) -> EnhancedCrawlerManager:
@@ -546,7 +546,7 @@ def get_enhanced_crawler_manager(use_firebase: bool = True) -> EnhancedCrawlerMa
 
 
 if __name__ == "__main__":
-    # Test the enhanced crawler manager
+    # Test the enhanced crawler manager.
     manager = get_enhanced_crawler_manager()
     
     logger.info("Storage Status")

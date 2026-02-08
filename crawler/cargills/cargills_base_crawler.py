@@ -1138,25 +1138,24 @@ class CargillsBaseCrawler:
             }
 
 
-# Helper function for simple category crawling
+# Helper function for basic category crawling.
 async def crawl_cargills_category(url: str, category: str, test_mode: bool = False) -> dict:
-    """
-    Convenience function to crawl a Cargills category
-    
+    """Crawl a Cargills category.
+
     Args:
-        url: Category URL
-        category: Category name
-        test_mode: If True, saves to test_output
-    
+        url: Category URL.
+        category: Category name.
+        test_mode: If True, save to test_output.
+
     Returns:
-        dict with crawl results
+        Dictionary with crawl results.
     """
     crawler = CargillsBaseCrawler(url, category, test_mode)
     return await crawler.run()
 
 
 if __name__ == "__main__":
-    # Example usage
+    # Example usage.
     async def test():
         result = await crawl_cargills_category(
             url="https://cargillsonline.com/Product/Beverages?IC=Mw==&NC=QmV2ZXJhZ2Vz",

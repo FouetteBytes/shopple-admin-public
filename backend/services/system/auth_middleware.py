@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 
 # Endpoints that do not require authentication.
 # These are typically health checks, status endpoints, or read-only data.
-# Note: The frontend session/login is handled separately by Next.js.
+# The frontend session/login is handled separately by Next.js.
 PUBLIC_ENDPOINTS = [
     '/api/health',
     '/health',

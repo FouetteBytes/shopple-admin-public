@@ -194,7 +194,7 @@ VARIETY: Chicken Kochchi Bites"""
         
         # Get the comprehensive system prompt
         system_prompt = self._create_standard_system_prompt()
-        # User message is just the product name
+        # User message contains only the product name.
         user_message = product_name
         
         # 1️⃣ Try Groq API
@@ -722,19 +722,19 @@ VARIETY: [your reasoned answer or None]"""
             
     def _create_failed_result(self, product_name: str, price: str, image_url: str) -> Dict:
         """
-        Create result when AI fails with intelligent fallback classification
-        Enhanced to provide better results even when AI fails
+        Create a result when AI fails with intelligent fallback classification.
+        Enhanced to provide better results even when AI fails.
         """
-        # Clean product name (remove size info for failed cases)
+        # Clean product name (remove size info for failed cases).
         clean_name = re.sub(r'\s*\d+\s*[gGkKmMlL]+\s*', '', product_name)
         clean_name = re.sub(r'\s*\([^)]*\)\s*', '', clean_name).strip()
         
-        # Try to guess product type from name keywords as fallback
+        # Try to infer product type from name keywords as a fallback.
         product_type = "Unknown"
         variety = None
         brand_name = None
         
-        # Simple keyword-based classification as emergency fallback
+        # Keyword-based classification as an emergency fallback.
         name_lower = product_name.lower()
         
         # Basic product type detection

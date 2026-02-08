@@ -417,7 +417,7 @@ class PriceRepository:
                 supermarket_product_count[supermarket_id] = supermarket_product_count.get(supermarket_id, 0) + 1
 
         # 2. Fetch all products in one go to avoid N+1 problem (Batch 2)
-        # This reduces 500+ network calls to just 1.
+        # This reduces 500+ network calls to a single request.
         all_product_docs = list(db.collection('products').select(
             ['name', 'brand_name', 'category', 'sizeRaw', 'image_url']
         ).stream())
@@ -550,11 +550,11 @@ class PriceRepository:
             'lastUpdated': price_date.isoformat(),
         }
         
-        # Merge=True to preserve other potential fields
-        # Note: Using set(merge=True) acts as an upsert/patch
+        # Merge=True preserves other potential fields.
+        # Using set(merge=True) acts as an upsert/patch.
         db.collection('current_prices').document(current_price_id).set(price_data, merge=True)
         
-        # Invalidate caches
+        # Invalidate caches.
         if self.cache and self.cache.is_available():
             self.cache.delete(cache_keys.price_current_key(product_id))
             self.cache.delete(cache_keys.price_stats_key())

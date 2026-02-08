@@ -74,7 +74,7 @@ def _load_locked() -> None:
         return
     path = _storage_path()
     
-    # Initialize implementation defaults
+    # Initialize implementation defaults.
     impl_defaults = {k: list(v) for k, v in DEFAULT_ALLOWED_MODELS.items()}
     impl_selections = {
         k: (v[0] if v else None) for k, v in DEFAULT_ALLOWED_MODELS.items()
@@ -89,13 +89,13 @@ def _load_locked() -> None:
         with open(path, "r", encoding="utf-8") as fh:
             data = json.load(fh)
         
-        # Handle migration from simple dict to {"models": ..., "defaults": ...}
+        # Handle migration from a legacy dict to {"models": ..., "defaults": ...}.
         if isinstance(data, dict):
             if "models" in data:
                 raw_models = data.get("models", {})
                 raw_defaults = data.get("defaults", {})
             else:
-                # Legacy format: data IS the models dict
+                # Legacy format: data is the models dict.
                 raw_models = data
                 raw_defaults = {}
         else:

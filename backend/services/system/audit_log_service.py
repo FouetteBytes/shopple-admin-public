@@ -129,7 +129,7 @@ class AuditLogService:
                     raw = source.get('raw_audit_event', {})
                     email = source.get('userEmail') or raw.get('userEmail') or raw.get('adminEmail')
                     
-                    # Try extracting from details/notes if still missing
+                    # Try extracting from details/notes if still missing.
                     if not email:
                         notes = source.get('audit_notes', {})
                         if isinstance(notes, dict):
@@ -146,11 +146,11 @@ class AuditLogService:
                     elif level == 'WARNING':
                         status = "Warning"
 
-                # Construct Notes/Details
+                # Construct notes/details.
                 notes = source.get('audit_notes', {})
                 if not notes and 'message' in source:
                      notes = {"message": source['message']}
-                     # Add extra context if available
+                     # Add extra context if available.
                      if 'function' in source:
                          notes['function'] = source['function']
                      if 'line' in source:
@@ -160,7 +160,7 @@ class AuditLogService:
                 logs.append({
                     "id": hit['_id'],
                     "audit_timestamp": source.get('timestamp'),
-                    "audit_user_email": email or 'system', # Default to system for app logs
+                    "audit_user_email": email or 'system',  # Default to system for app logs.
                     "audit_action": source.get('audit_action') or source.get('level', 'UNKNOWN'),
                     "audit_resource": source.get('audit_resource') or source.get('module', 'backend'),
                     "audit_notes": notes,

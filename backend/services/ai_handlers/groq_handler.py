@@ -208,7 +208,7 @@ class GroqHandler:
             else:
                 # Single request without memory or fresh conversation
                 if system_prompt:
-                    # Use provided system prompt
+                    # Use the provided system prompt.
                     messages = [
                         {
                             "role": "system",
@@ -220,7 +220,7 @@ class GroqHandler:
                         }
                     ]
                 else:
-                    # Fallback to simple system prompt
+                    # Fall back to the baseline system prompt.
                     messages = [
                         {
                             "role": "system",
@@ -232,7 +232,7 @@ class GroqHandler:
                         }
                     ]
             
-            # Make API call with the selected client
+            # Make API call with the selected client.
             completion = client_info['client'].chat.completions.create(
                 model=model,
                 messages=messages,
@@ -243,7 +243,7 @@ class GroqHandler:
                 stop=None,
             )
             
-            # Handle streaming response
+            # Handle streaming response.
             ai_response = ""
             logger.debug("Streaming response from Groq")
             for chunk in completion:

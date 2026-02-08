@@ -89,7 +89,7 @@ class OpenRouterHandler:
             else:
                 # Single request without memory or fresh conversation
                 if system_prompt:
-                    # Use provided system prompt
+                    # Use the provided system prompt.
                     messages = [
                         {
                             "role": "system",
@@ -101,7 +101,7 @@ class OpenRouterHandler:
                         }
                     ]
                 else:
-                    # Fallback to simple system prompt
+                    # Fall back to the baseline system prompt.
                     messages = [
                         {
                             "role": "system",
@@ -113,7 +113,7 @@ class OpenRouterHandler:
                         }
                     ]
             
-            # Prepare request data
+            # Prepare request data.
             data = {
                 "model": model,
                 "messages": messages,
@@ -122,7 +122,7 @@ class OpenRouterHandler:
                 "top_p": 0.95
             }
             
-            # Make API call
+            # Make API call.
             timeout_seconds = float(request_timeout) if request_timeout is not None else 60
             response = requests.post(
                 self.base_url,

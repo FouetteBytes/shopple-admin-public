@@ -72,7 +72,7 @@ class CrawlerFileHandler(FileSystemEventHandler):
         if event.is_directory:
             return
             
-        # For safety, process modified files as well.
+        # Process modified files as well.
         self.on_created(event)
     
     def _process_new_file(self, file_path: str):

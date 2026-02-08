@@ -642,7 +642,7 @@ class IntelligentProductMatcher:
 
                 for pid in candidate_ids:
                     cache_entry = self.product_cache[pid]
-                    # Very high base score for exact name+brand; adjust for size
+                    # Very high base score for exact name+brand; adjust for size.
                     score = 0.98
                     if target_size and cache_entry.size:
                         if target_size == str(cache_entry.size).lower().strip():
