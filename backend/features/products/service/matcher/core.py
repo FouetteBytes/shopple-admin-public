@@ -30,9 +30,13 @@ class IntelligentProductMatcher:
             cls._instance._initialized = False
         return cls._instance
     
-    def __init__(self, cache_file: str = "cache/product_cache.pkl", similarity_threshold: float = 0.75, exact_match_threshold: float = 0.95, cache_ttl_hours: int = 24):
+    def __init__(self, cache_file: str = "cache/product_cache.pkl", similarity_threshold: float = 0.75, exact_match_threshold: float = 0.95, cache_ttl_hours: int = None):
         if self._initialized:
             return
+        
+        # Default cache TTL: 7 days (configurable via PRODUCT_CACHE_TTL_HOURS env var)
+        if cache_ttl_hours is None:
+            cache_ttl_hours = int(os.environ.get('PRODUCT_CACHE_TTL_HOURS', '168'))
             
         self.cache_file = cache_file
         
@@ -217,13 +221,16 @@ class IntelligentProductMatcher:
         """
         Refresh the local cache from the database.
         
-        For large datasets (1M+), uses pagination to avoid memory issues.
-        Also populates the scalable index service for fast candidate retrieval.
+        Uses a subprocess to query Firestore, bypassing the gRPC + Gunicorn
+        fork deadlock that causes .stream()/.get() to hang in worker processes.
+        The subprocess runs a fresh Python process with a clean gRPC state.
         """
         logger.info("Refreshing product cache from database")
         
         try:
-            products_ref = db.collection('products')
+            import subprocess
+            import json
+            import sys
             
             new_cache = {}
             new_normalized_names = {}
@@ -238,63 +245,67 @@ class IntelligentProductMatcher:
             index_available = self.product_index.is_available()
             products_indexed = 0
             
-            if use_pagination:
-                # Paginated loading for large datasets
-                last_doc = None
-                batch_num = 0
+            # Use a subprocess to fetch products from Firestore.
+            # This avoids gRPC channel deadlocks in Gunicorn's forked workers.
+            script_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                '..', '..', '..', '..', 'utils', 'firestore_fetch_products.py'
+            )
+            script_path = os.path.normpath(script_path)
+            
+            logger.info("Cache refresh: fetching products via subprocess", 
+                        extra={"script": script_path})
+            
+            result = subprocess.run(
+                [sys.executable, script_path],
+                capture_output=True,
+                text=True,
+                timeout=120,
+                env=os.environ.copy(),
+            )
+            
+            if result.returncode != 0:
+                logger.error("Firestore fetch subprocess failed",
+                             extra={"returncode": result.returncode, 
+                                    "stderr": result.stderr[:500]})
+                return
+            
+            # Log subprocess metadata from stderr
+            if result.stderr:
+                logger.info("Subprocess fetch metadata", extra={"info": result.stderr.strip()})
+            
+            # Parse products from stdout
+            products_data = json.loads(result.stdout)
+            logger.info(f"Subprocess returned {len(products_data)} products")
+            
+            # NOTE: We skip product_index.index_product() during bulk refresh
+            # because it makes 8+ individual Redis calls per product to Upstash,
+            # which is too slow for hundreds of products.
+            # The in-memory cache structures are sufficient for duplicate detection.
+            
+            product_count = 0
+            for item in products_data:
+                product_id = item.pop('_id', None)
+                if not product_id:
+                    continue
                 
-                while True:
-                    batch_num += 1
-                    query = products_ref.limit(batch_size)
-                    if last_doc:
-                        query = query.start_after(last_doc)
-                    
-                    docs = list(query.stream())
-                    if not docs:
-                        break
-                    
-                    for doc in docs:
-                        product_data = doc.to_dict()
-                        product_id = doc.id
-                        
-                        # Process product (same as before)
-                        self._process_product_for_cache(
-                            product_id, product_data,
-                            new_cache, new_normalized_names, new_brand_groups,
-                            new_exact_name_brand_index, new_exact_name_brand_size_index,
-                            new_brand_name_index
-                        )
-                        
-                        # Also add to scalable index
-                        if index_available:
-                            self.product_index.index_product(product_id, product_data)
-                            products_indexed += 1
-                    
-                    last_doc = docs[-1]
-                    logger.debug(f"Loaded batch {batch_num}: {len(docs)} products")
-                    
-                    # Safety limit for testing
-                    if len(new_cache) >= 2_000_000:
-                        logger.warning("Reached 2M product limit during cache refresh")
-                        break
-            else:
-                # Non-paginated loading (legacy, for small datasets)
-                products = products_ref.stream()
-                
-                for doc in products:
-                    product_data = doc.to_dict()
-                    product_id = doc.id
-                    
+                try:
                     self._process_product_for_cache(
-                        product_id, product_data,
+                        product_id, item,
                         new_cache, new_normalized_names, new_brand_groups,
                         new_exact_name_brand_index, new_exact_name_brand_size_index,
                         new_brand_name_index
                     )
-                    
-                    if index_available:
-                        self.product_index.index_product(product_id, product_data)
-                        products_indexed += 1
+                except Exception as proc_err:
+                    if product_count < 3:
+                        logger.warning(f"Error processing product {product_id}: {proc_err}")
+                    continue
+                
+                product_count += 1
+                if product_count % 200 == 0:
+                    logger.info(f"Cache refresh progress: {product_count} products processed")
+            
+            logger.info(f"All {product_count} products processed, updating cache structures")
             
             # Update cache with optimized indexes
             self.product_cache = new_cache
@@ -308,6 +319,7 @@ class IntelligentProductMatcher:
             self.scalable_mode = len(new_cache) >= SCALABLE_MODE_THRESHOLD and index_available
             
             # Save to disk/Redis
+            logger.info("Saving cache to Redis/disk")
             self.save_cache()
             
             logger.info("Cache refreshed", extra={
@@ -642,7 +654,7 @@ class IntelligentProductMatcher:
 
                 for pid in candidate_ids:
                     cache_entry = self.product_cache[pid]
-                    # Very high base score for exact name+brand; adjust for size.
+                    # Very high base score for exact name+brand; adjust for size
                     score = 0.98
                     if target_size and cache_entry.size:
                         if target_size == str(cache_entry.size).lower().strip():
@@ -917,7 +929,71 @@ class IntelligentProductMatcher:
         
         return False, None
 
-    def add_product_to_cache(self, product_id: str, product_data: Dict) -> None:
+    def remove_product_from_cache(self, product_id: str) -> bool:
+        """
+        Remove a product from all in-memory cache structures.
+        Call this after deleting a product so it no longer appears as a
+        duplicate candidate.
+        
+        Returns True if the product was found and removed.
+        """
+        if product_id not in self.product_cache:
+            return False
+
+        entry = self.product_cache.pop(product_id)
+
+        # Remove from normalized_names index
+        if entry.normalized_name and entry.normalized_name in self.normalized_names:
+            self.normalized_names[entry.normalized_name].discard(product_id)
+            if not self.normalized_names[entry.normalized_name]:
+                del self.normalized_names[entry.normalized_name]
+
+        # Remove from brand_groups
+        if entry.brand_name:
+            brand_normalized = normalize_product_name(entry.brand_name)
+            if brand_normalized in self.brand_groups:
+                self.brand_groups[brand_normalized].discard(product_id)
+                if not self.brand_groups[brand_normalized]:
+                    del self.brand_groups[brand_normalized]
+
+        # Remove from exact indexes
+        name_clean = entry.name.lower().strip()
+        brand_clean = entry.brand_name.lower().strip() if entry.brand_name else ""
+        size_clean = entry.size.lower().strip() if entry.size else ""
+
+        if name_clean and brand_clean:
+            nb_key = f"{name_clean}|{brand_clean}"
+            if nb_key in self.exact_name_brand_index:
+                self.exact_name_brand_index[nb_key].discard(product_id)
+                if not self.exact_name_brand_index[nb_key]:
+                    del self.exact_name_brand_index[nb_key]
+
+            if brand_clean in self.brand_name_index:
+                if name_clean in self.brand_name_index[brand_clean]:
+                    self.brand_name_index[brand_clean][name_clean].discard(product_id)
+                    if not self.brand_name_index[brand_clean][name_clean]:
+                        del self.brand_name_index[brand_clean][name_clean]
+                if not self.brand_name_index[brand_clean]:
+                    del self.brand_name_index[brand_clean]
+
+        nbs_key = f"{name_clean}|{brand_clean}|{size_clean}"
+        if nbs_key in self.exact_name_brand_size_index:
+            if self.exact_name_brand_size_index[nbs_key] == product_id:
+                del self.exact_name_brand_size_index[nbs_key]
+
+        logger.debug("Product removed from cache", extra={"product_id": product_id})
+        return True
+
+    def update_product_in_cache(self, product_id: str, product_data: Dict) -> None:
+        """
+        Update an existing product in cache. Removes old entry, adds new one.
+        Handles ID changes (migration) by removing old_id and adding new_id.
+        """
+        self.remove_product_from_cache(product_id)
+        new_id = product_data.get('id', product_id)
+        self.add_product_to_cache(new_id, product_data)
+
+    def add_product_to_cache(self, product_id: str, product_data: Dict, skip_index: bool = False) -> None:
         """
         Add a new product to the local cache AND the scalable Redis index.
         
@@ -927,6 +1003,9 @@ class IntelligentProductMatcher:
         Args:
             product_id: Product ID
             product_data: Product data
+            skip_index: If True, skip the slow Redis index_product() call.
+                        Use for bulk operations where 8+ HTTP calls per product
+                        to Upstash would cause timeouts.
         """
         # Use sizeRaw for string comparison, fallback to stringified size
         size_for_comparison = product_data.get('sizeRaw', '') or str(product_data.get('size', ''))
@@ -993,7 +1072,8 @@ class IntelligentProductMatcher:
             self.exact_name_brand_size_index[name_no_brand_size_key] = product_id
         
         # CRITICAL: Also update the scalable Redis index for 1M+ products
-        if self.product_index.is_available():
+        # Skip during bulk operations to avoid 8+ HTTP calls per product to Upstash
+        if not skip_index and self.product_index.is_available():
             self.product_index.index_product(product_id, product_data)
             logger.debug("Product added to scalable index", extra={"product_id": product_id})
         

@@ -19,12 +19,12 @@ const PriceIntelligenceChart: React.FC<PriceIntelligenceChartProps> = ({
     const dataMap = new Map<string, any>();
     const supermarkets = new Set<string>();
     
-    console.log(' PriceIntelligenceChart - Raw data received:', { priceHistory, currentPrices });
+    console.log('🔍 PriceIntelligenceChart - Raw data received:', { priceHistory, currentPrices });
     
     // Process historical data from backend structure
     if (priceHistory && typeof priceHistory === 'object') {
       Object.entries(priceHistory).forEach(([supermarket, storeData]: [string, any]) => {
-        console.log(` Processing ${supermarket} historical data:`, storeData);
+        console.log(`📊 Processing ${supermarket} historical data:`, storeData);
         supermarkets.add(supermarket);
         
         // Process daily_prices array (main historical data)
@@ -64,7 +64,7 @@ const PriceIntelligenceChart: React.FC<PriceIntelligenceChartProps> = ({
     
     // Add current prices as the most recent data points
     if (currentPrices && Array.isArray(currentPrices)) {
-      console.log(' Processing current prices:', currentPrices);
+      console.log('💰 Processing current prices:', currentPrices);
       
       currentPrices.forEach((priceInfo: any) => {
         const supermarket = priceInfo.supermarketId;
@@ -99,8 +99,8 @@ const PriceIntelligenceChart: React.FC<PriceIntelligenceChartProps> = ({
         return rest;
       });
     
-    console.log(' Final chart data for LineChart:', result);
-    console.log(' Available supermarkets:', Array.from(supermarkets));
+    console.log('📈 Final chart data for LineChart:', result);
+    console.log('🏪 Available supermarkets:', Array.from(supermarkets));
     return result;
   }, [priceHistory, currentPrices]);
 
@@ -133,7 +133,7 @@ const PriceIntelligenceChart: React.FC<PriceIntelligenceChartProps> = ({
         </h4>
         <div className="flex items-center justify-center h-64 text-gray-500">
           <div className="text-center">
-            <div className="text-4xl mb-2"></div>
+            <div className="text-4xl mb-2">📊</div>
             <p className="text-lg mb-1">No Price Data Available</p>
             <p className="text-sm">Upload price data to see intelligent price analysis</p>
           </div>

@@ -239,7 +239,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const checkSession = async (isInitialLoad: boolean = false) => {
     try {
       // Debug logging to track what's triggering session checks
-      console.log(` checkSession called: isInitialLoad=${isInitialLoad}, timestamp=${new Date().toISOString()}`);
+      console.log(`🔍 checkSession called: isInitialLoad=${isInitialLoad}, timestamp=${new Date().toISOString()}`);
       
       if (isInitialLoad) {
         setLoading(true);

@@ -499,12 +499,12 @@ class ProductIndexService:
                     "total_so_far": stats["total_indexed"]
                 })
                 
-                # Safety check for very large datasets.
+                # Safety check for very large datasets
                 if stats["total_indexed"] >= 2_000_000:  # 2M limit
                     logger.warning("Reached 2M product limit")
                     break
             
-            # Update sync timestamp.
+            # Update sync timestamp
             if self.is_available():
                 self._client.set(self.META_SYNC, datetime.now().isoformat())
             
@@ -527,7 +527,7 @@ class ProductIndexService:
                 self._client.delete(self.DATA_KEY)
                 self._client.delete(self.META_COUNT)
                 self._client.delete(self.META_SYNC)
-                # Individual index keys require manual cleanup or a KEYS pattern.
+                # Note: Individual index keys need manual cleanup or use KEYS pattern
                 logger.warning("Cleared main product indexes")
             else:
                 self._memory_store.clear()

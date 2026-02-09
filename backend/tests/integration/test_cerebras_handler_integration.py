@@ -156,7 +156,7 @@ def test_cerebras_conversation_memory(handler, allowed_models):
     assert response1 is not None, "First classification should succeed"
     assert response2 is not None, "Second classification should succeed with memory"
     
-    print(f"\n Memory Test:")
+    print(f"\n🧠 Memory Test:")
     print(f"   First response length: {len(response1)}")
     print(f"   Second response length: {len(response2)}")
 

@@ -22,8 +22,8 @@ spec:
         - secretRef:
             name: shopple-secrets
         env:
-        # The frontend must call the backend Service in Kubernetes (internal).
-        # For Next.js client-side calls, use localhost via the LoadBalancer.
+        # Crucial: Frontend must talk to backend Service in K8s (internal)
+        # BUT for Next.js CLIENT side calls, it needs localhost (via LoadBalancer)
         - name: INTERNAL_BACKEND_URL
           valueFrom:
             secretKeyRef:
@@ -38,8 +38,8 @@ spec:
           value: "3000"
         - name: DISABLE_SECURE_COOKIES
           value: "true"
-        # Use the Dockerfile entrypoint.sh to generate env-config.js at runtime.
-        # The entrypoint reads NEXT_PUBLIC_* env vars and writes to public/env-config.js.
+        # Use the entrypoint.sh from Dockerfile which generates env-config.js at runtime
+        # The entrypoint reads NEXT_PUBLIC_* env vars and writes them to public/env-config.js
         command: ["/bin/sh", "-c"]
         args: ["mkdir -p /app/logs && ./entrypoint.sh npm start > /app/logs/frontend.json.log 2>&1"]
         volumeMounts:
@@ -69,7 +69,7 @@ kind: Service
 metadata:
   name: frontend
 spec:
-  type: ClusterIP   # Internal only; accessed via Ingress.
+  type: ClusterIP   # Internal only - accessed via Ingress
   selector:
     app: frontend
   ports:

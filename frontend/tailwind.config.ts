@@ -16,7 +16,7 @@ const config: Config = {
         'primary': '#7B6CF0'
       },
       fontSize: {
-        'xxs': '.625rem', // 10px.
+        'xxs': '.625rem', // 10px
       },
       keyframes: {
         shimmer: {

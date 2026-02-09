@@ -103,6 +103,7 @@ product_bp.add_url_rule('/api/products/cleanup-size-display', view_func=product_
 product_bp.add_url_rule('/api/products/preview-stream', view_func=product_controller.preview_products_stream, methods=['POST'])
 product_bp.add_url_rule('/api/products/upload-image', view_func=product_controller.upload_product_image, methods=['POST'])
 product_bp.add_url_rule('/api/products/download-image', view_func=product_controller.download_product_image, methods=['POST'])
+product_bp.add_url_rule('/api/products/matcher-cache-refresh', view_func=product_controller.refresh_matcher_cache, methods=['POST'])
 
 # --- Scalable Index Routes (for 1M+ products) ---
 product_bp.add_url_rule('/api/products/index/build', view_func=product_controller.build_scalable_index, methods=['POST'])

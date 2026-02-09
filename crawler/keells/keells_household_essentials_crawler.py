@@ -1,9 +1,8 @@
-"""Keells household essentials crawler."""
+'''Keells Household Essentials Crawler'''
 import asyncio
 from keells_base_crawler import crawl_keells_category
 
 async def main(test_mode: bool = False):
-    """Crawl the Keells household essentials category."""
     url = 'https://www.keellssuper.com/household-essentials'
     category = 'household_essentials'
     return await crawl_keells_category(url, category, test_mode)

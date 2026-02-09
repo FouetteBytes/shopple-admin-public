@@ -39,6 +39,8 @@ DEFAULT_ALLOWED_MODELS: Dict[str, List[str]] = {
 _LOCK = threading.Lock()
 _ALLOWED_MODELS: Dict[str, List[str]] | None = None
 _DEFAULT_MODELS: Dict[str, str | None] = {}
+_LAST_DISK_LOAD: float = 0.0  # epoch timestamp of last disk read
+_SYNC_INTERVAL: float = float(os.environ.get('MODEL_REGISTRY_SYNC_SECONDS', '5'))  # seconds
 
 
 def _storage_path() -> str:
@@ -68,13 +70,18 @@ def _clean_list(values: Iterable[str] | None) -> List[str]:
     return cleaned
 
 
-def _load_locked() -> None:
-    global _ALLOWED_MODELS, _DEFAULT_MODELS
-    if _ALLOWED_MODELS is not None:
+def _load_locked(force: bool = False) -> None:
+    """Load allowed models from disk.  Skips if already loaded *and* the
+    on-disk file hasn't potentially changed (checked via a simple time-based
+    interval to handle multi-worker Gunicorn)."""
+    global _ALLOWED_MODELS, _DEFAULT_MODELS, _LAST_DISK_LOAD
+    import time as _time
+    now = _time.time()
+    if _ALLOWED_MODELS is not None and not force and (now - _LAST_DISK_LOAD) < _SYNC_INTERVAL:
         return
     path = _storage_path()
     
-    # Initialize implementation defaults.
+    # Initialize implementation defaults
     impl_defaults = {k: list(v) for k, v in DEFAULT_ALLOWED_MODELS.items()}
     impl_selections = {
         k: (v[0] if v else None) for k, v in DEFAULT_ALLOWED_MODELS.items()
@@ -83,19 +90,21 @@ def _load_locked() -> None:
     if not os.path.exists(path):
         _ALLOWED_MODELS = impl_defaults
         _DEFAULT_MODELS = impl_selections
+        _LAST_DISK_LOAD = now
+        _LAST_DISK_LOAD = now
         return
 
     try:
         with open(path, "r", encoding="utf-8") as fh:
             data = json.load(fh)
         
-        # Handle migration from a legacy dict to {"models": ..., "defaults": ...}.
+        # Handle migration from simple dict to {"models": ..., "defaults": ...}
         if isinstance(data, dict):
             if "models" in data:
                 raw_models = data.get("models", {})
                 raw_defaults = data.get("defaults", {})
             else:
-                # Legacy format: data is the models dict.
+                # Legacy format: data IS the models dict
                 raw_models = data
                 raw_defaults = {}
         else:
@@ -106,6 +115,7 @@ def _load_locked() -> None:
         logger.warning("Failed to load allowed models registry", extra={"error": str(exc)})
         _ALLOWED_MODELS = impl_defaults
         _DEFAULT_MODELS = impl_selections
+        _LAST_DISK_LOAD = now
         return
 
     merged_models: Dict[str, List[str]] = {}
@@ -131,11 +141,13 @@ def _load_locked() -> None:
 
     _ALLOWED_MODELS = merged_models
     _DEFAULT_MODELS = merged_defaults
+    _LAST_DISK_LOAD = now
     # Persist migrated/merged structure immediately
     _persist_locked()
 
 
 def _persist_locked() -> None:
+    global _LAST_DISK_LOAD
     if _ALLOWED_MODELS is None:
         return
     path = _storage_path()
@@ -146,6 +158,8 @@ def _persist_locked() -> None:
     try:
         with open(path, "w", encoding="utf-8") as fh:
             json.dump(payload, fh, indent=2, sort_keys=True)
+        import time as _time
+        _LAST_DISK_LOAD = _time.time()
     except Exception as exc:
         logger.error("Failed to persist allowed models registry", extra={"error": str(exc)})
         return False

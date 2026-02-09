@@ -9,16 +9,7 @@ const SIMPLE_HEALTH_ENDPOINT = `${API_BASE_URL}/api/health`
 const CLOCK_SYNC_INTERVAL_MS = 60_000
 const CLOCK_TICK_INTERVAL_MS = 1_000
 
-const formatOffsetLabel = (offsetMinutes: number) => {
-    if (!Number.isFinite(offsetMinutes)) return 'GMT+00:00'
-    const sign = offsetMinutes >= 0 ? '+' : '-'
-    const absMinutes = Math.abs(offsetMinutes)
-    const hours = Math.floor(absMinutes / 60)
-    const minutes = absMinutes % 60
-    return `GMT${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
-}
-
-const formatServerTime = (utcTimestamp: number, timezone?: string | null, offsetMinutes: number = 0) => {
+const formatServerTime = (utcTimestamp: number) => {
     const baseDate = new Date(utcTimestamp)
     const formatterOptions: Intl.DateTimeFormatOptions = {
         weekday: 'short',
@@ -27,31 +18,18 @@ const formatServerTime = (utcTimestamp: number, timezone?: string | null, offset
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        hour12: false
+        hour12: false,
+        timeZoneName: 'short'
     }
 
-    let formatted = baseDate.toUTCString()
+    // Always display in Asia/Colombo timezone so it matches
+    // all other time displays (schedule cards, countdowns, etc.)
+    const formatted = new Intl.DateTimeFormat('en-US', {
+        ...formatterOptions,
+        timeZone: 'Asia/Colombo'
+    }).format(baseDate)
 
-    if (timezone) {
-        try {
-            formatted = new Intl.DateTimeFormat('en-US', {
-                ...formatterOptions,
-                timeZone: timezone
-            }).format(baseDate)
-        } catch (error) {
-            console.warn('Falling back to offset formatting for server time:', error)
-        }
-    }
-
-    if (!timezone) {
-        const fallbackDate = new Date(utcTimestamp + offsetMinutes * 60_000)
-        formatted = new Intl.DateTimeFormat('en-US', formatterOptions).format(fallbackDate)
-    }
-
-    const offsetLabel = formatOffsetLabel(offsetMinutes)
-    const timezoneLabel = timezone || offsetLabel
-
-    return `${formatted} · ${timezoneLabel}`
+    return formatted
 }
 
 const ServerClock: React.FC = () => {
@@ -60,8 +38,6 @@ const ServerClock: React.FC = () => {
 
     const syncStateRef = React.useRef(syncState)
     const utcDeltaRef = React.useRef(0)
-    const timezoneRef = React.useRef<string | null>(null)
-    const offsetMinutesRef = React.useRef(0)
 
     const updateSyncState = React.useCallback((state: 'syncing' | 'ready' | 'error') => {
         syncStateRef.current = state
@@ -87,8 +63,6 @@ const ServerClock: React.FC = () => {
 
                 const payload = await response.json()
                 const timestamp = payload?.timestamp as string | undefined
-                const timezone = payload?.timezone as string | undefined
-                const offsetMinutes = Number(payload?.utc_offset_minutes ?? 0)
 
                 if (!timestamp) {
                     throw new Error('Missing timestamp in server response')
@@ -100,12 +74,10 @@ const ServerClock: React.FC = () => {
                 }
 
                 utcDeltaRef.current = serverUtcTimestamp - Date.now()
-                timezoneRef.current = timezone || null
-                offsetMinutesRef.current = offsetMinutes
 
                 if (isMounted) {
                     updateSyncState('ready')
-                    setDisplayTime(formatServerTime(serverUtcTimestamp, timezoneRef.current, offsetMinutesRef.current))
+                    setDisplayTime(formatServerTime(serverUtcTimestamp))
                 }
             } catch (error) {
                 console.error('Unable to synchronize server time', error)
@@ -119,7 +91,7 @@ const ServerClock: React.FC = () => {
         const updateDisplay = () => {
             if (!isMounted || syncStateRef.current === 'error') return
             const serverUtcNow = Date.now() + utcDeltaRef.current
-            setDisplayTime(formatServerTime(serverUtcNow, timezoneRef.current, offsetMinutesRef.current))
+            setDisplayTime(formatServerTime(serverUtcNow))
         }
 
         fetchServerTime()

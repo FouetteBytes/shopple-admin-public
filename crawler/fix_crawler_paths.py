@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
-"""Fix crawler output paths."""
+"""
+Fix Crawler Output Paths
+"""
 
 import os
 import sys
 import re
 
-# Add the backend path for logger_service.
+# Add backend to path for logger_service
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger
 
 logger = get_logger(__name__)
 
 def fix_crawler_output_path(filepath, store, category):
-    """Update the output path in a crawler file."""
+    """Fix the output path in a crawler file"""
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # Find and replace the output_dir line.
+        # Find and replace the output_dir line
         old_pattern = f'output_dir = "output/{store}"'
         new_path = f'output_dir = "output/{store}/{category}"'
         
@@ -33,7 +35,7 @@ def fix_crawler_output_path(filepath, store, category):
     except Exception as e:
         logger.error(f"❌ Error fixing {filepath}: {e}")
 
-# Fix all crawler files.
+# Fix all crawler files
 keells_crawlers = [
     ("keells_vegetables_crawler.py", "vegetables"),
     ("keells_fruits_crawler.py", "fruits"),
@@ -57,7 +59,7 @@ cargills_crawlers = [
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Fix Keells crawlers.
+# Fix Keells crawlers
 for filename, category in keells_crawlers:
     filepath = os.path.join(base_dir, "keells", filename)
     if os.path.exists(filepath):
@@ -65,7 +67,7 @@ for filename, category in keells_crawlers:
     else:
         logger.warning(f"⚠️  File not found: {filepath}")
 
-# Fix Cargills crawlers.
+# Fix Cargills crawlers
 for filename, category in cargills_crawlers:
     filepath = os.path.join(base_dir, "cargills", filename)
     if os.path.exists(filepath):

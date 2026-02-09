@@ -2,24 +2,24 @@
 set -e
 
 # -----------------------------------------------------------------------------
-# Shopple Admin - Kubernetes cleanup script
+# Shopple Admin - Kubernetes Cleanup Script
 #
 # Purpose:
-#   Removes Kubernetes resources and optionally deletes persistent data,
+#   Removes Kubernetes resources and (optionally) deletes persistent data,
 #   PVCs, and Docker images. Use with care in development environments.
 #
 # Usage:
-#   bash k8s/scripts/clean.sh                    # Clean deployments only.
-#   bash k8s/scripts/clean.sh --purge-data       # Also delete local hostPath data.
-#   bash k8s/scripts/clean.sh --purge-pvc        # Also delete PersistentVolumeClaims.
-#   bash k8s/scripts/clean.sh --purge-images     # Also remove Docker images.
-#   bash k8s/scripts/clean.sh --purge-all        # Complete cleanup (data + PVC + images).
+#   bash k8s/scripts/clean.sh                    # Clean deployments only
+#   bash k8s/scripts/clean.sh --purge-data       # Also delete local hostPath data
+#   bash k8s/scripts/clean.sh --purge-pvc        # Also delete PersistentVolumeClaims
+#   bash k8s/scripts/clean.sh --purge-images     # Also remove Docker images
+#   bash k8s/scripts/clean.sh --purge-all        # Complete cleanup (data + PVC + images)
 #
 # Options:
-#   --purge-data    Deletes local hostPath data directories (opensearch-data).
-#   --purge-pvc     Deletes PersistentVolumeClaims (loses stored data).
-#   --purge-images  Removes local Docker images for Shopple services.
-#   --purge-all     Combines all purge options (complete reset).
+#   --purge-data    Deletes local hostPath data directories (opensearch-data)
+#   --purge-pvc     Deletes PersistentVolumeClaims (loses all stored data!)
+#   --purge-images  Removes local Docker images for Shopple services
+#   --purge-all     Combines all purge options (complete reset)
 # -----------------------------------------------------------------------------
 
 PROJECT_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -50,7 +50,7 @@ done
 
 echo ""
 echo "=============================================="
-echo " Shopple Admin Kubernetes Cleanup"
+echo "🧹 Shopple Admin Kubernetes Cleanup"
 echo "=============================================="
 echo "   Purge Data:   $PURGE_DATA"
 echo "   Purge PVC:    $PURGE_PVC"
@@ -59,9 +59,9 @@ echo "=============================================="
 echo ""
 
 # ---------------------------------------------------------------------------
-# STEP 1: Delete Kubernetes deployments and services
+# STEP 1: Delete Kubernetes Deployments & Services
 # ---------------------------------------------------------------------------
-echo " Deleting Kubernetes resources..."
+echo "📦 Deleting Kubernetes resources..."
 
 for file in "$PROJECT_ROOT"/k8s/*.yaml; do
   echo "   Deleting $(basename "$file")..."
@@ -86,13 +86,13 @@ if [ "$PURGE_PVC" = "true" ]; then
   # Delete all PVCs in the default namespace.
   kubectl delete pvc --all --ignore-not-found 2>/dev/null || true
   
-  # Delete any leftover PVs.
+  # Also delete any leftover PVs
   kubectl delete pv --all --ignore-not-found 2>/dev/null || true
   
   echo "   ✅ PVCs deleted"
 else
   echo ""
-  echo " PVCs preserved. Use --purge-pvc to delete them."
+  echo "📁 PVCs preserved. Use --purge-pvc to delete them."
 fi
 
 # ---------------------------------------------------------------------------
@@ -102,13 +102,13 @@ if [ "$PURGE_DATA" = "true" ]; then
   echo ""
   echo "⚠️  Purging local persistent data..."
   
-  # Remove the OpenSearch data directory.
+  # Remove OpenSearch data directory
   if [ -d "$PROJECT_ROOT/opensearch-data" ]; then
     rm -rf "$PROJECT_ROOT/opensearch-data"
     echo "   ✅ Deleted opensearch-data"
   fi
   
-  # Remove any other local data directories that might exist.
+  # Remove any other local data directories that might exist
   if [ -d "$PROJECT_ROOT/backend-data" ]; then
     rm -rf "$PROJECT_ROOT/backend-data"
     echo "   ✅ Deleted backend-data"
@@ -122,7 +122,7 @@ if [ "$PURGE_DATA" = "true" ]; then
   echo "   ✅ Local data purged"
 else
   echo ""
-  echo " Local data preserved. Use --purge-data to remove it."
+  echo "📁 Local data preserved. Use --purge-data to remove it."
 fi
 
 # ---------------------------------------------------------------------------
@@ -130,7 +130,7 @@ fi
 # ---------------------------------------------------------------------------
 if [ "$PURGE_IMAGES" = "true" ]; then
   echo ""
-  echo " Removing local Docker images..."
+  echo "🐳 Removing local Docker images..."
   docker rmi -f shopple-backend:latest 2>/dev/null || true
   docker rmi -f shopple-frontend:latest 2>/dev/null || true
   docker rmi -f shopple-crawler:latest 2>/dev/null || true
@@ -138,7 +138,7 @@ if [ "$PURGE_IMAGES" = "true" ]; then
   echo "   ✅ Docker images removed"
 else
   echo ""
-  echo " Docker images preserved. Use --purge-images to remove them."
+  echo "🐳 Docker images preserved. Use --purge-images to remove them."
 fi
 
 echo ""

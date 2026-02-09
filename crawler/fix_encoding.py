@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Fix crawler output JSON encoding."""
+"""
+Fix Crawler Output JSON Encoding
+"""
 
 import os
 import sys
 import re
 
-# Add the backend path for logger_service.
+# Add backend to path for logger_service
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger
 
@@ -17,12 +19,12 @@ def add_windows_encoding_fix(file_path):
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # Check whether a fix already exists.
+        # Check if fix already exists
         if 'PYTHONIOENCODING' in content:
             logger.info(f"✅ {file_path} already has encoding fix")
             return
         
-        # Find the first import statement.
+        # Find the first import statement
         lines = content.split('\n')
         insert_index = 0
         
@@ -31,7 +33,7 @@ def add_windows_encoding_fix(file_path):
                 insert_index = i
                 break
         
-        # Add the encoding fix before the first import.
+        # Add the encoding fix before the first import
         encoding_fix = [
             "",
             "# Fix Windows encoding issues",
@@ -42,16 +44,16 @@ def add_windows_encoding_fix(file_path):
             ""
         ]
         
-        # Ensure sys is imported.
+        # Also need to ensure sys is imported
         if 'import sys' not in content:
             lines.insert(insert_index, 'import sys')
             insert_index += 1
         
-        # Insert the encoding fix.
+        # Insert the encoding fix
         for j, fix_line in enumerate(encoding_fix):
             lines.insert(insert_index + j, fix_line)
         
-        # Write back to the file.
+        # Write back to file
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write('\n'.join(lines))
         
@@ -64,7 +66,7 @@ def main():
     """Process all Python crawler files."""
     base_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # Find all Python files in crawler directories.
+    # Find all Python files in crawler directories
     for root, dirs, files in os.walk(base_dir):
         for file in files:
             if file.endswith('_crawler.py'):

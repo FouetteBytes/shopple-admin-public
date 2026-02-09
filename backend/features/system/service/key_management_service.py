@@ -37,6 +37,13 @@ class KeyManagementService(BaseService):
                 os.environ[env_var] = key
 
         logger.info("API keys updated", extra={"providers_updated": list(keys.keys())})
+
+        # Immediately reload handlers so this worker picks up the new keys
+        try:
+            self.reload_keys()
+        except Exception as e:
+            logger.warning("Auto-reload after set_keys failed", extra={"error": str(e)})
+
         return {"ok": True, "status": status}
 
     def reload_keys(self) -> bool:
@@ -51,6 +58,23 @@ class KeyManagementService(BaseService):
         classifier = get_classifier()
         if not classifier:
             return {"ok": False, "error": "Classifier is still loading", "loading": True}
+
+        # Lazy reload: if the handler for the requested provider is not available,
+        # attempt a reload from keystore in case another Gunicorn worker saved the key.
+        _handler_map = {
+            'groq': lambda: classifier.groq_handler,
+            'openrouter': lambda: classifier.openrouter_handler,
+            'gemini': lambda: classifier.gemini_handler,
+            'cerebras': lambda: classifier.cerebras_handler,
+        }
+        handler_fn = _handler_map.get(provider)
+        handler = handler_fn() if handler_fn else None
+        if not handler or not handler.is_available():
+            logger.info("Handler not available, reloading from keystore",
+                        extra={"provider": provider})
+            self.reload_keys()
+            # Re-fetch classifier in case it was updated
+            classifier = get_classifier()
 
         tiny_prompt = (
             "Return EXACTLY these 5 lines, nothing else, no extra text or formatting.\n"

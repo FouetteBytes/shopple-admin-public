@@ -148,7 +148,7 @@ export const FirebaseAuthLoginInline: React.FC<FirebaseAuthLoginInlineProps> = (
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
         <p className="text-blue-800 text-sm">
-           Only Super Admin accounts can delete all products. If you don&rsquo;t have the required permissions, please contact an administrator.
+          💡 Only Super Admin accounts can delete all products. If you don&rsquo;t have the required permissions, please contact an administrator.
         </p>
       </div>
 
@@ -173,7 +173,7 @@ export const FirebaseAuthLoginInline: React.FC<FirebaseAuthLoginInlineProps> = (
             </>
           ) : (
             <>
-               Sign In
+              🔐 Sign In
             </>
           )}
         </Button>

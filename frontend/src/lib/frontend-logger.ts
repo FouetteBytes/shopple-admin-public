@@ -1,12 +1,12 @@
 /**
  * Frontend Logger
  * 
- * Captures client-side logs, errors, and console output, then sends them
+ * Captures client-side logs, errors, and console output and sends them
  * to the backend for centralized logging in OpenSearch.
  * 
  * This is especially useful when the frontend is hosted separately from
- * the backend (e.g., Vercel, Netlify, CloudFront), because it enables
- * capturing client-side errors that would otherwise be lost.
+ * the backend (e.g., Vercel, Netlify, CloudFront) as it allows capturing
+ * client-side errors that would otherwise be lost.
  */
 
 import { API_BASE_URL } from '@/lib/api';
@@ -66,7 +66,7 @@ class FrontendLogger {
   private setupGlobalErrorHandlers(): void {
     if (typeof window === 'undefined') return;
 
-    // Capture unhandled errors.
+    // Capture unhandled errors
     window.addEventListener('error', (event) => {
       this.error('Uncaught error', {
         errorName: event.error?.name || 'Error',
@@ -80,7 +80,7 @@ class FrontendLogger {
       });
     });
 
-    // Capture unhandled promise rejections.
+    // Capture unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
       this.error('Unhandled promise rejection', {
         errorName: 'UnhandledRejection',
@@ -91,7 +91,7 @@ class FrontendLogger {
       });
     });
 
-    // Optionally capture console errors.
+    // Optionally capture console errors
     const originalConsoleError = console.error;
     console.error = (...args) => {
       originalConsoleError.apply(console, args);
@@ -108,7 +108,7 @@ class FrontendLogger {
       this.flush();
     }, this.flushIntervalMs);
 
-    // Flush on page unload.
+    // Flush on page unload
     window.addEventListener('beforeunload', () => {
       this.flush(true);
     });
@@ -161,7 +161,7 @@ class FrontendLogger {
     const entry = this.createEntry(level, message, options);
     this.queue.push(entry);
 
-    // Flush critical errors immediately.
+    // Immediately flush critical errors
     if (level === 'CRITICAL' || level === 'ERROR') {
       this.flush();
     } else if (this.queue.length >= this.batchSize) {
@@ -170,7 +170,7 @@ class FrontendLogger {
   }
 
   public setUser(userId: string, userEmail: string): void {
-    // Store user information for subsequent log entries.
+    // Store user info for future logs
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('frontend_logger_user_id', userId);
       sessionStorage.setItem('frontend_logger_user_email', userEmail);
@@ -192,7 +192,7 @@ class FrontendLogger {
     const entries = [...this.queue];
     this.queue = [];
 
-    // Enrich all entries with user information.
+    // Add user info to all entries
     const userInfo = this.getUserInfo();
     const entriesWithUser = entries.map(entry => ({
       ...entry,
@@ -204,7 +204,7 @@ class FrontendLogger {
 
     try {
       if (sync && typeof navigator !== 'undefined' && navigator.sendBeacon) {
-        // Use sendBeacon to flush logs during page unload.
+        // Use sendBeacon for page unload
         navigator.sendBeacon(url, JSON.stringify(entriesWithUser));
       } else {
         await fetch(url, {
@@ -215,7 +215,7 @@ class FrontendLogger {
         });
       }
     } catch (error) {
-      // Re-queue failed entries without unbounded retries.
+      // Re-queue failed entries (but don't re-queue indefinitely)
       if (entries.length < 50) {
         this.queue = [...entries, ...this.queue];
       }
@@ -231,10 +231,10 @@ class FrontendLogger {
   }
 }
 
-// Export the singleton instance.
+// Export singleton instance
 export const frontendLogger = FrontendLogger.getInstance();
 
-// Export convenience functions.
+// Export convenience functions
 export const logDebug = (message: string, options?: Partial<Omit<FrontendLogEntry, 'level' | 'message' | 'timestamp'>>) => 
   frontendLogger.debug(message, options);
 

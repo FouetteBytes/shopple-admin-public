@@ -174,6 +174,45 @@ def _load_env_and_keystore():
     except Exception as e:
         logger.warning("Keystore not loaded", extra={"error": str(e)})
 
+
+def _prewarm_product_matcher_cache():
+    """Pre-warm the IntelligentProductMatcher cache from Firestore.
+    
+    Runs in a background thread so it doesn't block app startup.
+    If the Firestore query fails/hangs, the app still starts normally.
+    """
+    import threading
+
+    def _do_prewarm():
+        try:
+            import os as _os2
+            from services.firebase.firebase_client import initialize_firebase
+            from backend.features.products.service.matcher.core import IntelligentProductMatcher
+
+            cache_file = _os2.path.join(
+                _os2.path.dirname(_os2.path.abspath(__file__)),
+                '..', '..', 'cache', 'product_cache.pkl'
+            )
+            matcher = IntelligentProductMatcher(cache_file=cache_file, similarity_threshold=0.75)
+
+            if len(matcher.product_cache) == 0:
+                logger.info("Pre-warming product matcher cache from database")
+                db = initialize_firebase()
+                matcher.refresh_cache_from_db(db)
+                logger.info("Product matcher cache pre-warmed",
+                            extra={"product_count": len(matcher.product_cache)})
+            else:
+                logger.info("Product matcher cache loaded from storage",
+                            extra={"product_count": len(matcher.product_cache)})
+        except Exception as exc:
+            logger.warning("Product matcher cache pre-warm failed",
+                           extra={"error": str(exc)})
+
+    t = threading.Thread(target=_do_prewarm, name="prewarm-matcher", daemon=True)
+    t.start()
+    logger.info("Product matcher pre-warm started in background thread")
+
+
 def initialize_all_services():
     """Initialize all services"""
     global SERVICES_INITIALIZING
@@ -203,6 +242,9 @@ def initialize_all_services():
     initialize_file_watcher()
     start_file_watcher()
     
+    # Pre-warm product matcher cache (background thread – non-blocking)
+    _prewarm_product_matcher_cache()
+    
     # Mark initialization complete
     SERVICES_INITIALIZING = False
     
@@ -221,24 +263,54 @@ def get_classifier():
     return classifier
 
 def reload_classifier_keys():
-    """Reinitialize handlers on the existing classifier to pick up updated env vars.
-    Avoids recreating cache/corrections state.
+    """Reinitialize handlers on the existing classifier to pick up updated keys.
+
+    Reads keys **directly from the encrypted keystore** (shared disk file) and
+    passes them to handler constructors.  This avoids the race condition where
+    os.environ / get_api_config() may return stale values in a multi-worker
+    Gunicorn setup (each worker has its own process memory).
     """
     global classifier
     try:
         if not classifier:
             return False
-        from backend.config.env_config import get_api_config
-        cfg = get_api_config()
-        # Recreate handlers with new keys (single Groq key as per preference)
+
+        # ── 1. Load keystore from disk (shared across all workers)
+        from services.system.keystore import load_keys_from_disk, get_keys
+        load_keys_from_disk()
+        ks = get_keys()  # {"groq": "gsk_...", "cerebras": "csk_...", ...}
+
+        groq_key = ks.get('groq') or None
+        openrouter_key = ks.get('openrouter') or None
+        gemini_key = ks.get('gemini') or None
+        cerebras_key = ks.get('cerebras') or None
+
+        # Also sync into os.environ for any code that still reads env vars
+        _provider_env = {
+            'groq': 'GROQ_API_KEY',
+            'openrouter': 'OPENROUTER_API_KEY',
+            'gemini': 'GEMINI_API_KEY',
+            'cerebras': 'CEREBRAS_API_KEY',
+        }
+        for provider, env_var in _provider_env.items():
+            val = ks.get(provider)
+            if val:
+                os.environ[env_var] = val
+
+        providers_with_keys = [p for p in ('groq', 'openrouter', 'gemini', 'cerebras') if ks.get(p)]
+        logger.info("Keystore keys loaded for handler reload",
+                    extra={"providers_with_keys": providers_with_keys})
+
+        # ── 2. Recreate handlers with keys passed directly (no env var indirection)
         from backend.services.ai_handlers.groq_handler import GroqHandler
         from backend.services.ai_handlers.openrouter_handler import OpenRouterHandler
         from backend.services.ai_handlers.gemini_handler import GeminiHandler
         from backend.services.ai_handlers.cerebras_handler import CerebrasHandler
-        classifier.groq_handler = GroqHandler(cfg.get('groq_api_key'))
-        classifier.openrouter_handler = OpenRouterHandler(cfg.get('openrouter_api_key'))
-        classifier.gemini_handler = GeminiHandler(cfg.get('gemini_api_key'))
-        classifier.cerebras_handler = CerebrasHandler(cfg.get('cerebras_api_key'))
+
+        classifier.groq_handler = GroqHandler(api_key=groq_key)
+        classifier.openrouter_handler = OpenRouterHandler(api_key=openrouter_key)
+        classifier.gemini_handler = GeminiHandler(api_key=gemini_key)
+        classifier.cerebras_handler = CerebrasHandler(api_key=cerebras_key)
         logger.info("Reinitialized API handlers with updated keys")
         return True
     except Exception as e:

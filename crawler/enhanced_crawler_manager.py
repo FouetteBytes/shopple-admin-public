@@ -1,6 +1,6 @@
-"""Enhanced crawler manager with Firebase Storage integration.
-
-Combines local storage with cloud storage capabilities.
+"""
+Enhanced Crawler Manager with Firebase Storage Integration
+Combines local storage with cloud storage capabilities
 """
 
 import asyncio
@@ -17,13 +17,13 @@ import threading
 import queue
 import logging
 
-# Add the backend path for logger_service.
+# Add backend to path for logger_service
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger, log_error
 
 logger = get_logger(__name__)
 
-# Firebase Storage Manager (imported when available).
+# Firebase Storage Manager (will be imported when available)
 try:
     from firebase_storage_manager import get_storage_manager
     FIREBASE_AVAILABLE = True
@@ -32,24 +32,24 @@ except ImportError:
     logger.warning("Firebase Storage not available. Install requirements: pip install -r requirements-firebase.txt")
 
 class EnhancedCrawlerManager:
-    """Crawler management system with Firebase Storage integration.
-
-    Supports parallel execution, real-time progress monitoring, and cloud storage.
+    """
+    Advanced Crawler Management System with Firebase Storage Integration
+    Supports parallel execution, real-time progress monitoring, and cloud storage
     """
     
     def __init__(self, use_firebase: bool = True):
-        # Load environment variables.
+        # Load environment variables
         try:
             from dotenv import load_dotenv
             load_dotenv()
         except ImportError:
-            pass  # dotenv not available; continue without it.
+            pass  # dotenv not available, continue without it
             
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
         self.crawler_dir = self.base_dir
         self.output_dir = os.path.join(self.base_dir, "output")
         
-        # Storage configuration.
+        # Storage configuration
         self.use_firebase = use_firebase and FIREBASE_AVAILABLE
         self.storage_manager = None
         
@@ -61,24 +61,24 @@ class EnhancedCrawlerManager:
                 log_error(logger, e, {"context": "Firebase Storage initialization"})
                 self.use_firebase = False
         
-        # Ensure output directories exist.
+        # Ensure output directories exist
         os.makedirs(os.path.join(self.output_dir, "keells"), exist_ok=True)
         os.makedirs(os.path.join(self.output_dir, "cargills"), exist_ok=True)
         
-        # Storage configuration file.
+        # Storage configuration file
         self.config_file = os.path.join(self.base_dir, "storage_config.json")
         self.storage_config = self._load_storage_config()
         
-        # Active crawler tracking.
+        # Active crawler tracking
         self.active_crawlers = {}
         self.crawler_results = {}
         self.crawler_logs = {}
         
-        # Threading for concurrent execution.
+        # Threading for concurrent execution
         self.executor = ThreadPoolExecutor(max_workers=8)
         self.progress_queues = {}
         
-        # Available crawlers configuration.
+        # Available crawlers configuration
         self.available_crawlers = {
             "keells": {
                 "vegetables": {
@@ -204,9 +204,9 @@ class EnhancedCrawlerManager:
         logger.info("Firebase Storage", extra={"enabled": self.use_firebase})
     
     def _load_storage_config(self) -> Dict[str, Any]:
-        """Load storage configuration."""
+        """Load storage configuration"""
         default_config = {
-            "storage_mode": "both",  # "local", "firebase", "both".
+            "storage_mode": "both",  # "local", "firebase", "both"
             "auto_upload": True,
             "keep_local_days": 7,
             "max_local_files": 50,
@@ -224,7 +224,7 @@ class EnhancedCrawlerManager:
         return default_config
     
     def save_storage_config(self, config: Dict[str, Any]):
-        """Save storage configuration."""
+        """Save storage configuration"""
         try:
             with open(self.config_file, 'w') as f:
                 json.dump(config, f, indent=2)
@@ -233,14 +233,16 @@ class EnhancedCrawlerManager:
         except Exception as e:
             logger.error(f"Failed to save storage config: {e}")
     
-    def run_crawler_with_storage(self, store: str, category: str,
+    def run_crawler_with_storage(self, store: str, category: str, 
                                 max_items: Optional[int] = None) -> Dict[str, Any]:
-        """Run a crawler and handle storage based on configuration."""
+        """
+        Run crawler and handle storage based on configuration
+        """
         try:
-            # Generate a unique crawler ID.
+            # Generate unique crawler ID
             crawler_id = f"{store}_{category}_{int(time.time())}"
             
-            # Initialize crawler tracking.
+            # Initialize crawler tracking
             self.active_crawlers[crawler_id] = {
                 "status": "starting",
                 "progress": 0,
@@ -250,17 +252,17 @@ class EnhancedCrawlerManager:
                 "config": {"max_items": max_items}
             }
             
-            # Run the crawler.
+            # Run the crawler
             result = self._execute_crawler(store, category, max_items)
             
             if result["success"]:
-                # Handle storage based on configuration.
+                # Handle storage based on configuration
                 storage_result = self._handle_file_storage(
                     result["output_file"], store, category, result["metadata"]
                 )
                 result["storage"] = storage_result
                 
-                # Update crawler status.
+                # Update crawler status
                 self.active_crawlers[crawler_id]["status"] = "completed"
                 self.active_crawlers[crawler_id]["progress"] = 100
                 
@@ -282,7 +284,7 @@ class EnhancedCrawlerManager:
         Execute the actual crawler script
         """
         try:
-            # Get crawler configuration.
+            # Get crawler configuration
             if store not in self.available_crawlers or category not in self.available_crawlers[store]:
                 return {
                     "success": False,
@@ -292,7 +294,7 @@ class EnhancedCrawlerManager:
             crawler_config = self.available_crawlers[store][category]
             crawler_file = crawler_config["file"]
             
-            # Determine the crawler directory.
+            # Determine the crawler directory
             crawler_path = os.path.join(self.crawler_dir, store, crawler_file)
             
             if not os.path.exists(crawler_path):
@@ -301,12 +303,12 @@ class EnhancedCrawlerManager:
                     "error": f"Crawler file not found: {crawler_path}"
                 }
             
-            # Prepare the command.
+            # Prepare the command
             cmd = [sys.executable, crawler_path]
             if max_items:
                 cmd.extend(["--max-items", str(max_items)])
             
-            # Execute crawler.
+            # Execute crawler
             logger.info("Running crawler", extra={"name": crawler_config["name"]})
             process = subprocess.run(
                 cmd,
@@ -316,16 +318,16 @@ class EnhancedCrawlerManager:
             )
             
             if process.returncode == 0:
-                # Find the output file.
+                # Find the output file
                 expected_output = os.path.join(
                     self.output_dir, store, f"{store}_{category}.json"
                 )
                 
                 if os.path.exists(expected_output):
-                    # Get file info.
+                    # Get file info
                     file_size = os.path.getsize(expected_output)
                     
-                    # Load and count items.
+                    # Load and count items
                     with open(expected_output, 'r', encoding='utf-8') as f:
                         data = json.load(f)
                     
@@ -370,20 +372,20 @@ class EnhancedCrawlerManager:
         }
         
         try:
-            # Always keep a local copy initially.
+            # Always keep local copy initially
             if self.storage_config["storage_mode"] in ["firebase", "both"]:
                 if self.use_firebase and self.storage_manager:
-                    # Upload to Firebase.
+                    # Upload to Firebase
                     firebase_result = self.storage_manager.upload_crawler_data(
                         local_file, store, category, metadata
                     )
                     storage_result["firebase"] = firebase_result
                     
-                    # If Firebase upload is successful and mode is "firebase" only.
+                    # If Firebase upload successful and mode is "firebase" only
                     if (firebase_result["success"] and 
                         self.storage_config["storage_mode"] == "firebase" and
                         not self.storage_config.get("keep_local_backup", False)):
-                        # Remove the local file.
+                        # Remove local file
                         try:
                             os.remove(local_file)
                             storage_result["local"]["success"] = False
@@ -391,7 +393,7 @@ class EnhancedCrawlerManager:
                         except Exception as e:
                             logger.warning(f"Could not remove local file: {e}")
             
-            # Clean up old local files if configured.
+            # Cleanup old local files if configured
             if self.storage_config.get("auto_cleanup", False):
                 self._cleanup_old_files(store, category)
             
@@ -410,7 +412,7 @@ class EnhancedCrawlerManager:
             if not os.path.exists(store_dir):
                 return
             
-            # Get all JSON files for this category.
+            # Get all JSON files for this category
             pattern = f"{store}_{category}"
             files = []
             
@@ -419,10 +421,10 @@ class EnhancedCrawlerManager:
                     file_path = os.path.join(store_dir, file)
                     files.append((file_path, os.path.getmtime(file_path)))
             
-            # Sort by modification time (oldest first).
+            # Sort by modification time (oldest first)
             files.sort(key=lambda x: x[1])
             
-            # Remove old files based on configuration.
+            # Remove old files based on configuration
             max_files = self.storage_config.get("max_local_files", 50)
             keep_days = self.storage_config.get("keep_local_days", 7)
             current_time = time.time()
@@ -430,11 +432,11 @@ class EnhancedCrawlerManager:
             for file_path, mod_time in files:
                 should_remove = False
                 
-                # Check if too many files.
+                # Check if too many files
                 if len(files) > max_files:
                     should_remove = True
                 
-                # Check if too old.
+                # Check if too old
                 days_old = (current_time - mod_time) / (24 * 3600)
                 if days_old > keep_days:
                     should_remove = True
@@ -509,7 +511,7 @@ class EnhancedCrawlerManager:
             total += len(store)
         return total
     
-    # Additional methods for Firebase file management.
+    # Additional methods for Firebase file management
     def download_from_firebase(self, cloud_path: str, local_path: str = None) -> Dict[str, Any]:
         """Download file from Firebase Storage"""
         if not self.use_firebase:
@@ -532,7 +534,7 @@ class EnhancedCrawlerManager:
         return self.storage_manager.delete_crawler_file(cloud_path)
 
 
-# Singleton instance.
+# Singleton instance
 _enhanced_crawler_manager = None
 
 def get_enhanced_crawler_manager(use_firebase: bool = True) -> EnhancedCrawlerManager:
@@ -546,7 +548,7 @@ def get_enhanced_crawler_manager(use_firebase: bool = True) -> EnhancedCrawlerMa
 
 
 if __name__ == "__main__":
-    # Test the enhanced crawler manager.
+    # Test the enhanced crawler manager
     manager = get_enhanced_crawler_manager()
     
     logger.info("Storage Status")

@@ -1086,9 +1086,9 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                       className="pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
                     >
                       <option value="all">All Scores</option>
-                      <option value="high"> High (≥90%)</option>
-                      <option value="medium"> Medium (75-90%)</option>
-                      <option value="low"> Low (&lt;75%)</option>
+                      <option value="high">🟢 High (≥90%)</option>
+                      <option value="medium">🟡 Medium (75-90%)</option>
+                      <option value="low">🔴 Low (&lt;75%)</option>
                     </select>
                   </div>
 
@@ -1102,8 +1102,8 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                     >
                       <option value="all">All Types</option>
                       <option value="exact">⭐ Exact Match</option>
-                      <option value="fuzzy"> Fuzzy Match</option>
-                      <option value="brand_variety">️ Brand/Variety</option>
+                      <option value="fuzzy">🔍 Fuzzy Match</option>
+                      <option value="brand_variety">🏷️ Brand/Variety</option>
                     </select>
                   </div>
 
@@ -1116,10 +1116,10 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                       className="pl-3 pr-8 py-2 border border-gray-300 rounded-lg text-sm bg-white hover:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
                     >
                       <option value="all">All Differences</option>
-                      <option value="name"> Name Differs</option>
-                      <option value="brand"> Brand Differs</option>
-                      <option value="size"> Size Differs</option>
-                      <option value="variety"> Variety Differs</option>
+                      <option value="name">📝 Name Differs</option>
+                      <option value="brand">🏢 Brand Differs</option>
+                      <option value="size">📏 Size Differs</option>
+                      <option value="variety">🎨 Variety Differs</option>
                     </select>
                   </div>
 
@@ -1241,7 +1241,7 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                                   </div>
                                   <div className="mt-1 pt-1 border-t border-gray-200">
                                     <div className="text-xs font-medium text-blue-600">
-                                       Average Match: {(calculateOverallMatch(match) * 100).toFixed(1)}%
+                                      📊 Average Match: {(calculateOverallMatch(match) * 100).toFixed(1)}%
                                     </div>
                                   </div>
                                 </div>
@@ -1393,7 +1393,7 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                               <div className="space-y-1 text-xs">
                                 {match.new_product.product_name !== match.existing_product.product_name && (
                                   <div className="bg-yellow-100 border border-yellow-200 rounded p-1">
-                                    <span className="text-yellow-800 font-medium"> Name differs</span>
+                                    <span className="text-yellow-800 font-medium">📝 Name differs</span>
                                     <div className="text-xs text-yellow-700 mt-0.5">
                                       <div><strong>New:</strong> {match.new_product.product_name.substring(0, 30)}{match.new_product.product_name.length > 30 ? '...' : ''}</div>
                                       <div><strong>Existing:</strong> {match.existing_product.product_name.substring(0, 30)}{match.existing_product.product_name.length > 30 ? '...' : ''}</div>
@@ -1402,7 +1402,7 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                                 )}
                                 {match.new_product.brand_name !== match.existing_product.brand_name && (
                                   <div className="bg-blue-100 border border-blue-200 rounded p-1">
-                                    <span className="text-blue-800 font-medium">️ Brand differs</span>
+                                    <span className="text-blue-800 font-medium">🏷️ Brand differs</span>
                                     <div className="text-xs text-blue-700 mt-0.5">
                                       <div><strong>New:</strong> {match.new_product.brand_name || 'N/A'}</div>
                                       <div><strong>Existing:</strong> {match.existing_product.brand_name || 'N/A'}</div>
@@ -1411,7 +1411,7 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                                 )}
                                 {(match.new_product.sizeRaw || match.new_product.size) !== (match.existing_product.sizeRaw || match.existing_product.size) && (
                                   <div className="bg-purple-100 border border-purple-200 rounded p-1">
-                                    <span className="text-purple-800 font-medium"> Size differs</span>
+                                    <span className="text-purple-800 font-medium">📏 Size differs</span>
                                     <div className="text-xs text-purple-700 mt-0.5">
                                       <div><strong>New:</strong> {match.new_product.sizeRaw || match.new_product.size || 'N/A'}</div>
                                       <div><strong>Existing:</strong> {match.existing_product.sizeRaw || match.existing_product.size || 'N/A'}</div>
@@ -1420,7 +1420,7 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                                 )}
                                 {match.new_product.category !== match.existing_product.category && (
                                   <div className="bg-green-100 border border-green-200 rounded p-1">
-                                    <span className="text-green-800 font-medium"> Category differs</span>
+                                    <span className="text-green-800 font-medium">📂 Category differs</span>
                                     <div className="text-xs text-green-700 mt-0.5">
                                       <div><strong>New:</strong> {formatCategoryName(match.new_product.category)}</div>
                                       <div><strong>Existing:</strong> {formatCategoryName(match.existing_product.category)}</div>
@@ -1429,7 +1429,7 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                                 )}
                                 {match.match_reasons.length > 0 && (
                                   <div className="bg-gray-100 border border-gray-200 rounded p-1">
-                                    <span className="text-gray-800 font-medium text-xs"> Match Reasons:</span>
+                                    <span className="text-gray-800 font-medium text-xs">🔍 Match Reasons:</span>
                                     <div className="flex flex-wrap gap-1 mt-1">
                                       {match.match_reasons.slice(0, 3).map((reason: string, idx: number) => (
                                         <span key={idx} className="px-1 py-0.5 bg-gray-200 text-gray-700 text-xs rounded">
@@ -1663,7 +1663,7 @@ export const ProductReviewModal: React.FC<ProductReviewModalProps> = ({
                 </div>
                 
                 <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
-                  <h5 className="text-sm font-medium text-blue-900 mb-2"> How to Fix:</h5>
+                  <h5 className="text-sm font-medium text-blue-900 mb-2">💡 How to Fix:</h5>
                   <ol className="text-sm text-blue-800 space-y-1">
                     <li>1. Download or edit your JSON file</li>
                     <li>2. Fix the issues listed above for each invalid entry</li>

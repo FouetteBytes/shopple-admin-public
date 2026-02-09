@@ -132,7 +132,10 @@ class ProductService:
         # 4. Update AI Cache
         self._update_ai_cache(final_product_data)
         
-        # 5. Migrate Prices (if ID changed) or Update Prices (if ID unchanged)
+        # 5. Update duplicate-detection matcher cache
+        self._update_matcher_cache(product_id, final_product_data, id_changed)
+        
+        # 6. Migrate Prices (if ID changed) or Update Prices (if ID unchanged)
         if id_changed:
             self._migrate_prices(product_id, new_product_id, final_product_data)
         else:
@@ -165,6 +168,9 @@ class ProductService:
         
         # Delete the product document
         self.repository.delete(product_id)
+        
+        # Remove from matcher cache so deleted products don't appear as duplicates
+        self._remove_from_matcher_cache(product_id)
         
         self._invalidate_cache()
 
@@ -212,6 +218,21 @@ class ProductService:
 
         # Invalidate cache
         self._invalidate_cache()
+        
+        # Clear the entire matcher cache since all products are deleted
+        try:
+            matcher = self._get_matcher()
+            if matcher:
+                matcher.product_cache.clear()
+                matcher.normalized_names.clear()
+                matcher.brand_groups.clear()
+                matcher.exact_name_brand_index.clear()
+                matcher.exact_name_brand_size_index.clear()
+                matcher.brand_name_index.clear()
+                matcher.save_cache()
+                logger.info("Matcher cache cleared after delete-all")
+        except Exception as e:
+            logger.warning("Failed to clear matcher cache", extra={"error": str(e)})
             
         return {
             'success': True,
@@ -227,6 +248,47 @@ class ProductService:
         """Invalidate product caches."""
         self.repository.invalidate_product_stats()
         self.repository.invalidate_product_lists()
+
+    def _get_matcher(self):
+        """Get the IntelligentProductMatcher singleton."""
+        try:
+            import os as _os
+            from backend.features.products.service.matcher.core import IntelligentProductMatcher
+            cache_file = _os.path.join(
+                _os.path.dirname(_os.path.abspath(__file__)),
+                '..', '..', 'cache', 'product_cache.pkl'
+            )
+            return IntelligentProductMatcher(cache_file=cache_file, similarity_threshold=0.75)
+        except Exception:
+            return None
+
+    def _update_matcher_cache(self, old_product_id: str, product_data: Dict, id_changed: bool):
+        """Sync the duplicate-detection matcher cache after a product edit."""
+        try:
+            matcher = self._get_matcher()
+            if not matcher:
+                return
+            if id_changed:
+                matcher.remove_product_from_cache(old_product_id)
+            new_id = product_data.get('id', old_product_id)
+            matcher.add_product_to_cache(new_id, product_data)
+            matcher.save_cache()
+            logger.debug("Matcher cache updated after product edit",
+                         extra={"product_id": new_id, "id_changed": id_changed})
+        except Exception as e:
+            logger.warning("Failed to update matcher cache", extra={"error": str(e)})
+
+    def _remove_from_matcher_cache(self, product_id: str):
+        """Remove a product from the matcher cache after deletion."""
+        try:
+            matcher = self._get_matcher()
+            if not matcher:
+                return
+            if matcher.remove_product_from_cache(product_id):
+                matcher.save_cache()
+                logger.debug("Product removed from matcher cache", extra={"product_id": product_id})
+        except Exception as e:
+            logger.warning("Failed to remove from matcher cache", extra={"error": str(e)})
 
     def _migrate_product(self, old_id: str, new_id: str, current_data: Dict, update_data: Dict):
         """Handle migration from old product ID to new product ID."""

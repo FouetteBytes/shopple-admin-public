@@ -10,9 +10,9 @@ from services.system.logger_service import get_logger
 
 logger = get_logger(__name__)
 
-# Endpoints that do not require authentication.
-# These are typically health checks, status endpoints, or read-only data.
-# The frontend session/login is handled separately by Next.js.
+# Endpoints that don't require authentication
+# These are typically health checks, status endpoints, or read-only data
+# Note: The frontend session/login is handled separately by Next.js
 PUBLIC_ENDPOINTS = [
     '/api/health',
     '/health',
@@ -31,8 +31,8 @@ PUBLIC_ENDPOINTS = [
     '/api/frontend/log',  # Frontend log ingestion (client-side error/console logs)
 ]
 
-# Prefix patterns for public read-only endpoints (GET only).
-# These match any path starting with the prefix.
+# Prefix patterns for public read-only endpoints (GET only)
+# These match any path starting with the prefix
 PUBLIC_PREFIXES = [
     '/api/prices/',  # Price data (read-only, used by dashboards)
     '/api/products/search',  # Product search (read-only)
@@ -50,26 +50,27 @@ PUBLIC_PREFIXES = [
     '/api/audit/storage',  # OpenSearch audit storage stats (read-only)
 ]
 
-# Streaming endpoints that need special handling.
-# These endpoints check auth but handle it differently due to SSE.
+# Streaming endpoints that need special handling
+# These endpoints check auth but handle it differently due to SSE
 STREAMING_ENDPOINTS = [
     '/api/crawler/progress/',  # Matches /api/crawler/progress/<id>
     '/api/crawler/progress-all',
     '/classify',  # Classifier streaming endpoint
     '/api/products/preview-stream',  # Product preview streaming
+    '/api/products/matcher-cache-refresh',  # Matcher cache admin endpoint
 ]
 
-# Session cookie name (must match frontend's session-manager.ts).
+# Session cookie name (must match frontend's session-manager.ts)
 SESSION_COOKIE_NAME = 'admin-session'
 
 
 def is_public_endpoint(path: str, method: str = 'GET') -> bool:
-    """Check whether the endpoint is public (no auth required)."""
-    # Check exact matches (always public regardless of method).
+    """Check if endpoint is public (no auth required)"""
+    # Check exact matches (always public regardless of method)
     if path in PUBLIC_ENDPOINTS:
         return True
     
-    # Prefix matches are only public for GET requests (read-only).
+    # Prefix matches are only public for GET requests (read-only)
     if method == 'GET':
         for prefix in PUBLIC_PREFIXES:
             if path.startswith(prefix):

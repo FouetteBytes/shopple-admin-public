@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Clean file storage manager for Firebase Storage.
-
-Handles automatic upload, local/cloud file management, and storage operations.
+"""
+Clean File Storage Manager for Firebase Storage
+Handles automatic upload, local/cloud file management, and storage operations
 """
 import os
 import sys
@@ -14,14 +14,14 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 import traceback
 
-# Add the backend path for logger_service.
+# Add backend to path for logger_service
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger, log_error
 from cache.sqlite_store import CrawlerCacheStore
 
 logger = get_logger(__name__)
 
-# Add the current directory to the path.
+# Add the current directory to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 try:
@@ -32,22 +32,24 @@ except ImportError:
     logger.warning("Firebase not available")
 
 class CleanFileStorageManager:
-    """Clean file storage manager with automatic upload and flexible storage options."""
+    """
+    Clean file storage manager with automatic upload and flexible storage options
+    """
     
     def __init__(self):
         self.storage_manager = None
         self.config = self.load_config()
         
-        # Define local storage paths first.
+        # Define local storage paths FIRST
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.output_path = os.path.join(self.base_path, 'output')
         self.cache_path = os.path.join(self.base_path, 'cache')
         self.cache_store = CrawlerCacheStore(self.cache_path)
         
-        # Initialize Firebase if available.
+        # Initialize Firebase if available
         if FIREBASE_AVAILABLE:
             try:
-                # Check whether Firebase credentials are configured in the environment.
+                # Check if Firebase credentials are configured in environment
                 firebase_project_id = os.getenv('FIREBASE_PROJECT_ID')
                 firebase_client_email = os.getenv('FIREBASE_CLIENT_EMAIL')
                 firebase_private_key = os.getenv('FIREBASE_PRIVATE_KEY')
@@ -61,10 +63,10 @@ class CleanFileStorageManager:
             except Exception as e:
                 logger.warning(f"Firebase Storage Manager initialization failed: {e}")
                 logger.info("Storage Manager will work in local-only mode")
-                # Do not print the full traceback to avoid cluttering logs.
+                # Don't print full traceback to avoid cluttering logs
                 # traceback.print_exc()
         
-        # Ensure directories exist.
+        # Ensure directories exist
         os.makedirs(self.output_path, exist_ok=True)
         os.makedirs(self.cache_path, exist_ok=True)
         self._cache_lock = threading.Lock()
@@ -113,10 +115,10 @@ class CleanFileStorageManager:
             self._set_upload_status(store, category, filename, 'cloud_only')
     
     def load_config(self) -> Dict[str, Any]:
-        """Load storage configuration."""
+        """Load storage configuration"""
         config_path = os.path.join(os.path.dirname(__file__), 'storage_config.json')
         default_config = {
-            'storage_mode': 'firebase',  # 'local', 'firebase', 'both' - default to cloud-only.
+            'storage_mode': 'firebase',  # 'local', 'firebase', 'both' - Default to cloud-only
             'auto_upload': True,
             'keep_local_days': 7,
             'max_local_files': 50,
@@ -134,7 +136,7 @@ class CleanFileStorageManager:
         return default_config
     
     def save_config(self, config: Dict[str, Any]) -> Dict[str, Any]:
-        """Save storage configuration."""
+        """Save storage configuration"""
         try:
             config_path = os.path.join(os.path.dirname(__file__), 'storage_config.json')
             with open(config_path, 'w') as f:
@@ -145,7 +147,7 @@ class CleanFileStorageManager:
             return {"error": f"Failed to save config: {str(e)}", "success": False}
     
     def auto_upload_new_files(self, store: str, category: str = None) -> Dict[str, Any]:
-        """Automatically upload new files to Firebase after crawler output."""
+        """Automatically upload new files to Firebase after crawler generates them"""
         if not self.storage_manager or not self.config.get('auto_upload', True):
             return {"success": False, "message": "Auto upload disabled or Firebase not available"}
         
@@ -156,7 +158,7 @@ class CleanFileStorageManager:
             if not os.path.exists(store_path):
                 return {"success": True, "uploaded_files": [], "message": "No files to upload"}
             
-            # If a category is specified, check that folder.
+            # If category specified, check specific category folder
             if category:
                 category_path = os.path.join(store_path, category)
                 if os.path.exists(category_path):
@@ -164,14 +166,14 @@ class CleanFileStorageManager:
                 else:
                     files_to_upload = []
             else:
-                # Check all categories in the store.
+                # Check all categories in the store
                 files_to_upload = []
                 for item in os.listdir(store_path):
                     item_path = os.path.join(store_path, item)
                     if os.path.isdir(item_path):
                         files_to_upload.extend(self._get_files_to_upload(item_path, store, item))
                     elif item.endswith('.json'):
-                        # Direct files in the store folder.
+                        # Direct files in store folder
                         files_to_upload.append({
                             'local_path': item_path,
                             'store': store,
@@ -179,21 +181,21 @@ class CleanFileStorageManager:
                             'filename': item
                         })
             
-            # Upload each file.
+            # Upload each file
             for file_info in files_to_upload:
                 try:
                     filename = file_info['filename']
                     file_store = file_info['store']
                     file_category = file_info['category']
                     
-                    # Set upload status.
+                    # Set uploading status
                     self._set_upload_status(file_store, file_category, filename, 'uploading')
                     
-                    # Read file content.
+                    # Read file content
                     with open(file_info['local_path'], 'r', encoding='utf-8') as f:
                         content = f.read()
                     
-                    # Upload to Firebase using file content.
+                    # Upload to Firebase using content
                     upload_result = self.storage_manager.upload_content(
                         content, 
                         file_store, 
@@ -212,10 +214,10 @@ class CleanFileStorageManager:
                         
                         logger.info(f"[SUCCESS] Uploaded: {filename} to {upload_result.get('cloud_path')}")
                         
-                        # Update status based on storage mode.
+                        # Update status based on storage mode
                         self._set_upload_status(file_store, file_category, filename, 'completed')
                         if self.config.get('storage_mode') == 'firebase':
-                            # Remove the local file after the configured grace period.
+                            # Remove local file after the configured grace period
                             self._schedule_local_cleanup(file_store, file_category, filename, file_info['local_path'])
                         else:
                             # Keep both local and cloud copies
@@ -598,7 +600,7 @@ class CleanFileStorageManager:
         """
         import time
         
-        logger.info(f" Starting file watcher for auto-upload (checking every {interval}s)")
+        logger.info(f"🔍 Starting file watcher for auto-upload (checking every {interval}s)")
         logger.info("File watcher filters", extra={
             "store": store or "all stores",
             "category": category or "all categories",
@@ -664,7 +666,7 @@ class CleanFileStorageManager:
                 category = path_parts[1]
                 filename = path_parts[2]
                 
-                logger.info(f" Triggering auto-upload for: {store}/{category}/{filename}")
+                logger.info(f"🚀 Triggering auto-upload for: {store}/{category}/{filename}")
                 
                 # Check if file is not already uploading/uploaded
                 upload_status = self._get_upload_status(store, category, filename)
@@ -1374,7 +1376,7 @@ class CleanFileStorageManager:
     def clear_all_files(self) -> Dict[str, Any]:
         """Clear all files from both local and cloud storage"""
         try:
-            # Clear local files.
+            # Clear local files
             if os.path.exists(self.output_path):
                 shutil.rmtree(self.output_path)
                 os.makedirs(self.output_path, exist_ok=True)
@@ -1484,16 +1486,16 @@ class CleanFileStorageManager:
             try:
                 json_content = json.loads(content_result['content'])
                 
-                # Handle different JSON structures to extract items.
+                # Handle different JSON structures to extract items
                 items = []
                 if isinstance(json_content, list):
-                    # If it is a list of items.
+                    # If it's a list of items
                     items = json_content
                 elif isinstance(json_content, dict) and 'items' in json_content:
-                    # If it is an object with an items property.
+                    # If it's an object with items property
                     items = json_content['items']
                 elif isinstance(json_content, dict):
-                    # If it is a single object, wrap it in a list.
+                    # If it's a single object, wrap in list
                     items = [json_content]
                 
                 return {
@@ -1518,12 +1520,13 @@ class CleanFileStorageManager:
                 "error": f"Error parsing file as JSON: {str(e)}"
             }
 
+    # ...existing code...
     
-# Create an alias for the class name used in the test.
+# Create an alias for the class name used in the test
 CleanFileManager = CleanFileStorageManager
 
 def main():
-    """Main function for command line usage."""
+    """Main function for command line usage"""
     import sys
     
     if len(sys.argv) < 2:
@@ -1600,13 +1603,13 @@ def main():
                 os.makedirs(f'{manager.output_path}/cargills/fruits', exist_ok=True)
                 os.makedirs(f'{manager.output_path}/cargills/vegetables', exist_ok=True)
             
-            # Clear Firebase storage.
+            # Clear Firebase storage
             if manager.storage_manager:
                 cloud_files = manager.storage_manager.list_files()
                 for file_info in cloud_files:
                     manager.storage_manager.delete_file(file_info['path'])
             
-            # Clear upload status cache.
+            # Clear upload status cache
             manager.cache_store.clear_all_upload_status()
             
             result = {"success": True, "message": "All files cleared"}
@@ -1634,5 +1637,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Create an alias for backward compatibility.
+# Create alias for backward compatibility
 CleanFileManager = CleanFileStorageManager

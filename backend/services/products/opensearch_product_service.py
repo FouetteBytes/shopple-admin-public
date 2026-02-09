@@ -172,7 +172,6 @@ class OpenSearchProductService:
                 'sizeRaw': product.get('sizeRaw', ''),
                 'sizeUnit': product.get('sizeUnit', ''),
                 'image_url': product.get('image_url', ''),
-                'is_active': product.get('is_active', True),  # Default to True if not specified.
                 'created_at': product.get('created_at'),
                 'updated_at': product.get('updated_at') or datetime.now(timezone.utc).isoformat(),
                 'search_text': self._build_search_text(product)
@@ -182,7 +181,7 @@ class OpenSearchProductService:
                 index=self.index_name,
                 id=product.get('id'),
                 body=doc,
-                refresh=False  # Do not wait for refresh for bulk operations.
+                refresh=False  # Don't wait for refresh for bulk operations
             )
             return True
         except Exception as e:
@@ -207,7 +206,6 @@ class OpenSearchProductService:
                 'sizeRaw': product.get('sizeRaw', ''),
                 'sizeUnit': product.get('sizeUnit', ''),
                 'image_url': product.get('image_url', ''),
-                'is_active': product.get('is_active', True),  # Default to True if not specified.
                 'created_at': product.get('created_at'),
                 'updated_at': product.get('updated_at') or datetime.now(timezone.utc).isoformat(),
                 'search_text': self._build_search_text(product)

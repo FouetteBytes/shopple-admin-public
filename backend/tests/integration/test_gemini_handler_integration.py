@@ -63,7 +63,7 @@ def test_gemini_real_classification(handler, allowed_models):
         pytest.skip("No allowed Gemini models configured")
     
     for test_model in allowed_models:
-        print(f"\n Testing Gemini model: {test_model}")
+        print(f"\n🧪 Testing Gemini model: {test_model}")
         
         # Start timing
         start_time = time.time_ns()
@@ -155,7 +155,7 @@ def test_gemini_conversation_memory(handler, allowed_models):
     assert response1 is not None, "First response should succeed"
     assert response2 is not None, "Second response should succeed with memory"
     
-    print(f"\n Memory Test:")
+    print(f"\n🧠 Memory Test:")
     print(f"   First response length: {len(response1)}")
     print(f"   Second response length: {len(response2)}")
 

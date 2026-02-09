@@ -118,7 +118,7 @@ class ClassifierService(BaseService):
 
                 for i, product in enumerate(products):
                     if is_cancelled():
-                        yield f"data: {json.dumps({'type': 'stopped', 'message': 'Classification stopped by user', 'current': i, 'total': total_products, 'results_so_far': results})}\n\n"
+                        yield f"data: {json.dumps({'type': 'stopped', 'message': '🛑 Classification stopped by user', 'current': i, 'total': total_products, 'results_so_far': results})}\n\n"
                         break
                     
                     product_name = product.get('product_name', product.get('name', 'Unknown'))
@@ -133,7 +133,7 @@ class ClassifierService(BaseService):
                     def progress_callback(message, current_model): pass
 
                     if is_cancelled():
-                        yield f"data: {json.dumps({'type': 'stopped', 'message': 'Classification stopped by user', 'current': i, 'total': total_products, 'results_so_far': results})}\n\n"
+                        yield f"data: {json.dumps({'type': 'stopped', 'message': '🛑 Classification stopped by user', 'current': i, 'total': total_products, 'results_so_far': results})}\n\n"
                         break
 
                     try:
@@ -156,7 +156,7 @@ class ClassifierService(BaseService):
                             cache_info = result.get('cache_info', {})
                             response_data = {
                                 'type': 'cache_hit',
-                                'message': f"Cache hit ({cache_info.get('match_type', 'exact')} match, {cache_info.get('confidence', 1.0):.1%} confidence)",
+                                'message': f"💾 Cache HIT! ({cache_info.get('match_type', 'exact')} match, {cache_info.get('confidence', 1.0):.1%} confidence)",
                                 'model_used': 'CACHE',
                                 'processing_time': f"{classification_time:.3f}s",
                                 'cache_info': cache_info
@@ -172,7 +172,7 @@ class ClassifierService(BaseService):
                             
                             response_data = {
                                 'type': 'model_success', 
-                                'message': f"{model_used} model successful.", 
+                                'message': f"✅ {model_used} model successful!", 
                                 'model_used': model_used, 
                                 'processing_time': f"{classification_time:.1f}s", 
                                 'selected_model': result.get('selected_model')
@@ -198,14 +198,14 @@ class ClassifierService(BaseService):
 
                     except Exception as e:
                         if is_cancelled():
-                                yield f"data: {json.dumps({'type': 'stopped', 'message': 'Classification stopped by user', 'current': i, 'total': total_products, 'results_so_far': results})}\n\n"
+                             yield f"data: {json.dumps({'type': 'stopped', 'message': '🛑 Classification stopped by user', 'current': i, 'total': total_products, 'results_so_far': results})}\n\n"
                              break
                         result = {
                             'product_type': 'AI_FAILED', 'brand_name': None, 'product_name': product_name, 'size': None, 'variety': None,
                             'price': product.get('price', ''), 'image_url': product.get('image_url', ''), 'original_name': product_name,
                             'error': str(e), 'status': 'error', 'model_used': 'FAILED'
                         }
-                        yield f"data: {json.dumps({'type': 'classification_error', 'message': f'Classification failed: {str(e)}'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'classification_error', 'message': f'❌ Classification failed: {str(e)}'})}\n\n"
                     
                     results.append(result)
                     
@@ -220,7 +220,7 @@ class ClassifierService(BaseService):
                     
                     # Optimization Pause
                     if i < total_products - 1:
-                        yield f"data: {json.dumps({'type': 'optimization_pause', 'message': 'Brief pause for CPU optimization.'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'optimization_pause', 'message': '⏳ Quick pause for CPU optimization...'})}\n\n"
                         remaining = 2.0
                         step = 0.1
                         while remaining > 0:
@@ -228,16 +228,16 @@ class ClassifierService(BaseService):
                             time.sleep(step)
                             remaining -= step
                         if is_cancelled():
-                                yield f"data: {json.dumps({'type': 'stopped', 'message': 'Classification stopped by user', 'current': i + 1, 'total': total_products, 'results_so_far': results})}\n\n"
+                             yield f"data: {json.dumps({'type': 'stopped', 'message': '🛑 Classification stopped by user', 'current': i + 1, 'total': total_products, 'results_so_far': results})}\n\n"
                              break
 
                 # Completion
                 total_time = time.time() - start_time
                 if is_cancelled():
-                     msg = 'Classification stopped. Partial results returned.'
+                     msg = '🛑 Classification stopped. Partial results returned.'
                      event_type = 'session_cancelled'
                 else:
-                     msg = f'Smart AI classification complete. {stats["cache_hits"]} cache hits recorded.'
+                     msg = f'🎉 Smart AI Classification Complete! 💾 {stats["cache_hits"]} cache hits for lightning speed!'
                      event_type = 'session_completed'
 
                 summary_data = {

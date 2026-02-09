@@ -304,7 +304,7 @@ class ProductRepository(BaseRepository[Dict[str, Any]]):
                 except Exception as exc:
                     logger.warning(f"[Search] Intelligent matcher search failed: {exc} - falling back to simple search")
             
-            # Last-resort fallback: cached products with basic string matching.
+            # Last resort fallback: cached products with simple string matching
             if not products:
                 logger.info(f"[Search] Using simple string matching fallback for query: '{search[:50]}'")
                 fallback_cache_key = cache_keys.product_list_key(1, 500, '', category, brand)
@@ -323,7 +323,7 @@ class ProductRepository(BaseRepository[Dict[str, Any]]):
                         product_data['id'] = doc.id
                         all_products.append(product_data)
 
-                # Basic string matching.
+                # Simple string matching
                 search_lower = search.lower()
                 matches = [
                     p for p in all_products

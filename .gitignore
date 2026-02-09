@@ -1,6 +1,5 @@
-.github
-.pytest_cache/
-.vscode
+models/
+models
 
 .env
 .env/
@@ -23,12 +22,6 @@ __pycache__/
 *.so
 .Python
 
-# Documentation (internal only)
-doc/
-docs/
-**/docs/
-**/docs/
-
 # Log files
 logs/
 *.log
@@ -36,15 +29,6 @@ logs/
 backend/logs/
 **/*.log
 **/*.log.*
-
-# Build artifacts and caches
-.next/
-frontend/.next/
-frontend.log
-cache/
-crawler/output/
-backend/test_output/
-crawler/tests/test_output/
 
 
 keys.json.enc
@@ -54,3 +38,14 @@ backend/data/keys.json.enc
 # macOS system files
 .DS_Store
 **/.DS_Store
+
+
+.doc
+doc/
+doc
+
+frontend.log
+.next
+.pytest_cache
+.github
+.vscode

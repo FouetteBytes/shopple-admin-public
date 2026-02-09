@@ -1,14 +1,34 @@
 # ===========================================================================
-# Ingress - Single entry point for external traffic
+# INGRESS - Single Entry Point for All External Traffic
 # ===========================================================================
 #
-# Purpose
-# -------
-# Use a single Ingress controller to route traffic by URL path or hostname
-# instead of provisioning a LoadBalancer per service.
-
-# Local development
-# -----------------
+# WHY INGRESS?
+# ------------
+# Instead of a LoadBalancer per service, a single Ingress Controller routes
+# traffic to services based on URL path or hostname.
+#
+# ARCHITECTURE:
+# -------------
+#
+#   Internet
+#       │
+#       ▼
+#   ┌─────────────────────────────────────────────────────────────────────┐
+#   │                    INGRESS CONTROLLER                               │
+#   │                  (single LoadBalancer)                              │
+#   │                                                                     │
+#   │   /           → Frontend (port 3000)                               │
+#   │   /api/*      → Backend  (port 5001)                               │
+#   │   /dashboards → OpenSearch Dashboards (port 5601)                  │
+#   │                                                                     │
+#   └─────────────────────────────────────────────────────────────────────┘
+#       │               │               │
+#       ▼               ▼               ▼
+#   [Frontend]      [Backend]      [Dashboards]
+#   ClusterIP       ClusterIP       ClusterIP
+#
+# LOCAL DEVELOPMENT:
+# ------------------
 # 1. Install NGINX Ingress Controller:
 #    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
 #
@@ -17,10 +37,10 @@
 #
 # 3. Access via: http://localhost (Ingress Controller binds to port 80/443)
 #
-# Cloud deployment
-# ----------------
-# The Ingress controller automatically provisions a cloud LoadBalancer.
-# Update the host field below with the desired domain (e.g., app.example.com).
+# CLOUD DEPLOYMENT:
+# -----------------
+# The Ingress Controller automatically provisions a cloud LoadBalancer.
+# Update the 'host' field below with the desired domain (e.g., app.example.com)
 #
 # ===========================================================================
 
@@ -29,25 +49,25 @@ kind: Ingress
 metadata:
   name: shopple-ingress
   annotations:
-    # NGINX Ingress controller annotations.
+    # NGINX Ingress Controller annotations
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
-    # WebSocket support for SSE (Server-Sent Events).
+    # WebSocket support for SSE (Server-Sent Events)
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
-    # Rewrite /api/* to /* when forwarding to the backend.
+    # Rewrite /api/* to /* when forwarding to backend
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
   rules:
   # ---------------------------------------------------------------------------
-  # Local development (no hostname; matches any).
-  # For cloud deployments, set the host to the target domain (e.g., app.example.com).
+  # LOCAL DEVELOPMENT (no hostname - matches any)
+  # For cloud deployments, set the host to the target domain (e.g., app.example.com)
   # ---------------------------------------------------------------------------
   - http:
       paths:
-      # Frontend auth routes → frontend (Next.js API routes).
-      # Must come before /api to take precedence.
+      # Frontend auth routes → Frontend (Next.js API routes)
+      # MUST come before /api to take precedence
       - path: /api/auth
         pathType: Prefix
         backend:
@@ -56,8 +76,8 @@ spec:
             port:
               number: 3000
       
-      # Frontend admin session management routes → frontend (Next.js API routes).
-      # Be specific to avoid catching backend /api/admin/users/online routes.
+      # Frontend admin session management routes → Frontend (Next.js API routes)
+      # Be specific to avoid catching backend /api/admin/users/online etc
       - path: /api/admin/change-password
         pathType: Prefix
         backend:
@@ -106,8 +126,8 @@ spec:
             port:
               number: 3000
       
-      # Backend API routes → backend (Flask).
-      # This catches all /api/*, including /api/admin/users/*.
+      # Backend API routes → Backend (Flask)
+      # This catches all /api/* including /api/admin/users/*
       - path: /api
         pathType: Prefix
         backend:
@@ -116,7 +136,7 @@ spec:
             port:
               number: 5001
       
-      # Health check endpoint.
+      # Health check endpoint
       - path: /health
         pathType: Prefix
         backend:
@@ -125,7 +145,7 @@ spec:
             port:
               number: 5001
       
-      # OpenSearch Dashboards.
+      # OpenSearch Dashboards
       - path: /dashboards
         pathType: Prefix
         backend:
@@ -134,7 +154,7 @@ spec:
             port:
               number: 5601
       
-      # Catch-all route → frontend (must be last).
+      # Everything else → Frontend (must be last - catch-all)
       - path: /
         pathType: Prefix
         backend:
@@ -145,9 +165,9 @@ spec:
 
 ---
 # ===========================================================================
-# Alternative: host-based routing for cloud with custom domains
+# ALTERNATIVE: Host-based routing for cloud with custom domains
 # ===========================================================================
-# Uncomment and configure when using separate domains per service.
+# Uncomment and configure if you have separate domains for each service
 #
 # apiVersion: networking.k8s.io/v1
 # kind: Ingress
@@ -155,7 +175,7 @@ spec:
 #   name: shopple-ingress-cloud
 #   annotations:
 #     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-#     cert-manager.io/cluster-issuer: "letsencrypt-prod"  # For HTTPS.
+#     cert-manager.io/cluster-issuer: "letsencrypt-prod"  # For HTTPS
 # spec:
 #   ingressClassName: nginx
 #   tls:

@@ -181,7 +181,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
               <Chart size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white"> Smart Market Intelligence</h3>
+              <h3 className="text-xl font-bold text-white">🎯 Smart Market Intelligence</h3>
               <p className="text-blue-100 text-sm">Complete price analysis with actionable insights</p>
             </div>
           </div>
@@ -217,7 +217,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
                 <Star1 size={20} className="text-white" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-green-900"> Market Leader</h4>
+                <h4 className="text-lg font-bold text-green-900">🏆 Market Leader</h4>
                 <p className="text-green-700 text-sm">{marketLeadership.reason}</p>
               </div>
             </div>
@@ -328,7 +328,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
                   {/* Monthly Tracking */}
                   <div className="text-center pt-2 border-t border-gray-100">
                     <p className="text-xs text-gray-500">
-                       {stats.monthsTracked} months tracked • {stats.trend} trend
+                      📊 {stats.monthsTracked} months tracked • {stats.trend} trend
                     </p>
                   </div>
                 </div>
@@ -345,7 +345,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
                 <Warning2 size={20} className="text-white" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-orange-900"> Smart Price Alerts</h4>
+                <h4 className="text-lg font-bold text-orange-900">🚨 Smart Price Alerts</h4>
                 <p className="text-orange-700 text-sm">Unusual price movements that need your attention</p>
               </div>
             </div>
@@ -361,7 +361,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
                         <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                           anomaly.type === 'spike' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
                         }`}>
-                          {anomaly.type === 'spike' ? ' Price Spike' : ' Price Drop'}
+                          {anomaly.type === 'spike' ? '📈 Price Spike' : '📉 Price Drop'}
                         </span>
                       </div>
                       <p className="text-sm text-gray-600">
@@ -369,7 +369,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
                         {anomaly.type === 'spike' ? ' (unusually high)' : ' (unusually low)'}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                         {anomaly.type === 'spike' 
+                        💡 {anomaly.type === 'spike' 
                           ? 'Consider waiting for price to normalize or check other stores' 
                           : 'Great opportunity! Consider stocking up if this is a regular purchase'
                         }
@@ -403,7 +403,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
               <TrendUp size={20} className="text-white" />
             </div>
             <div>
-              <h4 className="text-lg font-bold text-purple-900"> Market Trend Analysis</h4>
+              <h4 className="text-lg font-bold text-purple-900">📊 Market Trend Analysis</h4>
               <p className="text-purple-700 text-sm">Overall market patterns and shopping recommendations</p>
             </div>
           </div>
@@ -411,7 +411,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
           <div className="bg-white rounded-lg p-4 border border-purple-200">
             <div className="grid md:grid-cols-3 gap-4">
               <div className="text-center">
-                <div className="text-2xl mb-2"></div>
+                <div className="text-2xl mb-2">🎯</div>
                 <h5 className="font-medium text-gray-900 mb-1">Best Value</h5>
                 <p className="text-sm text-gray-600 capitalize">{marketLeadership.winner || 'Calculating...'}</p>
                 <p className="text-xs text-green-600 font-medium">Lowest average prices</p>
@@ -427,7 +427,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
                 <p className="text-xs text-orange-600 font-medium">Highest price fluctuation</p>
               </div>
               <div className="text-center">
-                <div className="text-2xl mb-2"></div>
+                <div className="text-2xl mb-2">📈</div>
                 <h5 className="font-medium text-gray-900 mb-1">Market Trend</h5>
                 <p className="text-sm text-gray-600">
                   {Object.values(comprehensiveStats).some((stats: any) => stats.trend === 'upward') 
@@ -440,7 +440,7 @@ const MarketInsightsPanel: React.FC<MarketInsightsPanelProps> = ({
           
           <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-sm text-blue-800">
-              <strong> Smart Shopping Tip:</strong> Based on the data, shop at <strong className="capitalize">{marketLeadership.winner}</strong> for the best value. 
+              <strong>💡 Smart Shopping Tip:</strong> Based on the data, shop at <strong className="capitalize">{marketLeadership.winner}</strong> for the best value. 
               Watch for price drops around {Object.values(bestBuyAnalysis).some((analysis: any) => analysis.bestDay !== 'N/A') ? 'month-end periods' : 'weekends'} for maximum savings.
             </p>
           </div>

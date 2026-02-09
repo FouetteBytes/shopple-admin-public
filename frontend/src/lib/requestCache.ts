@@ -1,9 +1,14 @@
 /**
- * Request cache and deduplication layer.
- *
+ * Request Cache & Deduplication Layer
+ * 
  * Prevents duplicate in-flight requests and provides short-term caching
  * to reduce unnecessary API calls when multiple components need the same data.
- *
+ * 
+ * Features:
+ * - Deduplicates concurrent requests
+ * - Short-lived cache (5 seconds default)
+ * - Automatic cleanup
+ * - Type-safe
  */
 
 interface CacheEntry<T> {
@@ -17,8 +22,8 @@ class RequestCache {
   private readonly DEFAULT_TTL = 5000; // 5 seconds
 
   /**
-  * Fetch data with deduplication and caching.
-  *
+   * Fetch data with deduplication and caching
+   * 
    * @param key - Unique identifier for this request
    * @param fetcher - Function that returns a Promise with the data
    * @param ttl - Time to live in milliseconds (default: 5000ms)
@@ -29,20 +34,20 @@ class RequestCache {
     fetcher: () => Promise<T>,
     ttl: number = this.DEFAULT_TTL
   ): Promise<T> {
-    // Check the cache first.
+    // Check cache first
     const cached = this.cache.get(key);
     if (cached && Date.now() - cached.timestamp < ttl) {
       console.log(`[REQUEST CACHE] ✓ Cache hit for "${key}"`);
       return cached.data as T;
     }
 
-    // Check whether the request is already in flight.
+    // Check if request is already in flight
     if (this.inFlightRequests.has(key)) {
       console.log(`[REQUEST CACHE] ⚡ Deduplicating request for "${key}"`);
       return this.inFlightRequests.get(key) as Promise<T>;
     }
 
-    // Execute a new request.
+    // Make new request
     console.log(`[REQUEST CACHE] ↻ Fetching fresh data for "${key}"`);
     const promise = fetcher();
     this.inFlightRequests.set(key, promise);
@@ -50,42 +55,42 @@ class RequestCache {
     try {
       const data = await promise;
       
-      // Cache the result.
+      // Cache the result
       this.cache.set(key, {
         data,
         timestamp: Date.now()
       });
 
-      // Clean up in-flight tracking.
+      // Clean up in-flight tracking
       this.inFlightRequests.delete(key);
       
       return data;
     } catch (error) {
-      // Clean up on error.
+      // Clean up on error
       this.inFlightRequests.delete(key);
       throw error;
     }
   }
 
   /**
-  * Clear a specific cache entry.
+   * Clear a specific cache entry
    */
   invalidate(key: string): void {
     this.cache.delete(key);
-    console.log(`[REQUEST CACHE] ️  Invalidated cache for "${key}"`);
+    console.log(`[REQUEST CACHE] 🗑️  Invalidated cache for "${key}"`);
   }
 
   /**
-  * Clear all cached data.
+   * Clear all cached data
    */
   clear(): void {
     this.cache.clear();
     this.inFlightRequests.clear();
-    console.log('[REQUEST CACHE] ️  Cleared all cache entries');
+    console.log('[REQUEST CACHE] 🗑️  Cleared all cache entries');
   }
 
   /**
-  * Get current cache statistics.
+   * Get current cache statistics
    */
   getStats() {
     return {
@@ -95,7 +100,7 @@ class RequestCache {
   }
 
   /**
-  * Clean up expired cache entries.
+   * Clean up expired cache entries
    */
   cleanup(): void {
     const now = Date.now();
@@ -109,22 +114,22 @@ class RequestCache {
     });
 
     if (cleaned > 0) {
-      console.log(`[REQUEST CACHE]  Cleaned up ${cleaned} expired entries`);
+      console.log(`[REQUEST CACHE] 🧹 Cleaned up ${cleaned} expired entries`);
     }
   }
 }
 
-// Export the singleton instance.
+// Export singleton instance
 export const requestCache = new RequestCache();
 
-// Set up periodic cleanup every 30 seconds.
+// Set up periodic cleanup (every 30 seconds)
 if (typeof window !== 'undefined') {
   setInterval(() => {
     requestCache.cleanup();
   }, 30000);
 }
 
-// Helper function for API requests.
+// Helper function for API requests
 export async function cachedFetch<T>(
   url: string,
   options?: RequestInit,

@@ -35,7 +35,7 @@ if (typeof window !== 'undefined') {
   };
 
   const blockAccess = () => {
-    console.log(' ACCESS BLOCKED - Redirecting to login');
+    console.log('🚫 ACCESS BLOCKED - Redirecting to login');
     
     // Clear everything
     sessionStorage.clear();

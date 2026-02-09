@@ -42,7 +42,7 @@ const EnhancedProcessingProgress = ({ className = '' }: ProcessingProgressProps)
   } = useCentralStore()
 
   // Debug: Log when component re-renders with new model stats
-  console.log(' EnhancedProcessingProgress render, model stats:', modelStats)
+  console.log('🔄 EnhancedProcessingProgress render, model stats:', modelStats)
 
   const logsContainerRef = useRef<HTMLDivElement>(null)
   const [liveStats, setLiveStats] = useState({
@@ -166,7 +166,7 @@ const EnhancedProcessingProgress = ({ className = '' }: ProcessingProgressProps)
 
       // Debug log model stats every 2 seconds (to avoid spam)
       if (elapsed % 2 === 0) {
-        console.log(' Current model stats in progress component:', modelStats)
+        console.log('🎯 Current model stats in progress component:', modelStats)
       }
 
       setLiveStats({
@@ -214,14 +214,14 @@ const EnhancedProcessingProgress = ({ className = '' }: ProcessingProgressProps)
       case 'success': return '✅'
       case 'error': return '❌'
       case 'warning': return '⚠️'
-      case 'model': return ''
-      case 'product': return ''
-      case 'ai': return ''
-      case 'think': return ''
-      case 'think-header': return ''
-      case 'response-header': return ''
-      case 'complete': return ''
-      case 'stats': return ''
+      case 'model': return '🤖'
+      case 'product': return '📦'
+      case 'ai': return '🧠'
+      case 'think': return '💭'
+      case 'think-header': return '💡'
+      case 'response-header': return '📋'
+      case 'complete': return '🎉'
+      case 'stats': return '📊'
       case 'info':
       default: return 'ℹ️'
     }

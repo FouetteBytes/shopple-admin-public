@@ -1,5 +1,5 @@
-// Firebase service for notes and related client-side operations.
-// Provides client-side Firestore integration.
+// Firebase service for Notes and other data operations
+// Real Firebase Firestore integration for client-side
 
 import { 
     collection, 
@@ -45,7 +45,7 @@ class FirebaseService {
         return FirebaseService.instance
     }
 
-    // Check Firebase availability and log a single warning if unavailable.
+    // Check if Firebase is available and show warning once if not
     private checkFirebaseAvailable(): boolean {
         if (!isFirebaseConfigured()) {
             if (!FirebaseService.configWarningShown) {
@@ -57,7 +57,7 @@ class FirebaseService {
         return true
     }
 
-    // Convert a Firestore timestamp to a Date.
+    // Convert Firestore timestamp to Date
     private timestampToDate(timestamp: any): Date {
         if (timestamp && timestamp.toDate) {
             return timestamp.toDate()
@@ -68,12 +68,12 @@ class FirebaseService {
         return new Date()
     }
 
-    // Get the notes collection reference for a user.
+    // Get notes collection reference for a user
     private getNotesCollection(userId: string = 'default') {
         return collection(db, 'users', userId, 'notes')
     }
 
-    // Fetch notes from Firestore.
+    // Fetch notes from Firebase Firestore
     async getNotes(userId: string = 'default'): Promise<Note[]> {
         if (!this.checkFirebaseAvailable()) {
             return []
@@ -155,14 +155,14 @@ class FirebaseService {
                 updatedAt: serverTimestamp()
             }
             
-            // Normalize the due date to a Firestore timestamp.
+            // Handle date conversion for dueDate
             if (updateData.dueDate) {
                 updateData.dueDate = Timestamp.fromDate(updateData.dueDate)
             }
             
-            // Remove the identifier to prevent update conflicts.
+            // Remove id field to prevent conflicts
             delete updateData.id
-            delete updateData.createdAt // Preserve the original creation timestamp.
+            delete updateData.createdAt // Don't update createdAt
             
             await updateDoc(noteRef, updateData)
             console.log(`[Firebase] Updated note ${noteId} for user ${userId}`)
@@ -191,10 +191,10 @@ class FirebaseService {
         }
     }
 
-    // Register a real-time listener for note updates.
+    // Real-time listener for notes updates
     onNotesChange(callback: (notes: Note[]) => void, userId: string = 'default'): () => void {
         if (!this.checkFirebaseAvailable()) {
-            // Return a no-op unsubscribe function.
+            // Return a no-op unsubscribe function
             return () => {}
         }
         
@@ -235,7 +235,7 @@ class FirebaseService {
         }
     }
 
-    // Analytics for Firebase operations.
+    // Analytics for Firebase operations
     getOperationsStats() {
         return {
             ...this.operationsCount,
@@ -243,7 +243,7 @@ class FirebaseService {
         }
     }
 
-    // Reset operation counters.
+    // Reset operation counters
     resetStats() {
         this.operationsCount = {
             reads: 0,
@@ -252,7 +252,7 @@ class FirebaseService {
         }
     }
 
-    // Create a new note with a consistent structure.
+    // Utility function to create a new note with proper structure
     createNote(
         title: string, 
         content: string, 
@@ -270,7 +270,7 @@ class FirebaseService {
         }
     }
 
-    // Bulk operations for improved performance.
+    // Bulk operations for better performance
     async bulkDeleteNotes(noteIds: string[], userId: string = 'default'): Promise<boolean> {
         try {
             const deletePromises = noteIds.map(id => this.deleteNote(id, userId))

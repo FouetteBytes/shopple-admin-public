@@ -1,10 +1,10 @@
 # ===========================================================================
-# RBAC - Role-Based Access Control for backend pod monitoring
+# RBAC - Role-Based Access Control for Backend Pod Monitoring
 # ===========================================================================
 #
-# This allows the backend service to query the Kubernetes API for:
-# - Listing pods (service status monitoring).
-# - Deleting pods (service restart by deleting the pod; the deployment recreates it).
+# This allows the backend service to query Kubernetes API for:
+# - Listing pods (service status monitoring)
+# - Deleting pods (service restart by deleting pod, deployment recreates it)
 #
 # ===========================================================================
 

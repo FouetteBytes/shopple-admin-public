@@ -34,7 +34,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PageHero } from '@/components/shared/PageHero';
 import { Skeleton, CardSkeleton } from '@/components/shared/Skeleton';
 
-// Dynamically import chart components without SSR.
+// Dynamically import chart components with no SSR
 const PriceHistoryChart = dynamic(
   () => import('@/components/pricing/PriceHistoryChart'),
   { ssr: false },
@@ -60,14 +60,14 @@ const DebugData = dynamic(
   { ssr: false },
 );
 
-// Define interfaces for price data.
+// Define interfaces for price data
 interface PriceStats {
   total_current_prices: number;
   total_history_documents: number;
   products_with_prices: number;
   supermarkets_with_data: number;
   active_supermarkets: string[];
-  // Enhanced overview data.
+  // Enhanced overview data
   supermarket_stats?: { [key: string]: number };
   category_stats?: { [key: string]: { count: number; products: string[] } };
   brand_stats?: { [key: string]: { count: number; products: string[] } };
@@ -148,15 +148,15 @@ type StatCard = {
   icon: React.ElementType;
 };
 
-// Price history component.
+// Price History Component
 const PriceHistoryView: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [historyData, setHistoryData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Use SWR to fetch available products.
-  // This provides caching, revalidation, and better performance.
+  // Use SWR for fetching available products
+  // This provides caching, revalidation, and better performance
   const fetcher = (url: string) => fetch(url).then(r => r.json());
   
   const { data: productsData, error: productsError, mutate: refreshProducts } = useSWR(
@@ -164,8 +164,8 @@ const PriceHistoryView: React.FC = () => {
     fetcher,
     {
       revalidateOnFocus: false,
-      dedupingInterval: 60000, // Cache for 1 minute.
-      keepPreviousData: true, // Keep showing old data while fetching new data.
+      dedupingInterval: 60000, // Cache for 1 minute
+      keepPreviousData: true, // Keep showing old data while fetching new data
     }
   );
 
@@ -182,8 +182,8 @@ const PriceHistoryView: React.FC = () => {
       const response = await fetch(`${API_BASE_URL}/api/prices/history/product/${productId}`);
       const data = await response.json();
       if (data.success) {
-        console.log(' Price history data received:', data);
-        console.log(' Price history structure:', data.price_history);
+        console.log('🔍 Price history data received:', data);
+        console.log('📊 Price history structure:', data.price_history);
         setHistoryData(data);
       } else {
         console.error('Failed to fetch price history:', data.error);
@@ -214,13 +214,13 @@ const PriceHistoryView: React.FC = () => {
         </p>
       </div>
 
-      {/* Product selection (light theme). */}
+      {/* Product Selection - Modernized (Light Theme) */}
       <div className='relative overflow-hidden rounded-[28px] border border-white/40 bg-white/85 p-6 shadow-[0_40px_80px_-40px_rgba(15,23,42,0.1)] backdrop-blur'>
-        {/* Background gradients. */}
+        {/* Background Gradients */}
         <div className='absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl opacity-50 pointer-events-none'></div>
         <div className='absolute bottom-0 left-0 -mb-10 -ml-10 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl opacity-50 pointer-events-none'></div>
 
-        {/* Header. */}
+        {/* Header */}
         <div className='relative z-10 flex items-center justify-between mb-8'>
           <div className='flex items-center gap-4'>
             <div className='h-12 w-12 bg-gradient-to-br from-primary to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/25'>
@@ -260,7 +260,7 @@ const PriceHistoryView: React.FC = () => {
           className="mb-6"
         />
 
-        {/* Quick filter chips. */}
+        {/* Quick Filter Chips */}
         <div className='relative z-10 flex flex-wrap gap-2 items-center mb-6'>
           <span className='text-sm text-gray-500 font-medium mr-2'>Quick filters:</span>
           {['beverages', 'dairy', 'snacks', 'household', 'fruits'].map((category) => (
@@ -282,7 +282,7 @@ const PriceHistoryView: React.FC = () => {
           )}
         </div>
         
-        {/* Loading state for products. */}
+        {/* Loading State for Products */}
         {availableProducts.length === 0 ? (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-80 overflow-y-auto custom-scrollbar'>
             {[...Array(6)].map((_, index) => (
@@ -310,7 +310,7 @@ const PriceHistoryView: React.FC = () => {
                     : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
                 }`}
               >
-                {/* Selection indicator. */}
+                {/* Selection Indicator */}
                 {selectedProduct === product.id && (
                   <div className='absolute -top-2 -right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-sm'>
                     <span className='text-white text-xs'>✓</span>
@@ -318,7 +318,7 @@ const PriceHistoryView: React.FC = () => {
                 )}
                 
                 <div className='flex items-center gap-3'>
-                  {/* Product image. */}
+                  {/* Product Image */}
                   <div className='relative flex-shrink-0'>
                     {product.image_url ? (
                       <img 
@@ -334,13 +334,13 @@ const PriceHistoryView: React.FC = () => {
                         <Shop size={16} className='text-gray-400' />
                       </div>
                     )}
-                    {/* Price count badge. */}
+                    {/* Price Count Badge */}
                     <div className='absolute -bottom-1 -right-1 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full font-medium'>
                       {product.price_data.length}
                     </div>
                   </div>
                   
-                  {/* Product information. */}
+                  {/* Product Info */}
                   <div className='flex-1 min-w-0'>
                     <p className='font-semibold text-gray-800 truncate text-sm mb-1'>
                       {product.name}
@@ -365,7 +365,7 @@ const PriceHistoryView: React.FC = () => {
           </div>
         )}
 
-        {/* No results state. */}
+        {/* No Results State */}
         {filteredProducts.length === 0 && searchTerm && availableProducts.length > 0 && (
           <div className='text-center py-12'>
             <div className='w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
@@ -382,7 +382,7 @@ const PriceHistoryView: React.FC = () => {
           </div>
         )}
         
-        {/* Product count summary. */}
+        {/* Product Count Summary */}
         {availableProducts.length > 0 && (
           <div className='mt-6 flex items-center justify-between text-sm text-gray-600 bg-gray-50 rounded-lg p-4'>
             <div className='flex items-center gap-4'>
@@ -406,10 +406,10 @@ const PriceHistoryView: React.FC = () => {
         )}
       </div>
 
-      {/* Price history loading skeleton. */}
+      {/* Price History Loading - Modernized Skeleton */}
       {loading && (
         <div className='space-y-6 animate-pulse'>
-          {/* Product info skeleton. */}
+          {/* Product Info Skeleton */}
           <div className='border w-full p-6 rounded-2xl bg-white shadow-sm'>
             <div className='flex items-center justify-between mb-6'>
               <div className='flex items-center gap-3'>
@@ -438,7 +438,7 @@ const PriceHistoryView: React.FC = () => {
             </div>
           </div>
 
-          {/* Current prices skeleton. */}
+          {/* Current Prices Skeleton */}
           <div className='border w-full p-6 rounded-2xl bg-white shadow-sm'>
             <div className='flex items-center justify-between mb-6'>
               <div className='flex items-center gap-3'>
@@ -456,7 +456,7 @@ const PriceHistoryView: React.FC = () => {
             </div>
           </div>
 
-          {/* History chart skeleton. */}
+          {/* History Chart Skeleton */}
           <div className='h-96 bg-white rounded-2xl border border-gray-200 shadow-sm p-6'>
             <div className='flex items-center gap-3 mb-8'>
               <div className='h-10 w-10 bg-gray-200 rounded-xl'></div>
@@ -476,9 +476,9 @@ const PriceHistoryView: React.FC = () => {
 
       {historyData && !loading && (
         <div className='space-y-6'>
-          {/* Product info header. */}
+          {/* Product Info Header - Modernized */}
           <div className='border text-gray-500 w-full p-6 rounded-2xl bg-white shadow-sm'>
-            {/* Header. */}
+            {/* Header */}
             <div className='flex items-center justify-between mb-6'>
               <div className='flex items-center text-sm gap-3'>
                 <div className='h-10 w-10 bg-primary rounded-lg flex items-center justify-center'>
@@ -493,7 +493,7 @@ const PriceHistoryView: React.FC = () => {
 
             <hr className='bg-gray-200 my-4' />
 
-            {/* Product details. */}
+            {/* Product Details */}
             <div className='flex items-start gap-4 mb-6'>
               <div className='relative flex-shrink-0'>
                 {historyData.product.image_url ? (
@@ -526,7 +526,7 @@ const PriceHistoryView: React.FC = () => {
               </div>
             </div>
 
-            {/* Price analysis statistics. */}
+            {/* Price Analysis Stats */}
             {historyData.price_analysis && (
               <div className='grid grid-cols-2 md:grid-cols-5 gap-4'>
                 <div className='text-center p-4 bg-blue-50 rounded-xl border border-blue-100'>
@@ -558,9 +558,9 @@ const PriceHistoryView: React.FC = () => {
             )}
           </div>
 
-          {/* Current prices. */}
+          {/* Current Prices - Modernized */}
           <div className='border text-gray-500 w-full p-6 rounded-2xl bg-white shadow-sm'>
-            {/* Header. */}
+            {/* Header */}
             <div className='flex items-center justify-between mb-6'>
               <div className='flex items-center gap-3'>
                 <div className='h-10 w-10 bg-green-500 rounded-lg flex items-center justify-center'>
@@ -578,7 +578,7 @@ const PriceHistoryView: React.FC = () => {
 
             <hr className='bg-gray-200 my-4' />
 
-            {/* Current prices grid. */}
+            {/* Current Prices Grid */}
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               {historyData.current_prices.map((price: any, index: number) => (
                 <div key={price.id} className={`relative p-4 rounded-xl border transition-all hover:shadow-md ${
@@ -586,7 +586,7 @@ const PriceHistoryView: React.FC = () => {
                     ? 'border-green-500 bg-green-50 ring-2 ring-green-200/50' 
                     : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}>
-                  {/* Best price badge. */}
+                  {/* Best Price Badge */}
                   {index === 0 && (
                     <div className='absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-sm'>
                       Best Price
@@ -619,7 +619,7 @@ const PriceHistoryView: React.FC = () => {
             </div>
           </div>
 
-          {/* Price intelligence chart. */}
+          {/* AI-Powered Price Intelligence Chart */}
           {historyData && historyData.price_history && Object.keys(historyData.price_history).length > 0 && (
             <PriceIntelligenceChart 
               priceHistory={historyData.price_history}
@@ -629,10 +629,10 @@ const PriceHistoryView: React.FC = () => {
             />
           )}
 
-          {/* Chart diagnostics for VChart debugging. */}
+          {/* Chart Diagnostics for VChart Debugging */}
           <TestChart />
 
-          {/* Price intelligence summary. */}
+          {/* Price Intelligence Summary - Alternative to Traditional Chart */}
           {historyData && historyData.price_history && Object.keys(historyData.price_history).length > 0 && (
             <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6 mb-6">
               <div className="flex items-center justify-between mb-4">
@@ -641,7 +641,7 @@ const PriceHistoryView: React.FC = () => {
                     <Chart size={20} className="text-white" />
                   </div>
                   <div>
-                    <h5 className="text-lg font-bold text-indigo-900"> Quick Price Summary</h5>
+                    <h5 className="text-lg font-bold text-indigo-900">📊 Quick Price Summary</h5>
                     <p className="text-indigo-700 text-sm">Key metrics at a glance</p>
                   </div>
                 </div>
@@ -667,8 +667,8 @@ const PriceHistoryView: React.FC = () => {
                             latestRecord.trend_direction === 'downward' ? 'bg-green-100 text-green-600' :
                             'bg-blue-100 text-blue-600'
                           }`}>
-                            {latestRecord.trend_direction === 'upward' ? ' Rising' :
-                             latestRecord.trend_direction === 'downward' ? ' Falling' : '➡️ Stable'}
+                            {latestRecord.trend_direction === 'upward' ? '📈 Rising' :
+                             latestRecord.trend_direction === 'downward' ? '📉 Falling' : '➡️ Stable'}
                           </span>
                         )}
                       </div>
@@ -714,20 +714,20 @@ const PriceHistoryView: React.FC = () => {
                 })}
               </div>
               
-              {/* Quick action recommendations. */}
+              {/* Quick Action Recommendations */}
               <div className="mt-4 p-3 bg-white rounded-lg border border-indigo-200">
                 <h6 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
-                  <span></span> Smart Shopping Recommendations
+                  <span>💡</span> Smart Shopping Recommendations
                 </h6>
                 <div className="grid md:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-600"> Best Value:</span>
+                    <span className="text-gray-600">🎯 Best Value:</span>
                     <p className="font-medium text-green-600 capitalize">
                       {historyData.current_prices?.[0]?.supermarketId || 'Check current prices'}
                     </p>
                   </div>
                   <div>
-                    <span className="text-gray-600"> Price Trend:</span>
+                    <span className="text-gray-600">📈 Price Trend:</span>
                     <p className="font-medium text-blue-600">
                       {Object.values(historyData.price_history).some((data: any) => 
                         data.monthly_records?.[data.monthly_records.length - 1]?.monthly_stats?.trend_direction === 'upward'
@@ -743,7 +743,7 @@ const PriceHistoryView: React.FC = () => {
             </div>
           )}
 
-          {/* Historical trends by supermarket. */}
+          {/* Historical Trends by Supermarket - Modern Statistics Cards */}
           <div className='bg-gradient-to-br from-white to-gray-50 border-0 shadow-xl rounded-2xl p-8'>
             <div className='flex items-center gap-3 mb-8'>
               <div className='h-10 w-10 bg-gradient-to-br from-primary to-purple-600 rounded-xl flex items-center justify-center'>
@@ -759,7 +759,7 @@ const PriceHistoryView: React.FC = () => {
               <div className='grid gap-8'>
                 {Object.entries(historyData.price_history).map(([supermarket, data]: [string, any]) => (
                   <div key={supermarket} className='bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden'>
-                    {/* Supermarket header. */}
+                    {/* Supermarket Header */}
                     <div className='bg-gradient-to-r from-gray-900 to-gray-700 p-6'>
                       <div className='flex items-center justify-between'>
                         <div className='flex items-center gap-3'>
@@ -778,7 +778,7 @@ const PriceHistoryView: React.FC = () => {
                       </div>
                     </div>
                     
-                    {/* Monthly performance cards. */}
+                    {/* Monthly Performance Cards */}
                     {data.monthly_records && data.monthly_records.length > 0 && (
                       <div className='p-6'>
                         <div className='flex items-center gap-2 mb-6'>
@@ -789,7 +789,7 @@ const PriceHistoryView: React.FC = () => {
                         <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6'>
                           {data.monthly_records.map((record: any, idx: number) => (
                             <div key={idx} className='group hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-blue-200'>
-                              {/* Month header. */}
+                              {/* Month Header */}
                               <div className='flex justify-between items-center mb-6'>
                                 <div>
                                   <h4 className='text-xl font-bold text-gray-900'>{record.month}</h4>
@@ -802,7 +802,7 @@ const PriceHistoryView: React.FC = () => {
                               
                               {record.monthly_stats && (
                                 <div className='space-y-4'>
-                                  {/* Key metrics grid. */}
+                                  {/* Key Metrics Grid */}
                                   <div className='grid grid-cols-2 gap-4'>
                                     <div className='bg-white rounded-xl p-4 border border-gray-100'>
                                       <div className='text-xs text-gray-500 uppercase tracking-wide mb-1'>Avg Price</div>
@@ -814,7 +814,7 @@ const PriceHistoryView: React.FC = () => {
                                     </div>
                                   </div>
                                   
-                                  {/* Volatility and trend. */}
+                                  {/* Volatility & Trend */}
                                   <div className='bg-white rounded-xl p-4 border border-gray-100'>
                                     <div className='flex justify-between items-center mb-2'>
                                       <span className='text-xs text-gray-500 uppercase tracking-wide'>Market Volatility</span>
@@ -826,7 +826,7 @@ const PriceHistoryView: React.FC = () => {
                                     </div>
                                   </div>
                                   
-                                  {/* Trend direction. */}
+                                  {/* Trend Direction */}
                                   <div className='bg-white rounded-xl p-4 border border-gray-100'>
                                     <div className='flex justify-between items-center'>
                                       <span className='text-xs text-gray-500 uppercase tracking-wide'>Price Trend</span>
@@ -837,17 +837,17 @@ const PriceHistoryView: React.FC = () => {
                                           ? 'bg-green-100 text-green-700' 
                                           : 'bg-gray-100 text-gray-700'
                                       }`}>
-                                        {record.monthly_stats.trend_direction === 'up' ? '' : 
-                                         record.monthly_stats.trend_direction === 'down' ? '' : '➡️'}
+                                        {record.monthly_stats.trend_direction === 'up' ? '📈' : 
+                                         record.monthly_stats.trend_direction === 'down' ? '📉' : '➡️'}
                                         <span className='capitalize'>{record.monthly_stats.trend_direction}</span>
                                       </div>
                                     </div>
                                   </div>
                                   
-                                  {/* Best buy day. */}
+                                  {/* Best Buy Day */}
                                   <div className='bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200'>
                                     <div className='flex items-center gap-2 mb-1'>
-                                      <span className='text-green-600'></span>
+                                      <span className='text-green-600'>🎯</span>
                                       <span className='text-xs text-green-700 uppercase tracking-wide font-semibold'>Best Buy Day</span>
                                     </div>
                                     <div className='text-green-900 font-bold'>
@@ -867,7 +867,7 @@ const PriceHistoryView: React.FC = () => {
                       </div>
                     )}
                     
-                    {/* Recent price activity. */}
+                    {/* Recent Price Activity */}
                     <div className='px-6 pb-6'>
                       <div className='flex items-center gap-2 mb-4'>
                         <div className='h-2 w-2 bg-purple-500 rounded-full'></div>
@@ -922,7 +922,7 @@ const PriceHistoryView: React.FC = () => {
   );
 };
 
-// Enhanced overview component.
+// Enhanced Overview Component
 const EnhancedOverviewView: React.FC = () => {
   const [products, setProducts] = useState<EnhancedProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -961,10 +961,10 @@ const EnhancedOverviewView: React.FC = () => {
   ], [stats, categoryFilter, supermarketFilter]);
 
   useEffect(() => {
-    // Debounce search to reduce API calls.
+    // Debounce search to avoid too many API calls
     const timeoutId = setTimeout(() => {
       fetchEnhancedData();
-    }, searchTerm ? 500 : 0); // 500ms delay for search, immediate for filters.
+    }, searchTerm ? 500 : 0); // 500ms delay for search, immediate for filters
 
     return () => clearTimeout(timeoutId);
   }, [categoryFilter, supermarketFilter, currentPage, searchTerm]);
@@ -974,7 +974,7 @@ const EnhancedOverviewView: React.FC = () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        per_page: '50' // Reduced from 1000 to 50 for load testing.
+        per_page: '50' // Reduced from 1000 to 50 to debug loading issues
       });
       
       if (categoryFilter) params.append('category', categoryFilter);
@@ -999,7 +999,7 @@ const EnhancedOverviewView: React.FC = () => {
             brand_stats: data.brand_stats
           });
           
-          // Log cache information for debugging.
+          // Log cache info for debugging
           if (data.cache_info) {
             console.log(`[${data.cache_info.cached ? 'CACHED' : 'FRESH'}] Data loaded from ${data.cache_info.cache_key}`);
           }
@@ -1035,7 +1035,7 @@ const EnhancedOverviewView: React.FC = () => {
 
   return (
     <div className='space-y-6'>
-      {/* Search and filters section. */}
+      {/* Search and Filters Section - Moved to top */}
       <div className='space-y-4'>
         <div>
           <h3 className='text-lg font-semibold text-gray-900 mb-2'>Browse Products</h3>
@@ -1055,16 +1055,16 @@ const EnhancedOverviewView: React.FC = () => {
         />
       </div>
 
-      {/* Enhanced product grid. */}
+      {/* Enhanced Product Grid */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
         {filteredProducts.map((product) => {
-          // Sort prices to identify the best deal.
+          // Sort prices to find best deal
           const sortedPrices = [...product.price_data].sort((a, b) => a.price - b.price);
           const bestPrice = sortedPrices[0];
           const worstPrice = sortedPrices[sortedPrices.length - 1];
           const priceRange = worstPrice.price - bestPrice.price;
           
-          // Generate mock trend data for demo; replace with API data in production.
+          // Generate mock trend data for demo (in real app, this would come from API)
           const trendData = Array.from({ length: 7 }, (_, i) => ({
             date: new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             price: bestPrice.price + (Math.random() - 0.5) * 20
@@ -1092,7 +1092,7 @@ const EnhancedOverviewView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Price trend visualization. */}
+              {/* Price Trend Visualization */}
               <div className='mb-4'>
                 <div className='flex items-center justify-between mb-2'>
                   <span className='text-xs font-medium text-gray-500'>7-Day Price Trend</span>
@@ -1109,7 +1109,7 @@ const EnhancedOverviewView: React.FC = () => {
                 />
               </div>
 
-              {/* Price comparison. */}
+              {/* Price Comparison */}
               <div className='space-y-2'>
                 <div className='flex items-center justify-between mb-2'>
                   <span className='text-sm font-medium text-gray-700'>Price Comparison</span>
@@ -1160,7 +1160,7 @@ const EnhancedOverviewView: React.FC = () => {
                 })}
               </div>
 
-              {/* Quick action button. */}
+              {/* Quick Action Button */}
               <button className='w-full mt-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium'>
                 View Price History
               </button>
@@ -1169,7 +1169,7 @@ const EnhancedOverviewView: React.FC = () => {
         })}
       </div>
 
-      {/* Pagination. */}
+      {/* Pagination */}
       {pagination && pagination.pages > 1 && (
         <div className='flex justify-center items-center gap-2 mt-6'>
           <button
@@ -1213,7 +1213,7 @@ const EnhancedOverviewView: React.FC = () => {
   );
 };
 
-// Price comparison component.
+// Price Comparison Component
 const PriceComparisonView: React.FC = () => {
   const [comparisons, setComparisons] = useState<ProductComparison[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1281,12 +1281,12 @@ const PriceComparisonView: React.FC = () => {
         onAutoRefreshChange={() => {}}
       />
 
-      {/* Comparisons. */}
+      {/* Comparisons */}
       {filteredComparisons.length > 0 ? (
         <div className='space-y-4'>
           {filteredComparisons.map((comparison) => (
             <div key={comparison.product_id} className='border rounded-lg p-6'>
-              {/* Product header. */}
+              {/* Product Header */}
               <div className='flex items-center justify-between mb-4'>
                 <div>
                   <h4 className='text-lg font-semibold text-gray-900'>
@@ -1307,7 +1307,7 @@ const PriceComparisonView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Price grid. */}
+              {/* Price Grid */}
               <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
                 {comparison.current_prices.map((priceInfo, index) => (
                   <div 
@@ -1370,7 +1370,7 @@ const PricingDashboard: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [supermarkets, setSupermarkets] = useState<SupermarketOption[]>([]);
   
-  // State for enhanced upload functionality.
+  // New state for enhanced upload functionality
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [uploadProgress, setUploadProgress] = useState<{
     total: number;
@@ -1406,7 +1406,7 @@ const PricingDashboard: React.FC = () => {
     },
   ];
   
-  // Toast notifications.
+  // Toast notifications
   const { toasts, addToast, removeToast } = useToast();
 
   const formatNumber = (value?: number | null) => new Intl.NumberFormat('en-US').format(value ?? 0);
@@ -1444,12 +1444,12 @@ const PricingDashboard: React.FC = () => {
     ]
   ), [loading, stats]);
 
-  // Generate date options for the horizontal scroller.
+  // Helper function to generate date options for the horizontal scroller
   const generateDateOptions = () => {
     const dates = [];
     const today = new Date();
     
-    // Generate dates from 30 days ago to today.
+    // Generate dates from 30 days ago to today
     for (let i = 30; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
@@ -1461,7 +1461,7 @@ const PricingDashboard: React.FC = () => {
 
   const dateOptions = generateDateOptions();
 
-  // Fetch initial data.
+  // Fetch initial data
   useEffect(() => {
     if (activeTab === 'overview') {
       fetchOverviewData();
@@ -1474,15 +1474,15 @@ const PricingDashboard: React.FC = () => {
   const handleRefreshData = async () => {
     setLoading(true);
     try {
-      // Always fetch basic stats.
+      // Always fetch basic stats
       await fetchStats();
       
-      // Refresh data based on the active tab.
+      // Refresh data based on active tab
       if (activeTab === 'overview') {
         await fetchOverviewData();
       }
       
-      // Show a success toast.
+      // Show success toast
       addToast({
         type: 'success',
         title: 'Data Refreshed',
@@ -1525,7 +1525,7 @@ const PricingDashboard: React.FC = () => {
       console.log('[OVERVIEW] API Response:', data);
       
       if (data.success) {
-        // Store overview data separately to prevent conflicts.
+        // Store overview data separately to prevent conflicts
         const overviewData = {
           supermarket_stats: data.supermarket_stats,
           category_stats: data.category_stats,
@@ -1535,7 +1535,7 @@ const PricingDashboard: React.FC = () => {
         console.log('[OVERVIEW] Setting overview stats:', overviewData);
         setOverviewStats(overviewData);
         
-        // Update the main stats for the top cards.
+        // Also update the main stats for top cards
         const totalProducts = Object.values(data.supermarket_stats || {}).reduce((sum: number, count: any) => sum + count, 0);
         const totalSupermarkets = Object.keys(data.supermarket_stats || {}).length;
         
@@ -1551,7 +1551,7 @@ const PricingDashboard: React.FC = () => {
           brand_stats: data.brand_stats
         }) as PriceStats);
         
-        // Log cache information for debugging.
+        // Log cache info for debugging
         if (data.cache_info) {
           console.log(`[OVERVIEW] [${data.cache_info.cached ? 'CACHED' : 'FRESH'}] Data loaded`);
         }
@@ -1596,7 +1596,7 @@ const PricingDashboard: React.FC = () => {
     });
 
     try {
-      // Read and parse the file.
+      // Read and parse the file
       const fileContent = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (e) => resolve(e.target?.result as string);
@@ -1606,13 +1606,13 @@ const PricingDashboard: React.FC = () => {
 
       const priceData = JSON.parse(fileContent);
       
-      // Handle both new (metadata) and legacy (direct array) formats.
+      // Handle both new format (with metadata) and old format (direct array)
       let productsArray;
       if (Array.isArray(priceData)) {
-        // Legacy format: direct array.
+        // Old format: direct array
         productsArray = priceData;
       } else if (priceData.results && Array.isArray(priceData.results)) {
-        // New format: metadata with products in the results field.
+        // New format: with metadata, products in 'results' field
         productsArray = priceData.results;
       } else {
         throw new Error('Invalid JSON format: Expected array or object with results field');
@@ -1623,28 +1623,28 @@ const PricingDashboard: React.FC = () => {
         processed: 0,
         current: `Found ${productsArray.length} products to upload`,
         details: [
-          ` File parsed successfully`, 
-          ` Target: ${selectedSupermarket}`, 
-          ` Price Date: ${selectedDate.toLocaleDateString('en-US', { 
+          `📋 File parsed successfully`, 
+          `🏪 Target: ${selectedSupermarket}`, 
+          `📅 Price Date: ${selectedDate.toLocaleDateString('en-US', { 
             weekday: 'short', 
             year: 'numeric', 
             month: 'short', 
             day: 'numeric' 
           })}`,
-          ` Upload Time: ${new Date().toLocaleTimeString()}`
+          `🕒 Upload Time: ${new Date().toLocaleTimeString()}`
         ]
       });
 
-      // Perform an enhanced upload with date and progress tracking.
+      // Enhanced upload with date and real-time progress
       const response = await fetch(`${API_BASE_URL}/api/prices/upload`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           supermarket_id: selectedSupermarket,
-          price_date: selectedDate.toISOString().split('T')[0], // Send the selected date to the backend.
+          price_date: selectedDate.toISOString().split('T')[0], // Send selected date to backend
           price_data: productsArray.map((item: any) => ({
             ...item,
-            price_date: selectedDate.toISOString().split('T')[0], // Add the date to each item.
+            price_date: selectedDate.toISOString().split('T')[0], // Also add to each item
             upload_date: selectedDate.toISOString().split('T')[0]
           }))
         }),
@@ -1659,25 +1659,25 @@ const PricingDashboard: React.FC = () => {
           current: 'Upload completed successfully!',
           details: [
             `✅ Processed: ${result.stats.total_processed} products`,
-            ` Price records created: ${result.stats.total_processed}`,
-            ` Success rate: 100%`,
-            ` Database updated`
+            `💰 Price records created: ${result.stats.total_processed}`,
+            `🎯 Success rate: 100%`,
+            `📊 Database updated`
           ]
         });
 
-        // Success notification.
+        // Success notification
         addToast({
           type: 'success',
           title: 'Upload Successful!',
           message: `Successfully uploaded ${result.stats.total_processed} price records for ${selectedSupermarket} with date ${selectedDate.toLocaleDateString()}.`
         });
 
-        // Reset the form after a short delay.
+        // Reset form after delay
         setTimeout(() => {
           setSelectedFile(null);
           setSelectedSupermarket('');
           setUploadProgress(null);
-          fetchStats(); // Refresh statistics.
+          fetchStats(); // Refresh stats
         }, 3000);
 
       } else {
@@ -1743,7 +1743,7 @@ const PricingDashboard: React.FC = () => {
       </PageNavbar>
 
       <PageContent>
-        {/* Stats and overview. */}
+        {/* Stats & Overview */}
         <div className='space-y-6 mb-8'>
         <PageHero
           category="Pricing Control Center"
@@ -1781,7 +1781,7 @@ const PricingDashboard: React.FC = () => {
         </PageHero>
         </div>
 
-        {/* Main content tabs. */}
+        {/* Main Content Tabs */}
         <div className='bg-white rounded-lg border'>
           <div className='border-b px-6 py-4'>
             <GlassSubTabs
@@ -1810,10 +1810,10 @@ const PricingDashboard: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Stats overview with interactive charts. */}
+                  {/* Stats Overview with Interactive Charts */}
                   {overviewStats && (overviewStats.supermarket_stats || overviewStats.category_stats || overviewStats.brand_stats) && (
                     <div className='space-y-6'>
-                      {/* Statistics cards. */}
+                      {/* Statistics Cards */}
                       <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                         <div className='border text-gray-500 w-full p-4 rounded-2xl bg-white'>
                           <div className='flex items-center text-sm gap-2 mb-4'>
@@ -1872,9 +1872,9 @@ const PricingDashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Interactive distribution charts. */}
+                      {/* Interactive Distribution Charts */}
                       <div className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6'>
-                        {/* Supermarket distribution chart. */}
+                        {/* Supermarket Distribution Chart */}
                         <div className='border text-gray-500 w-full p-4 rounded-2xl bg-white'>
                           <div className='flex items-center text-sm gap-2 mb-4'>
                             <Chart size={20} className='text-blue-600' />
@@ -1891,7 +1891,7 @@ const PricingDashboard: React.FC = () => {
                           />
                         </div>
 
-                        {/* Category distribution chart. */}
+                        {/* Category Distribution Chart */}
                         <div className='border text-gray-500 w-full p-4 rounded-2xl bg-white'>
                           <div className='flex items-center text-sm gap-2 mb-4'>
                             <Category2 size={20} className='text-green-600' />
@@ -1908,7 +1908,7 @@ const PricingDashboard: React.FC = () => {
                           />
                         </div>
 
-                        {/* Top brands chart. */}
+                        {/* Top Brands Chart */}
                         <div className='border text-gray-500 w-full p-4 rounded-2xl bg-white'>
                           <div className='flex items-center text-sm gap-2 mb-4'>
                             <Building4 size={20} className='text-purple-600' />
@@ -1932,7 +1932,7 @@ const PricingDashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Quick stats summary. */}
+                      {/* Quick Stats Summary */}
                       <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
                         <div className='border text-gray-500 w-full p-4 rounded-2xl bg-white text-center'>
                           <div className='text-2xl font-bold text-blue-600'>
@@ -1962,7 +1962,7 @@ const PricingDashboard: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Loading state. */}
+                  {/* Loading State */}
                   {(loading || overviewLoading) && (
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                       <CardSkeleton />
@@ -1971,7 +1971,7 @@ const PricingDashboard: React.FC = () => {
                     </div>
                   )}
 
-                  {/* No data state. */}
+                  {/* No Data State */}
                   {!loading && !overviewLoading && (!overviewStats || (!overviewStats.supermarket_stats && !overviewStats.category_stats && !overviewStats.brand_stats)) && (
                     <div className='text-center py-12'>
                       <div className='h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4'>
@@ -2025,7 +2025,7 @@ const PricingDashboard: React.FC = () => {
         </div>
       </PageContent>
       
-      {/* Toast notifications. */}
+      {/* Toast Notifications */}
       <ToastNotification toasts={toasts} onRemove={removeToast} />
     </div>
   );

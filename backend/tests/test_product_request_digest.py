@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock
 
-# Mock Google Cloud dependencies.
+# Mock google cloud dependencies
 sys.modules['google'] = MagicMock()
 sys.modules['google.cloud'] = MagicMock()
 sys.modules['google.cloud.firestore_v1'] = MagicMock()
@@ -46,7 +46,7 @@ def test_priority_rank_handles_unknown_values() -> None:
     service = _make_service()
     assert service._priority_rank("high") == service.PRIORITY_ORDER["high"]
     assert service._priority_rank("NORMAL") == service.PRIORITY_ORDER["normal"]
-    # Unknown priorities fall back to the default.
+    # Unknown priorities fall back to default
     assert service._priority_rank("urgent") == service.PRIORITY_ORDER[service.DEFAULT_PRIORITY]
 
 
@@ -90,7 +90,7 @@ def test_collect_digest_entries_filters_priority_and_status() -> None:
     assert len(digest["items"]) == 1
     assert digest["items"][0]["productName"] == "Alpha"
     assert digest["counts"]["priority"]["high"] == 1
-    # Completed low-priority requests are filtered out.
+    # Completed low-priority request filtered out
     assert digest["counts"]["priority"]["low"] == 0
 
 

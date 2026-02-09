@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy requirements
 COPY backend/requirements.txt /app/backend/requirements.txt
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r /app/backend/requirements.txt
+# Install Python dependencies (with retries for flaky networks)
+RUN pip install --no-cache-dir --retries 5 --timeout 120 -r /app/backend/requirements.txt
 
 # Copy source code
 COPY backend /app/backend
@@ -24,13 +24,21 @@ ENV PYTHONPATH=/app:/app/crawler
 ENV FLASK_APP=backend/app.py
 ENV PYTHONUNBUFFERED=1
 
+# gRPC fork safety: use 'poll' strategy so Firestore queries work
+# in Gunicorn's forked worker processes
+ENV GRPC_POLL_STRATEGY=poll
+ENV GRPC_ENABLE_FORK_SUPPORT=1
+
 # Expose port
 EXPOSE 5001
 
 # Run Gunicorn with:
-# - preload: Initialize app once before forking workers (better memory sharing & faster startup)
-# - 4 sync workers for concurrent request handling
+# - 1 worker process: The backend uses significant in-memory state (CrawlerManager,
+#   AI handler instances, model registry, keystore cache) that cannot be shared
+#   across forked processes. Multiple workers cause state-split bugs (flickering
+#   crawler status, stale keys/models, etc.). Use threads for concurrency instead.
+# - 8 threads per worker: Handles concurrent I/O-bound requests (API calls, DB,
+#   file reads) without the memory-isolation issues of multiple processes.
 # - Extended timeout for AI classification (5 min)
-# - Thread-based concurrency for I/O operations
 WORKDIR /app/backend
-CMD ["gunicorn", "--bind", "0.0.0.0:5001", "--workers", "4", "--threads", "4", "--timeout", "300", "--graceful-timeout", "120", "--keep-alive", "120", "--preload", "--log-level", "info", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5001", "--workers", "1", "--threads", "8", "--timeout", "300", "--graceful-timeout", "120", "--keep-alive", "120", "--log-level", "info", "app:app"]

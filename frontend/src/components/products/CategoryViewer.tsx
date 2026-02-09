@@ -456,7 +456,7 @@ const CategoryViewer: React.FC = () => {
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-orange-100 text-orange-800'
                       }`}>
-                        {selectedCategory.is_food ? ' Food Category' : ' Non-Food Category'}
+                        {selectedCategory.is_food ? '🍎 Food Category' : '🏠 Non-Food Category'}
                       </span>
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 /**
- * Chart utilities for VisActor VChart integration.
- * Handles data transformation and chart configuration for price history visualization.
+ * Chart Utilities for VisActor VChart Integration
+ * Handles data transformation and chart configuration for price history visualization
  */
 
 export interface PriceDataPoint {
@@ -24,78 +24,78 @@ export interface SupermarketColors {
   };
 }
 
-// Color scheme aligned with the application theme.
+// Color scheme that matches the application theme
 export const SUPERMARKET_COLORS: SupermarketColors = {
   keells: {
-    fill: 'rgba(59, 130, 246, 0.4)', // Blue with opacity.
+    fill: 'rgba(59, 130, 246, 0.4)', // Blue with opacity
     stroke: '#3b82f6'
   },
   cargills: {
-    fill: 'rgba(16, 185, 129, 0.4)', // Green with opacity.
+    fill: 'rgba(16, 185, 129, 0.4)', // Green with opacity  
     stroke: '#10b981'
   },
   arpico: {
-    fill: 'rgba(245, 101, 101, 0.4)', // Red with opacity.
+    fill: 'rgba(245, 101, 101, 0.4)', // Red with opacity
     stroke: '#f56565'
   }
 };
 
 /**
- * Transform price history data from backend format to a VChart-compatible format.
- * Converts daily prices from multiple supermarkets into a unified timeline.
+ * Transform price history data from backend format to VChart compatible format
+ * Converts daily_prices from multiple supermarkets into unified timeline
  */
 export const transformPriceHistoryForChart = (priceHistory: any): TransformedChartData[] => {
-  console.log(' Transform Input:', priceHistory);
+  console.log('🔄 Transform Input:', priceHistory);
   
   if (!priceHistory || typeof priceHistory !== 'object') {
     console.warn('❌ Invalid price history input');
     return [];
   }
 
-  // Collect all unique dates across supermarkets.
+  // Collect all unique dates across all supermarkets
   const allDates = new Set<string>();
   const supermarketData: { [supermarket: string]: { [date: string]: number } } = {};
 
-  // Extract daily prices from each supermarket.
+  // Extract daily prices from each supermarket
   Object.entries(priceHistory).forEach(([supermarket, data]: [string, any]) => {
-    console.log(` Processing ${supermarket}:`, data);
+    console.log(`📊 Processing ${supermarket}:`, data);
     
     if (data && data.daily_prices && Array.isArray(data.daily_prices)) {
       supermarketData[supermarket] = {};
       
       data.daily_prices.forEach((entry: any, index: number) => {
         if (entry.date && typeof entry.price === 'number') {
-          // Ensure the date uses YYYY-MM-DD format.
+          // Ensure date is in proper YYYY-MM-DD format
           let normalizedDate: string;
           if (typeof entry.date === 'string') {
-            // Check whether the date is already in YYYY-MM-DD format.
+            // Check if already in YYYY-MM-DD format
             if (/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) {
               normalizedDate = entry.date;
             } else {
-              // Attempt to parse and reformat.
+              // Try to parse and reformat
               const dateObj = new Date(entry.date);
               if (!isNaN(dateObj.getTime())) {
                 normalizedDate = dateObj.toISOString().split('T')[0];
               } else {
                 console.warn(`⚠️ Invalid date for ${supermarket}[${index}]:`, entry.date);
-                return; // Skip invalid dates.
+                return; // Skip invalid dates
               }
             }
           } else {
-            // Handle timestamp or Date object values.
+            // Handle timestamp or Date object
             const dateObj = new Date(entry.date);
             if (!isNaN(dateObj.getTime())) {
               normalizedDate = dateObj.toISOString().split('T')[0];
             } else {
               console.warn(`⚠️ Invalid date object for ${supermarket}[${index}]:`, entry.date);
-              return; // Skip invalid dates.
+              return; // Skip invalid dates
             }
           }
           
           allDates.add(normalizedDate);
           supermarketData[supermarket][normalizedDate] = entry.price;
           
-          if (index < 3) { // Log the first few entries for debugging.
+          if (index < 3) { // Log first few entries for debugging
             console.log(`✅ ${supermarket} date processed: ${entry.date} -> ${normalizedDate}, price: ${entry.price}`);
           }
         } else {
@@ -107,16 +107,16 @@ export const transformPriceHistoryForChart = (priceHistory: any): TransformedCha
     }
   });
 
-  console.log(' All unique dates:', Array.from(allDates).sort());
-  console.log(' Supermarket data keys:', Object.keys(supermarketData));
+  console.log('📅 All unique dates:', Array.from(allDates).sort());
+  console.log('🏪 Supermarket data keys:', Object.keys(supermarketData));
 
-  // Convert to chart format with all dates.
+  // Convert to chart format with all dates
   const chartData: TransformedChartData[] = Array.from(allDates)
     .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
     .map(date => {
       const dataPoint: TransformedChartData = { date };
       
-      // Add price data for each supermarket, if available for the date.
+      // Add price data for each supermarket (undefined if no data for that date)
       Object.keys(supermarketData).forEach(supermarket => {
         const price = supermarketData[supermarket][date];
         if (price !== undefined) {
@@ -127,14 +127,14 @@ export const transformPriceHistoryForChart = (priceHistory: any): TransformedCha
       return dataPoint;
     });
 
-  console.log(' Final chart data:', chartData.slice(0, 5));
+  console.log('📈 Final chart data:', chartData.slice(0, 5));
   console.log(`✅ Transformed ${chartData.length} data points`);
 
   return chartData;
 };
 
 /**
- * Transform current prices for comparison charts.
+ * Transform current prices for comparison charts
  */
 export const transformCurrentPricesForChart = (currentPrices: any[]): any[] => {
   if (!currentPrices || !Array.isArray(currentPrices)) return [];
@@ -147,7 +147,7 @@ export const transformCurrentPricesForChart = (currentPrices: any[]): any[] => {
 };
 
 /**
- * Generate VChart area series configuration for each supermarket.
+ * Generate VChart area series configuration for each supermarket
  */
 export const generateAreaSeries = (availableSupermarkets: string[]) => {
   return availableSupermarkets.map(supermarket => ({
@@ -158,7 +158,7 @@ export const generateAreaSeries = (availableSupermarkets: string[]) => {
     xField: 'date',
     yField: supermarket,
     seriesField: 'type',
-    stack: false, // Overlapping areas, not stacked.
+    stack: false, // Important: overlapping areas, not stacked
     area: {
       style: {
         fill: SUPERMARKET_COLORS[supermarket]?.fill || 'rgba(99, 102, 241, 0.4)',
@@ -187,13 +187,13 @@ export const generateAreaSeries = (availableSupermarkets: string[]) => {
       }
     },
     label: {
-      visible: false, // Hide labels to reduce clutter.
+      visible: false, // Hide labels to avoid clutter
     }
   }));
 };
 
 /**
- * Calculate price statistics for display.
+ * Calculate price statistics for display
  */
 export const calculatePriceStats = (chartData: TransformedChartData[], supermarkets: string[]) => {
   if (!chartData.length) return null;
@@ -228,14 +228,14 @@ export const calculatePriceStats = (chartData: TransformedChartData[], supermark
 };
 
 /**
- * Format a price for display.
+ * Format price for display
  */
 export const formatPrice = (price: number): string => {
   return `Rs ${price.toFixed(2)}`;
 };
 
 /**
- * Format percentage change values.
+ * Format percentage change
  */
 export const formatChange = (change: number): string => {
   const sign = change >= 0 ? '+' : '';
@@ -243,7 +243,7 @@ export const formatChange = (change: number): string => {
 };
 
 /**
- * Get trend direction based on change percentage.
+ * Get trend direction based on change percentage
  */
 export const getTrendDirection = (change: number): 'up' | 'down' | 'stable' => {
   if (change > 2) return 'up';
@@ -252,30 +252,30 @@ export const getTrendDirection = (change: number): 'up' | 'down' | 'stable' => {
 };
 
 /**
- * Generate a color palette for multiple series.
+ * Generate color palette for multiple series
  */
 export const generateColorPalette = (count: number): string[] => {
   const baseColors = [
-    '#3b82f6', // Blue.
-    '#10b981', // Green.
-    '#f59e0b', // Yellow.
-    '#ef4444', // Red.
-    '#8b5cf6', // Purple.
-    '#06b6d4', // Cyan.
-    '#84cc16', // Lime.
-    '#f97316', // Orange.
-    '#ec4899', // Pink.
-    '#6b7280'  // Gray.
+    '#3b82f6', // Blue
+    '#10b981', // Green  
+    '#f59e0b', // Yellow
+    '#ef4444', // Red
+    '#8b5cf6', // Purple
+    '#06b6d4', // Cyan
+    '#84cc16', // Lime
+    '#f97316', // Orange
+    '#ec4899', // Pink
+    '#6b7280'  // Gray
   ];
   
   if (count <= baseColors.length) {
     return baseColors.slice(0, count);
   }
   
-  // Generate additional colors if needed.
+  // Generate additional colors if needed
   const colors = [...baseColors];
   for (let i = baseColors.length; i < count; i++) {
-    const hue = (i * 137.508) % 360; // Golden angle approximation.
+    const hue = (i * 137.508) % 360; // Golden angle approximation
     colors.push(`hsl(${hue}, 70%, 50%)`);
   }
   
@@ -283,7 +283,7 @@ export const generateColorPalette = (count: number): string[] => {
 };
 
 /**
- * Calculate a price volatility score (0-100, lower is more stable).
+ * Calculate price volatility score (0-100, lower is more stable)
  */
 export const calculateVolatilityScore = (prices: number[]): number => {
   if (prices.length < 2) return 0;
@@ -297,7 +297,7 @@ export const calculateVolatilityScore = (prices: number[]): number => {
 };
 
 /**
- * Find the best price period within the date range.
+ * Find the best price period within date range
  */
 export const findBestPricePeriod = (chartData: TransformedChartData[], supermarket: string, days: number = 7): {
   startDate: string;
@@ -335,7 +335,7 @@ export const findBestPricePeriod = (chartData: TransformedChartData[], supermark
 };
 
 /**
- * Generate a recommendation based on price analysis.
+ * Generate recommendation based on price analysis
  */
 export const generatePriceRecommendation = (
   priceStats: any, 
@@ -355,12 +355,12 @@ export const generatePriceRecommendation = (
     };
   }
   
-  // Identify the current best price.
+  // Find current best price
   const sortedPrices = currentPrices.sort((a, b) => a.price - b.price);
   const bestStore = sortedPrices[0].supermarketId;
   const bestPrice = sortedPrices[0].price;
   
-  // Retrieve historical statistics for the best store.
+  // Get historical stats for best store
   const storeStats = priceStats[bestStore];
   if (!storeStats) {
     return {
@@ -400,7 +400,7 @@ export const generatePriceRecommendation = (
 };
 
 /**
- * Format a date for display.
+ * Format date for display
  */
 export const formatDateForDisplay = (dateString: string): string => {
   const date = new Date(dateString);
@@ -412,7 +412,7 @@ export const formatDateForDisplay = (dateString: string): string => {
 };
 
 /**
- * Calculate price trends over time periods.
+ * Calculate price trend over time periods
  */
 export const calculatePriceTrends = (chartData: TransformedChartData[], supermarket: string): {
   weekly?: number;
@@ -448,11 +448,11 @@ export const calculatePriceTrends = (chartData: TransformedChartData[], supermar
 };
 
 /**
- * Advanced chart enhancement utilities.
+ * Advanced chart enhancement utilities
  */
 
 /**
- * Smooth data using a moving average for trend visualization.
+ * Smooth data using moving average for cleaner trend visualization
  */
 export const smoothDataWithMovingAverage = (
   chartData: TransformedChartData[], 
@@ -478,7 +478,7 @@ export const smoothDataWithMovingAverage = (
 };
 
 /**
- * Detect price anomalies using statistical methods.
+ * Detect price anomalies using statistical methods
  */
 export const detectPriceAnomalies = (
   chartData: TransformedChartData[], 
@@ -514,7 +514,7 @@ export const detectPriceAnomalies = (
 };
 
 /**
- * Calculate correlation between supermarket prices.
+ * Calculate correlation between supermarket prices
  */
 export const calculatePriceCorrelation = (
   chartData: TransformedChartData[], 
@@ -541,7 +541,7 @@ export const calculatePriceCorrelation = (
 };
 
 /**
- * Generate market insights based on comprehensive analysis.
+ * Generate market insights based on comprehensive analysis
  */
 export const generateMarketInsights = (
   chartData: TransformedChartData[], 
@@ -574,7 +574,7 @@ export const generateMarketInsights = (
     };
   }
   
-  // Determine the market leader based on coverage and pricing.
+  // Find market leader (most data points + competitive pricing)
   let marketLeader = '';
   let bestScore = -1;
   
@@ -589,7 +589,7 @@ export const generateMarketInsights = (
     }
   });
   
-  // Identify the most volatile retailer.
+  // Find most volatile
   let mostVolatile = '';
   let highestVolatility = -1;
   
@@ -605,7 +605,7 @@ export const generateMarketInsights = (
     }
   });
   
-  // Identify the best value based on average price.
+  // Find best value (lowest average price)
   let bestValue = '';
   let lowestAvg = Infinity;
   
@@ -617,7 +617,7 @@ export const generateMarketInsights = (
     }
   });
   
-  // Calculate price gaps between supermarkets.
+  // Calculate price gaps between supermarkets
   const priceGaps: Array<{ supermarket1: string; supermarket2: string; avgDifference: number }> = [];
   
   for (let i = 0; i < availableSupermarkets.length; i++) {
@@ -637,9 +637,9 @@ export const generateMarketInsights = (
     }
   }
   
-  // Generate trend analysis.
+  // Generate trend analysis
   let trendAnalysis = 'Market showing ';
-  const recentData = chartData.slice(-7); // Last seven data points.
+  const recentData = chartData.slice(-7); // Last 7 data points
   const trends = availableSupermarkets.map(sm => {
     const recentPrices = recentData
       .map(d => d[sm])
@@ -672,7 +672,7 @@ export const generateMarketInsights = (
 };
 
 /**
- * Generate a VChart theme configuration.
+ * Generate VChart theme configuration for modern appearance
  */
 export const generateModernChartTheme = () => ({
   background: 'transparent',
@@ -742,11 +742,11 @@ export const generateModernChartTheme = () => ({
 });
 
 /**
- * Data export utilities for chart data.
+ * Data export utilities for chart data
  */
 
 /**
- * Export chart data to CSV format.
+ * Export chart data to CSV format
  */
 export const exportToCSV = (
   chartData: TransformedChartData[], 
@@ -754,24 +754,24 @@ export const exportToCSV = (
 ): void => {
   if (!chartData.length) return;
   
-  // Get all supermarket columns.
+  // Get all supermarket columns
   const supermarkets = Object.keys(chartData[0]).filter(key => key !== 'date');
   
-  // Create the CSV header.
+  // Create CSV header
   const headers = ['Date', ...supermarkets.map(sm => `${sm.charAt(0).toUpperCase() + sm.slice(1)} Price`)];
   
-  // Create CSV rows.
+  // Create CSV rows
   const rows = chartData.map(row => [
     row.date,
     ...supermarkets.map(sm => row[sm] !== undefined ? `Rs ${row[sm]?.toFixed(2)}` : '')
   ]);
   
-  // Combine headers and rows.
+  // Combine headers and rows
   const csvContent = [headers, ...rows]
     .map(row => row.map(field => `"${field}"`).join(','))
     .join('\n');
   
-  // Create and download the file.
+  // Create and download file
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
@@ -784,7 +784,7 @@ export const exportToCSV = (
 };
 
 /**
- * Export market insights to JSON format.
+ * Export market insights to JSON format
  */
 export const exportInsightsToJSON = (
   insights: any,
@@ -815,7 +815,7 @@ export const exportInsightsToJSON = (
 };
 
 /**
- * Generate a comprehensive report combining insights and recommendations.
+ * Generate a comprehensive report combining insights and recommendations
  */
 export const generateComprehensiveReport = (
   chartData: TransformedChartData[],

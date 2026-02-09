@@ -17,12 +17,12 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
     const dataMap = new Map<string, any>();
     const supermarkets = new Set<string>();
     
-    console.log(' PriceHistoryChart - Raw data received:', { priceHistory });
+    console.log('🔍 PriceHistoryChart - Raw data received:', { priceHistory });
     
     // Process historical data from backend structure (same as PriceIntelligenceChart)
     if (priceHistory && typeof priceHistory === 'object') {
       Object.entries(priceHistory).forEach(([supermarket, storeData]: [string, any]) => {
-        console.log(` Processing ${supermarket} historical data for AreaChart:`, storeData);
+        console.log(`📊 Processing ${supermarket} historical data for AreaChart:`, storeData);
         supermarkets.add(supermarket);
         
         // Process daily_prices array (main historical data)
@@ -74,8 +74,8 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
         return rest;
       });
     
-    console.log(' Final AreaChart data:', result);
-    console.log(' Available supermarkets for AreaChart:', Array.from(supermarkets));
+    console.log('📈 Final AreaChart data:', result);
+    console.log('🏪 Available supermarkets for AreaChart:', Array.from(supermarkets));
     return result;
   }, [priceHistory]);
 
@@ -108,7 +108,7 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
         </h4>
         <div className="flex items-center justify-center h-64 text-gray-500">
           <div className="text-center">
-            <div className="text-4xl mb-2"></div>
+            <div className="text-4xl mb-2">📈</div>
             <p className="text-lg mb-1">No Historical Data Available</p>
             <p className="text-sm">Upload price data to see historical trends</p>
           </div>

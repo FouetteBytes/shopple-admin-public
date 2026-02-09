@@ -33,16 +33,16 @@ const AdvancedDuplicateFilters: React.FC<AdvancedDuplicateFiltersProps> = ({
   filteredCount
 }) => {
   const matchTypeOptions = [
-    { value: 'exact', label: 'Exact', color: 'red', icon: '' },
-    { value: 'fuzzy', label: 'Fuzzy', color: 'orange', icon: '' },
-    { value: 'brand_variety', label: 'Brand', color: 'yellow', icon: '️' }
+    { value: 'exact', label: 'Exact', color: 'red', icon: '🎯' },
+    { value: 'fuzzy', label: 'Fuzzy', color: 'orange', icon: '🔍' },
+    { value: 'brand_variety', label: 'Brand', color: 'yellow', icon: '🏷️' }
   ];
 
   const differenceTypeOptions = [
-    { value: 'name', label: 'Name', icon: '' },
-    { value: 'brand', label: 'Brand', icon: '️' },
-    { value: 'size', label: 'Size', icon: '' },
-    { value: 'category', label: 'Cat', icon: '' }
+    { value: 'name', label: 'Name', icon: '📝' },
+    { value: 'brand', label: 'Brand', icon: '🏷️' },
+    { value: 'size', label: 'Size', icon: '📏' },
+    { value: 'category', label: 'Cat', icon: '📂' }
   ];
 
   const toggleMatchType = (type: string) => {

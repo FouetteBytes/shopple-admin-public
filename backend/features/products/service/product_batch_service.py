@@ -28,7 +28,7 @@ class ProductBatchService:
     
     def _get_matcher(self) -> IntelligentProductMatcher:
         
-        project_root = os.getcwd()  # Assumes the current working directory is the project root.
+        project_root = os.getcwd() # Assumes current working directory is project root
         cache_file = os.path.join(project_root, 'cache', 'product_cache.pkl')
         
         matcher = IntelligentProductMatcher(
@@ -37,7 +37,7 @@ class ProductBatchService:
             exact_match_threshold=0.95,
             cache_ttl_hours=24
         )
-        # Only refresh cache if empty; do not block on DB query if the cache is populated.
+        # Only refresh cache if empty - don't block on DB query if cache is populated
         if len(matcher.product_cache) == 0:
             logger.info("Product cache empty, refreshing from database")
             matcher.refresh_cache_from_db(self.db)
@@ -64,7 +64,7 @@ class ProductBatchService:
             "similarity_threshold": matcher.similarity_threshold if hasattr(matcher, 'similarity_threshold') else 'N/A'
         })
         
-        # Preview data structure.
+        # Preview data structure
         preview_data = {
             'new_products': [],
             'duplicate_matches': [],
@@ -81,7 +81,7 @@ class ProductBatchService:
         
         valid_products = []
         
-        # Pass 1: validation.
+        # Pass 1: Validation
         logger.info("Pass 1: Validating product entries")
         for index, product_data in enumerate(products):
             preview_data['stats']['processed'] += 1
@@ -109,7 +109,7 @@ class ProductBatchService:
             "invalid_count": preview_data['stats']['invalid_count']
         })
         
-        # Pass 2: duplicate detection using Redis-cached products.
+        # Pass 2: Duplicate Detection using Redis-cached products
         logger.info("Pass 2: Detecting duplicates against cached products")
         for index, product_data in valid_products:
             try:
@@ -269,6 +269,8 @@ class ProductBatchService:
                         updated_doc['last_updated'] = datetime.now().isoformat()
                         batch.update(doc_ref, updated_doc)
                         stats['updated'] += 1
+                        # Also update matcher cache with new data
+                        products_to_cache.append((product_id, updated_doc))
                         logger.info("Updating existing product", extra={
                             "product_id": product_id,
                             "product_name": product_data.get('product_name', ''),
@@ -320,14 +322,30 @@ class ProductBatchService:
         
         # CRITICAL: Update cache with all newly created products
         # This ensures duplicate detection works for subsequent uploads
+        # Run in background thread so the HTTP response returns immediately
         if products_to_cache:
-            logger.info("Updating cache with new products", extra={"count": len(products_to_cache)})
-            for product_id, product_doc in products_to_cache:
-                matcher.add_product_to_cache(product_id, product_doc)
+            import threading
             
-            # Save the updated cache to Redis/disk
-            matcher.save_cache()
-            logger.info("Cache updated and saved", extra={"new_products": len(products_to_cache)})
+            def _update_cache_background(matcher, products_to_cache):
+                try:
+                    logger.info("Background: Updating cache with new products", extra={"count": len(products_to_cache)})
+                    for product_id, product_doc in products_to_cache:
+                        # skip_index=True: avoid 8+ HTTP calls per product to Upstash
+                        matcher.add_product_to_cache(product_id, product_doc, skip_index=True)
+                    
+                    # Save the updated cache to Redis/disk (single call)
+                    matcher.save_cache()
+                    logger.info("Background: Cache updated and saved", extra={"new_products": len(products_to_cache)})
+                except Exception as e:
+                    logger.error("Background: Cache update failed", extra={"error": str(e)})
+            
+            cache_thread = threading.Thread(
+                target=_update_cache_background,
+                args=(matcher, products_to_cache),
+                daemon=True
+            )
+            cache_thread.start()
+            logger.info("Cache update started in background thread", extra={"count": len(products_to_cache)})
         
         self.product_service.repository.invalidate_product_stats() # Invalidate cache
         self.product_service.repository.invalidate_product_lists()

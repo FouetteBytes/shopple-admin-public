@@ -1,0 +1,74 @@
+{
+  "summary": {
+    "total_tests": 5,
+    "passed": 5,
+    "failed": 0,
+    "duration": 13.0,
+    "timestamp": "2025-11-05T12:13:11.421360"
+  },
+  "tests": [
+    {
+      "name": "Test 1: Process New Product Image",
+      "status": "passed",
+      "duration": 6.89,
+      "message": "Image uploaded successfully",
+      "error": null,
+      "data": {
+        "product_id": "test_keells_rice_redkekulu_1kg",
+        "source_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic2336.jpg",
+        "firebase_url": "https://storage.googleapis.com/shopple-7a67b.firebasestorage.app/products/images/test_keells_rice_redkekulu_1kg/test_keells_rice_redkekulu_1kg_20251105_121313.jpg"
+      }
+    },
+    {
+      "name": "Test 2: Skip Existing Firebase Image",
+      "status": "passed",
+      "duration": 0.0,
+      "message": "Correctly skipped re-upload of Firebase image",
+      "error": null,
+      "data": {
+        "product_id": "test_keells_rice_redkekulu_1kg",
+        "firebase_url": "https://storage.googleapis.com/shopple-7a67b.firebasestorage.app/products/images/test_keells_rice_redkekulu_1kg/test_keells_rice_redkekulu_1kg_20251105_121313.jpg"
+      }
+    },
+    {
+      "name": "Test 3: Update Product Image",
+      "status": "passed",
+      "duration": 4.41,
+      "message": "Image updated successfully",
+      "error": null,
+      "data": {
+        "product_id": "test_keells_rice_redkekulu_1kg",
+        "old_firebase_url": "https://storage.googleapis.com/shopple-7a67b.firebasestorage.app/products/images/test_keells_rice_redkekulu_1kg/test_keells_rice_redkekulu_1kg_20251105_121313.jpg",
+        "new_source_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic10679.jpg",
+        "new_firebase_url": "https://storage.googleapis.com/shopple-7a67b.firebasestorage.app/products/images/test_keells_rice_redkekulu_1kg/test_keells_rice_redkekulu_1kg_20251105_121320.jpg"
+      }
+    },
+    {
+      "name": "Test 4: Delete Product Image",
+      "status": "passed",
+      "duration": 1.69,
+      "message": "Image deleted successfully from Firebase Storage",
+      "error": null,
+      "data": {
+        "product_id": "test_keells_rice_redkekulu_1kg",
+        "deleted_url": "https://storage.googleapis.com/shopple-7a67b.firebasestorage.app/products/images/test_keells_rice_redkekulu_1kg/test_keells_rice_redkekulu_1kg_20251105_121320.jpg"
+      }
+    },
+    {
+      "name": "Test 5: Invalid URL Handling",
+      "status": "passed",
+      "duration": 0.0,
+      "message": "Correctly handled invalid URL with error message",
+      "error": null,
+      "data": {
+        "product_id": "test_invalid_url",
+        "invalid_url": "not-a-valid-url-at-all",
+        "error_message": "Failed to download image from source URL"
+      }
+    }
+  ],
+  "images": {
+    "original": "https://storage.googleapis.com/shopple-7a67b.firebasestorage.app/products/images/test_keells_rice_redkekulu_1kg/test_keells_rice_redkekulu_1kg_20251105_121313.jpg",
+    "updated": "https://storage.googleapis.com/shopple-7a67b.firebasestorage.app/products/images/test_keells_rice_redkekulu_1kg/test_keells_rice_redkekulu_1kg_20251105_121320.jpg"
+  }
+}

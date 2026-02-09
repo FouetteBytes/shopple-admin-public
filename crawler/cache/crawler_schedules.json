@@ -1,0 +1,62 @@
+{
+  "5144b5e1-68b1-4331-85f1-f2d83715e3c8": {
+    "description": null,
+    "last_error": null,
+    "label": "Test",
+    "last_run": "2025-11-15T01:19:34.334762+00:00",
+    "batch_mode": "parallel",
+    "schedule": {
+      "run_at": "2025-11-15T01:19:00.000Z",
+      "timezone": "Asia/Colombo",
+      "type": "one_time"
+    },
+    "enabled": false,
+    "headless_mode": false,
+    "last_status": "success",
+    "max_items": null,
+    "created_at": "2025-11-15T01:19:00.900419+00:00",
+    "limit_mode": "default",
+    "updated_at": "2025-11-15T01:19:34.334762+00:00",
+    "selection": {
+      "stores": [
+        "cargills"
+      ],
+      "mode": "store",
+      "categories": [
+        "beverages"
+      ]
+    },
+    "next_run": null,
+    "id": "5144b5e1-68b1-4331-85f1-f2d83715e3c8"
+  },
+  "d37add11-aca1-477d-9e67-ddf5d2489f8b": {
+    "description": null,
+    "last_error": null,
+    "label": "Test2",
+    "last_run": "2025-11-15T02:16:02.541609+00:00",
+    "batch_mode": "parallel",
+    "schedule": {
+      "run_at": "2025-11-15T02:16:00.000Z",
+      "type": "one_time",
+      "timezone": "Asia/Colombo"
+    },
+    "enabled": false,
+    "headless_mode": true,
+    "last_status": "success",
+    "max_items": null,
+    "created_at": "2025-11-15T02:15:46.275277+00:00",
+    "limit_mode": "default",
+    "updated_at": "2025-11-15T02:16:02.541609+00:00",
+    "selection": {
+      "stores": [
+        "keells"
+      ],
+      "categories": [
+        "household_essentials"
+      ],
+      "mode": "store"
+    },
+    "next_run": null,
+    "id": "d37add11-aca1-477d-9e67-ddf5d2489f8b"
+  }
+}

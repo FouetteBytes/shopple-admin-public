@@ -396,7 +396,7 @@ export const MonitorTab = ({
                         </span>
                         {isPseudo && (
                             <span className='inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-[11px] font-semibold text-yellow-700'>
-                                 File Only
+                                📁 File Only
                             </span>
                         )}
                     </div>
@@ -773,7 +773,7 @@ export const MonitorTab = ({
                                                     <div className='flex flex-col gap-1'>
                                                         <span className='inline-flex w-fit items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700'>completed</span>
                                                         {isPseudo && (
-                                                            <span className='inline-flex w-fit items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-700'> File Only</span>
+                                                            <span className='inline-flex w-fit items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-700'>📁 File Only</span>
                                                         )}
                                                     </div>
                                                 </td>
@@ -914,7 +914,7 @@ export const MonitorTab = ({
                                                 }`}
                                             >
                                                 {activity.status === 'running'
-                                                    ? ' Running'
+                                                    ? '🔄 Running'
                                                     : activity.status === 'error'
                                                     ? '❌ Error'
                                                     : activity.status === 'starting'

@@ -68,7 +68,7 @@ export function ProductRecordList({
   if (!products.length) {
     return (
       <div className="flex flex-col items-center justify-center rounded-[32px] border border-dashed border-white/50 bg-white/80 p-10 text-center text-slate-500">
-        <div className="text-4xl"></div>
+        <div className="text-4xl">📦</div>
         <p className="mt-3 text-lg font-semibold text-slate-700">No products match these filters</p>
         <p className="text-sm">Try broadening your search or upload a new record.</p>
       </div>
@@ -94,7 +94,7 @@ export function ProductRecordList({
                   {product.image_url ? (
                     <Image src={product.image_url} alt={product.name} fill sizes="80px" className="object-cover" unoptimized />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xl">️</div>
+                    <div className="flex h-full w-full items-center justify-center text-xl">🖼️</div>
                   )}
                 </div>
                 <div className="flex-1 space-y-1">

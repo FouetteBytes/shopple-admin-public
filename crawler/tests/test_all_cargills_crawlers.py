@@ -1,7 +1,10 @@
-"""Comprehensive test suite for all Cargills crawlers.
+"""
+Comprehensive Test Suite for All Cargills Crawlers
 
-Runs all eight Cargills category crawlers in a single pass and generates
-a summary with detailed metrics for each crawler.
+Tests all 8 Cargills category crawlers in a single run and generates
+a comprehensive summary with detailed metrics for each crawler.
+
+Author: Shopple Admin System
 """
 
 import pytest
@@ -11,12 +14,12 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-# Import the base crawler.
+# Import the base crawler
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / "cargills"))
 from cargills_base_crawler import CargillsBaseCrawler
 
-# Configuration for all Cargills crawlers.
+# Configuration for all Cargills crawlers
 CARGILLS_CRAWLERS = {
     "beverages": {
         "name": "Beverages",
@@ -62,7 +65,7 @@ CARGILLS_CRAWLERS = {
 
 
 class CrawlerTestResults:
-    """Aggregate test results for all crawlers."""
+    """Aggregate test results from all crawlers"""
     
     def __init__(self):
         self.results = {}
@@ -77,7 +80,7 @@ class CrawlerTestResults:
                    duration: float = 0.0, filename: str = "", 
                    file_size_kb: float = 0.0, samples: list = None, error: str = "",
                    timestamp: str = ""):
-        """Add a crawler result."""
+        """Add a crawler result"""
         self.results[category] = {
             "status": "success" if success else "failed",
             "product_count": product_count,
@@ -98,15 +101,15 @@ class CrawlerTestResults:
         self.total_duration += duration
     
     def get_summary(self) -> str:
-        """Generate a text summary."""
+        """Generate text summary"""
         lines = [
             "=" * 80,
-            " CARGILLS CRAWLER TEST RESULTS SUMMARY",
+            "📊 CARGILLS CRAWLER TEST RESULTS SUMMARY",
             "=" * 80,
             f"Total Crawlers Tested: {self.total_crawlers}",
             f"✅ Successful: {self.successful}",
             f"❌ Failed: {self.failed}",
-            f" Total Products Scraped: {self.total_products}",
+            f"📦 Total Products Scraped: {self.total_products}",
             f"⏱️  Total Duration: {self.total_duration:.2f}s",
             "=" * 80
         ]
@@ -131,7 +134,7 @@ class CrawlerTestResults:
         return "\n".join(lines)
     
     def to_json(self) -> dict:
-        """Export results as JSON."""
+        """Export as JSON"""
         return {
             "summary": {
                 "total_crawlers": self.total_crawlers,
@@ -146,11 +149,11 @@ class CrawlerTestResults:
 
 
 class TestAllCargillsCrawlers:
-    """Comprehensive test suite for all Cargills crawlers."""
+    """Comprehensive test suite for all Cargills crawlers"""
     
     @pytest.mark.asyncio
     async def test_base_crawler_initialization(self):
-        """Verify that the base crawler can be initialized."""
+        """Test that the base crawler can be initialized"""
         crawler = CargillsBaseCrawler(
             url="https://cargillsonline.com/Product/Beverages?IC=Mw==&NC=QmV2ZXJhZ2Vz",
             category="beverages",
@@ -164,50 +167,53 @@ class TestAllCargillsCrawlers:
     
     @pytest.mark.asyncio
     async def test_all_cargills_crawlers(self):
-        """Run all eight Cargills crawlers and collect metrics."""
-        print("\n Running comprehensive test for all 8 Cargills crawlers")
+        """
+        Comprehensive test that runs all 8 Cargills crawlers
+        and generates detailed metrics for each
+        """
+        print("\n🚀 Running comprehensive test for all 8 Cargills crawlers")
         
-        # Read MAX_ITEMS from the environment (default 10 for tests).
+        # Get MAX_ITEMS from environment (default to 10 for testing)
         max_items = int(os.getenv("MAX_ITEMS", "10"))
         print(f"   Max items per crawler: {max_items}")
         print(f"   Test mode: True")
         
-        # Results tracker.
+        # Results tracker
         results_tracker = CrawlerTestResults()
         
-        # Test output directory.
+        # Test output directory
         base_test_dir = Path(__file__).parent.parent / "test_output" / "cargills"
         base_test_dir.mkdir(parents=True, exist_ok=True)
         
-        # Run each crawler sequentially.
+        # Run each crawler sequentially
         for crawler_key, crawler_config in CARGILLS_CRAWLERS.items():
             print("\n" + "=" * 80)
-            print(f" Testing: {crawler_config['name']} ({crawler_key})")
+            print(f"🛒 Testing: {crawler_config['name']} ({crawler_key})")
             print(f"   URL: {crawler_config['url']}")
             print("=" * 80)
             
             start_time = datetime.now()
             
             try:
-                # Create the crawler instance.
+                # Create crawler instance
                 crawler = CargillsBaseCrawler(
                     url=crawler_config['url'],
                     category=crawler_key,
                     test_mode=True
                 )
                 
-                # Run the crawler.
+                # Run crawler
                 result = await crawler.run()
                 
-                # Confirm successful execution.
+                # Check if successful
                 assert result['success'], f"Crawler failed: {result.get('error', 'Unknown error')}"
                 
-                # Verify the output file exists.
+                # Verify output file exists
                 output_dir = Path(result['output_path'])
                 output_file = output_dir / result['filename']
                 assert output_file.exists(), f"Output file not found: {output_file}"
                 
-                # Load and validate products.
+                # Load and validate products
                 with open(output_file, 'r', encoding='utf-8') as f:
                     products = json.load(f)
                 
@@ -215,22 +221,22 @@ class TestAllCargillsCrawlers:
                 assert product_count > 0, "No products were scraped"
                 assert product_count <= max_items, f"Too many products: {product_count} > {max_items}"
                 
-                # Get file size.
+                # Get file size
                 file_size_kb = output_file.stat().st_size / 1024
                 
-                # Extract sample product names.
+                # Extract sample product names
                 samples = [
                     f"{p['product_name']} - {p['price']}"
                     for p in products[:3]
                 ]
                 
-                # Calculate duration.
+                # Calculate duration
                 duration = (datetime.now() - start_time).total_seconds()
                 
-                # Get file timestamp.
+                # Get file timestamp
                 file_timestamp = datetime.fromtimestamp(output_file.stat().st_mtime).isoformat()
                 
-                # Record success.
+                # Record success
                 results_tracker.add_result(
                     category=crawler_key,
                     success=True,
@@ -254,7 +260,7 @@ class TestAllCargillsCrawlers:
                 duration = (datetime.now() - start_time).total_seconds()
                 error_msg = str(e)
                 
-                # Record failure.
+                # Record failure
                 results_tracker.add_result(
                     category=crawler_key,
                     success=False,
@@ -267,24 +273,24 @@ class TestAllCargillsCrawlers:
                 print(f"   Error: {error_msg}")
                 print(f"   Duration: {duration:.2f}s")
         
-        # Print the comprehensive summary.
+        # Print comprehensive summary
         print("\n" + results_tracker.get_summary())
         
-        # Save results to JSON.
+        # Save results to JSON
         results_file = base_test_dir / "test_results_summary.json"
         with open(results_file, 'w', encoding='utf-8') as f:
             json.dump(results_tracker.to_json(), f, indent=2, ensure_ascii=False)
         
-        print(f"\n Results saved to: {results_file}")
+        print(f"\n📄 Results saved to: {results_file}")
         
-        # Assert that all crawlers passed.
+        # Assert that all crawlers passed
         if results_tracker.failed > 0:
             print(f"\n❌ {results_tracker.failed} crawler(s) failed!")
             pytest.fail(f"{results_tracker.failed} out of {results_tracker.total_crawlers} crawlers failed")
         else:
-            print(f"\n All {results_tracker.total_crawlers} crawlers passed successfully!")
+            print(f"\n🎉 All {results_tracker.total_crawlers} crawlers passed successfully!")
 
 
 if __name__ == "__main__":
-    # Run tests directly.
+    # Run tests directly
     pytest.main([__file__, "-v", "-s"])

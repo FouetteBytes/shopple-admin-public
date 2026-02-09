@@ -22,7 +22,7 @@ import {
 import MarketInsightsPanel from '@/components/pricing/MarketInsightsPanel';
 import { API_BASE_URL } from '@/lib/api';
 
-// Interface for enhanced product data.
+// Interface for enhanced product data
 interface EnhancedProduct {
   id: string;
   name: string;
@@ -135,19 +135,19 @@ const HistoryDashboard: React.FC = () => {
       </PageNavbar>
 
       <div className="space-y-6">
-        {/* Product selection section. */}
+        {/* Product Selection Section */}
         <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 shadow-lg p-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-10 w-10 bg-blue-500 rounded-xl flex items-center justify-center">
               <SearchNormal1 size={20} className="text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900"> Select Product for Analysis</h3>
+              <h3 className="text-lg font-bold text-gray-900">🔍 Select Product for Analysis</h3>
               <p className="text-sm text-gray-600">Choose a product to view detailed price history and market insights</p>
             </div>
           </div>
 
-          {/* Search and select. */}
+          {/* Search and Select */}
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Search Products</label>
@@ -180,7 +180,7 @@ const HistoryDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Selected product information. */}
+          {/* Selected Product Info */}
           {selectedProductData && (
             <div className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
               <div className="grid md:grid-cols-4 gap-4">
@@ -205,18 +205,18 @@ const HistoryDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Loading state. */}
+        {/* Loading State */}
         {loading && (
           <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-12">
             <div className="flex flex-col items-center justify-center">
               <div className="h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2"> Loading Market Intelligence</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">📊 Loading Market Intelligence</h3>
               <p className="text-gray-600 text-center">Analyzing price history and generating insights...</p>
             </div>
           </div>
         )}
 
-        {/* Market insights panel (rendered only when data is available). */}
+        {/* Market Insights Panel - Only show when data is available */}
         {!loading && historyData && historyData.price_history && Object.keys(historyData.price_history).length > 0 && (
           <MarketInsightsPanel 
             priceHistory={historyData.price_history}
@@ -225,7 +225,7 @@ const HistoryDashboard: React.FC = () => {
           />
         )}
 
-        {/* No data state. */}
+        {/* No Data State */}
         {!loading && selectedProduct && (!historyData || !historyData.price_history || Object.keys(historyData.price_history).length === 0) && (
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-12">
             <div className="text-center">
@@ -236,14 +236,14 @@ const HistoryDashboard: React.FC = () => {
               </p>
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 inline-block">
                 <p className="text-sm text-yellow-800">
-                   <strong>Tip:</strong> Historical data becomes available after products have been tracked for multiple periods.
+                  💡 <strong>Tip:</strong> Historical data becomes available after products have been tracked for multiple periods.
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Welcome state (no product selected). */}
+        {/* Welcome State - No product selected */}
         {!selectedProduct && !loading && (
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-200 p-12">
             <div className="text-center">
@@ -252,7 +252,7 @@ const HistoryDashboard: React.FC = () => {
                   <Document size={40} className="text-white" />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4"> Welcome to Price History Center</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">📈 Welcome to Price History Center</h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
                 Get comprehensive market intelligence with historical price analysis, trend identification, 
                 and smart shopping recommendations. Select a product above to begin your analysis.

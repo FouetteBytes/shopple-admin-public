@@ -1,6 +1,6 @@
-"""Firebase Storage manager for crawler data.
-
-Handles cloud storage operations for crawler JSON files.
+"""
+Firebase Storage Manager for Crawler Data
+Handles cloud storage operations for crawler JSON files
 """
 
 import json
@@ -15,13 +15,13 @@ import firebase_admin
 from firebase_admin import credentials, storage
 import logging
 
-# Add the backend path for logger_service.
+# Add backend to path for logger_service
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger, log_error
 
 logger = get_logger(__name__)
 
-# Load environment variables.
+# Load environment variables
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -29,33 +29,36 @@ except ImportError:
     logger.warning("python-dotenv not available, environment variables must be set manually")
 
 class FirebaseStorageManager:
-    """Manage Firebase Storage operations for crawler data."""
+    """
+    Manages Firebase Storage operations for crawler data
+    """
     
     def __init__(self, service_account_path: str = None, bucket_name: str = None):
-        """Initialize the Firebase Storage manager.
-
+        """
+        Initialize Firebase Storage Manager
+        
         Args:
-            service_account_path: Path to the service account JSON file.
-            bucket_name: Firebase Storage bucket name.
+            service_account_path: Path to service account JSON file
+            bucket_name: Firebase Storage bucket name
         """
         self.bucket_name = bucket_name or os.getenv('FIREBASE_STORAGE_BUCKET')
         
-        # If the bucket name is not provided, derive it from the project ID.
+        # If bucket name is not provided, try to derive it from project ID
         if not self.bucket_name:
             project_id = os.getenv('FIREBASE_PROJECT_ID')
             if project_id:
                 self.bucket_name = f"{project_id}.firebasestorage.app"
             else:
-                # Fallback for backward compatibility or local testing.
-                # Prefer setting this in the environment.
+                # Fallback for backward compatibility or local testing if needed, 
+                # but ideally should be set in env
                 self.bucket_name = 'shopple-7a67b.firebasestorage.app'
                 
         self.logger = logging.getLogger(__name__)
         
-        # Initialize the Firebase Admin SDK if not already initialized.
+        # Initialize Firebase Admin SDK if not already initialized
         if not firebase_admin._apps:
             if os.getenv('FIREBASE_PRIVATE_KEY'):
-                # Use environment variables.
+                # Use environment variables
                 project_id = os.getenv('FIREBASE_PROJECT_ID')
                 client_email = os.getenv('FIREBASE_CLIENT_EMAIL')
                 private_key = os.getenv('FIREBASE_PRIVATE_KEY')
@@ -82,7 +85,7 @@ class FirebaseStorageManager:
                 'storageBucket': self.bucket_name
             })
         
-        # Get the storage bucket with the explicit name.
+        # Get storage bucket with explicit name
         self.bucket = storage.bucket(self.bucket_name)
         self.logger.info(f"Firebase Storage Manager initialized with bucket: {self.bucket_name}")
 
@@ -123,29 +126,30 @@ class FirebaseStorageManager:
                           store: str, 
                           category: str, 
                           metadata: Dict[str, Any] = None) -> Dict[str, Any]:
-        """Upload crawler data to Firebase Storage.
-
+        """
+        Upload crawler data to Firebase Storage
+        
         Args:
-            local_file_path: Path to a local JSON file.
-            store: Store name (e.g., "keells", "cargills").
-            category: Category name (e.g., "vegetables", "dairy").
-            metadata: Additional metadata to store.
-
+            local_file_path: Path to local JSON file
+            store: Store name (e.g., 'keells', 'cargills')
+            category: Category name (e.g., 'vegetables', 'dairy')
+            metadata: Additional metadata to store
+            
         Returns:
-            Dictionary with upload results.
+            Dictionary with upload results
         """
         try:
-            # Preserve the original filename instead of generating a timestamp.
+            # Preserve original filename instead of generating new timestamp
             original_filename = os.path.basename(local_file_path)
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             
-            # Create the cloud file path using the original filename.
+            # Create cloud file path using original filename
             cloud_path = f"crawler-data/{store}/{category}/{original_filename}"
             
-            # Create the blob and upload.
+            # Create blob and upload
             blob = self.bucket.blob(cloud_path)
             
-            # Add metadata.
+            # Add metadata
             if metadata:
                 blob.metadata = {
                     'store': store,
@@ -156,13 +160,13 @@ class FirebaseStorageManager:
                     **metadata
                 }
             
-            # Upload the file.
+            # Upload file
             blob.upload_from_filename(local_file_path)
             
-            # Get the file size.
+            # Get file size
             file_size = os.path.getsize(local_file_path)
             
-            # Update the file index using the original filename.
+            # Update file index using original filename
             self._update_file_index(store, category, original_filename, cloud_path, file_size, metadata)
             
             result = {
@@ -297,7 +301,7 @@ class FirebaseStorageManager:
             target_slug, target_filename = self._resolve_target_path(existing_metadata, updates)
             target_path = f"classifier-results/{target_slug}/{target_filename}"
 
-            # Merge metadata updates into JSON payload metadata.
+            # Merge metadata updates into JSON payload metadata
             if isinstance(parsed, dict):
                 parsed_metadata = parsed.setdefault('metadata', {})
                 for key, value in updates.items():
@@ -307,7 +311,7 @@ class FirebaseStorageManager:
                 parsed_metadata.setdefault('updated_at', datetime.utcnow().isoformat())
                 content_text = json.dumps(parsed, indent=2, ensure_ascii=False)
 
-            # Merge metadata for the blob.
+            # Merge metadata for blob
             blob_metadata = blob.metadata or {}
             for key, value in updates.items():
                 if value is None:
@@ -317,7 +321,7 @@ class FirebaseStorageManager:
             blob_metadata['filename'] = target_filename
             blob_metadata['supermarket_slug'] = target_slug
 
-            # If the target path differs, upload to the new path and delete the old blob.
+            # If target path differs, upload to new path then delete old blob
             if target_path != cloud_path:
                 upload_result = self._upload_content_at_path(target_path, content_text, blob_metadata)
                 if not upload_result.get('success'):
@@ -391,7 +395,7 @@ class FirebaseStorageManager:
                 }
             
             if local_path:
-                # Download to a local file.
+                # Download to local file
                 blob.download_to_filename(local_path)
                 self.logger.info(f"Downloaded {cloud_path} to {local_path}")
                 
@@ -405,7 +409,7 @@ class FirebaseStorageManager:
                     'metadata': blob.metadata
                 }
             else:
-                # Download to memory.
+                # Download to memory
                 content = blob.download_as_text()
                 data = json.loads(content)
                 
@@ -484,7 +488,7 @@ class FirebaseStorageManager:
             
             blob.delete()
             
-            # Update the file index.
+            # Update file index
             self._remove_from_file_index(cloud_path)
             
             self.logger.info(f"Successfully deleted {cloud_path}")
@@ -519,7 +523,7 @@ class FirebaseStorageManager:
                     file_count += 1
                     total_size += blob.size or 0
                     
-                    # Parse the path to get store and category.
+                    # Parse path to get store and category
                     path_parts = blob.name.split('/')
                     if len(path_parts) >= 3:
                         store = path_parts[1]
@@ -560,7 +564,7 @@ class FirebaseStorageManager:
         try:
             index_path = "system/file_index.json"
             
-            # Try to get the existing index.
+            # Try to get existing index
             try:
                 blob = self.bucket.blob(index_path)
                 if blob.exists():
@@ -571,7 +575,7 @@ class FirebaseStorageManager:
             except:
                 index = {}
             
-            # Update the index.
+            # Update index
             if store not in index:
                 index[store] = {}
             if category not in index[store]:
@@ -585,10 +589,10 @@ class FirebaseStorageManager:
                 'metadata': metadata
             })
             
-            # Keep only the last 50 entries per category.
+            # Keep only last 50 entries per category
             index[store][category] = index[store][category][-50:]
             
-            # Upload the updated index.
+            # Upload updated index
             blob = self.bucket.blob(index_path)
             blob.upload_from_string(json.dumps(index, indent=2))
             
@@ -607,7 +611,7 @@ class FirebaseStorageManager:
                 content = blob.download_as_text()
                 index = json.loads(content)
                 
-                # Remove from the index.
+                # Remove from index
                 for store in index:
                     for category in index[store]:
                         index[store][category] = [
@@ -615,7 +619,7 @@ class FirebaseStorageManager:
                             if item['cloud_path'] != cloud_path
                         ]
                 
-                # Upload the updated index.
+                # Upload updated index
                 blob.upload_from_string(json.dumps(index, indent=2))
                 
         except Exception as e:
@@ -641,13 +645,13 @@ class FirebaseStorageManager:
             Dictionary with upload results
         """
         try:
-            # Create the cloud file path.
+            # Create cloud file path
             cloud_path = f"crawler-data/{store}/{category}/{filename}"
             
-            # Create the blob and upload.
+            # Create blob and upload
             blob = self.bucket.blob(cloud_path)
             
-            # Add metadata.
+            # Add metadata
             if metadata:
                 blob.metadata = {
                     'store': store,
@@ -656,10 +660,10 @@ class FirebaseStorageManager:
                     **metadata
                 }
             
-            # Upload content directly.
+            # Upload content directly
             blob.upload_from_string(content, content_type='application/json')
             
-            # Get content size.
+            # Get content size
             content_size = len(content.encode('utf-8'))
             
             result = {
@@ -699,7 +703,7 @@ class FirebaseStorageManager:
             if not blob.exists():
                 return {"success": False, "error": "File not found"}
             
-            # Download content as text.
+            # Download content as text
             content = blob.download_as_text()
             
             return {
@@ -730,7 +734,7 @@ class FirebaseStorageManager:
             if not blob.exists():
                 return None
             
-            # Reload to get the latest metadata.
+            # Reload to get latest metadata
             blob.reload()
             
             return {
@@ -763,7 +767,7 @@ class FirebaseStorageManager:
                 blob.delete()
                 self.logger.info(f"Successfully deleted file: {cloud_path}")
                 
-                # Remove from the file index.
+                # Remove from file index
                 self._remove_from_file_index(cloud_path)
                 
                 return {"success": True, "message": f"File {cloud_path} deleted"}
@@ -787,27 +791,27 @@ class FirebaseStorageManager:
             Dict with success status and formatted data for frontend
         """
         try:
-            # Construct the cloud path.
+            # Construct cloud path
             cloud_path = f"crawler-data/{store}/{category}/{filename}"
             
-            # First try to download from the cloud.
+            # First try to download from cloud
             result = self.download_file_content(cloud_path)
             
             if result.get('success'):
                 content = result['content']
                 try:
-                    # Parse JSON content.
+                    # Parse JSON content
                     json_data = json.loads(content)
                     
-                    # Handle different JSON structures.
+                    # Handle different JSON structures
                     if isinstance(json_data, list):
-                        # If it is a list of items.
+                        # If it's a list of items
                         items = json_data
                     elif isinstance(json_data, dict) and 'items' in json_data:
-                        # If it is an object with an items property.
+                        # If it's an object with items property
                         items = json_data['items']
                     elif isinstance(json_data, dict):
-                        # If it is a single object, wrap it in a list.
+                        # If it's a single object, wrap in list
                         items = [json_data]
                     else:
                         items = []
@@ -828,7 +832,7 @@ class FirebaseStorageManager:
                         "error": f"Invalid JSON format: {e}"
                     }
             else:
-                # Try local file as a fallback.
+                # Try local file as fallback
                 local_path = os.path.join(
                     os.path.dirname(__file__), 
                     "output", 
@@ -842,7 +846,7 @@ class FirebaseStorageManager:
                         with open(local_path, 'r', encoding='utf-8') as f:
                             json_data = json.load(f)
                         
-                        # Handle different JSON structures.
+                        # Handle different JSON structures
                         if isinstance(json_data, list):
                             items = json_data
                         elif isinstance(json_data, dict) and 'items' in json_data:
@@ -880,7 +884,7 @@ class FirebaseStorageManager:
                 "error": str(e)
             }
 
-# Singleton instance.
+# Singleton instance
 _storage_manager = None
 
 def get_storage_manager() -> FirebaseStorageManager:
@@ -889,7 +893,7 @@ def get_storage_manager() -> FirebaseStorageManager:
     """
     global _storage_manager
     if _storage_manager is None:
-        # Load environment variables from the .env file.
+        # Load environment variables from .env file
         from dotenv import load_dotenv
         load_dotenv()
         _storage_manager = FirebaseStorageManager()

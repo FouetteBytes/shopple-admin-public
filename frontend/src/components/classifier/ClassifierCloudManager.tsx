@@ -331,7 +331,7 @@ const ClassifierCloudManager: React.FC = () => {
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex min-w-0 flex-1 items-center gap-4">
                   <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-200/70">
-                    
+                    📁
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-base font-semibold text-slate-900" title={file.filename}>{file.filename}</p>

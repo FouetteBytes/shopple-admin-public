@@ -58,7 +58,7 @@ def test_groq_real_classification(handler, allowed_models):
     
     # Test each model individually
     for test_model in allowed_models:
-        print(f"\n Testing Groq model: {test_model}")
+        print(f"\n🧪 Testing Groq model: {test_model}")
         
         # Start timing
         start_time = time.time_ns()
@@ -124,7 +124,7 @@ def test_groq_multiple_keys_load_balancing(api_key, allowed_models):
     # Check stats
     stats = handler.get_load_balancer_stats()
     assert len(stats) > 0, "Should have usage stats"
-    print(f"\n Load Balancer Stats: {stats}")
+    print(f"\n📊 Load Balancer Stats: {stats}")
 
 
 @pytest.mark.timeout(30)

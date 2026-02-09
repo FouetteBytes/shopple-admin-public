@@ -24,15 +24,15 @@ class IntelligentProductCache:
     """
     
     def __init__(self, cache_dir: str = None):
-        # Set the default cache directory.
+        # Set default cache directory
         if cache_dir is None:
               # Resolve the cache directory relative to the project root when not configured.
             project_root = os.environ.get('PROJECT_ROOT')
             if not project_root:
-                # Derive the project root from the module location.
-                 current_dir = os.path.abspath(__file__)  # .../backend/features/products/service/matcher/legacy_cache.py
-                 backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))))
-                 # backend_dir is .../backend.
+                  # Derive the project root from the module location.
+                 current_dir = os.path.abspath(__file__) # .../backend/features/products/service/matcher/legacy_cache.py
+                 backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(current_dir))))) 
+                 # backend_dir is .../backend
                  project_root = os.path.dirname(backend_dir)
              
             cache_dir = os.path.join(project_root, "cache")
@@ -40,25 +40,25 @@ class IntelligentProductCache:
         self.cache_dir = cache_dir
         self.cache_file = os.path.join(cache_dir, "product_cache.json")
         self.metadata_file = os.path.join(cache_dir, "cache_metadata.json")
-          # Configuration - more strict matching.
-        self.similarity_threshold = 0.95  # Much higher threshold for cache hit (was 0.85).
-        self.fuzzy_threshold = 0.6       # Higher threshold for fuzzy suggestions (was 0.3).
-        self.max_cache_age_days = 30     # Cache expiration.
-        self.cache_version = "1.1"       # Increment for improved logic.
+          # Configuration - More strict matching
+        self.similarity_threshold = 0.95  # Much higher threshold for cache hit (was 0.85)
+        self.fuzzy_threshold = 0.6       # Higher threshold for fuzzy suggestions (was 0.3)
+        self.max_cache_age_days = 30     # Cache expiration
+        self.cache_version = "1.1"       # Increment for improved logic
         
-        # Ensure cache directory exists.
+        # Ensure cache directory exists
         if not os.path.exists(cache_dir):
             try:
                 os.makedirs(cache_dir, exist_ok=True)
             except Exception as e:
                 logger.error(f"Failed to create cache dir {cache_dir}: {e}")
         
-        # Lazy loading: do not load cache immediately.
+        # Lazy loading: Don't load cache immediately
         self.cache = None
         self.metadata = None
         self._cache_loaded = False
         
-        # Statistics.
+        # Statistics
         self.stats = {
             'hits': 0,
             'misses': 0,
@@ -69,7 +69,7 @@ class IntelligentProductCache:
         logger.debug("Intelligent Product Cache initialized (lazy loading enabled)", extra={"cache_file": self.cache_file})
     
     def _load_cache(self) -> Dict:
-        """Load cache from file."""
+        """Load cache from file"""
         try:
             if os.path.exists(self.cache_file):
                 with open(self.cache_file, 'r', encoding='utf-8') as f:
@@ -80,7 +80,7 @@ class IntelligentProductCache:
             return {}
     
     def _load_metadata(self) -> Dict:
-        """Load cache metadata."""
+        """Load cache metadata"""
         try:
             if os.path.exists(self.metadata_file):
                 with open(self.metadata_file, 'r', encoding='utf-8') as f:
@@ -97,7 +97,7 @@ class IntelligentProductCache:
             return {}
     
     def _save_cache(self):
-        """Save cache to file."""
+        """Save cache to file"""
         try:
             with open(self.cache_file, 'w', encoding='utf-8') as f:
                 json.dump(self.cache, f, indent=2, ensure_ascii=False)
@@ -105,7 +105,7 @@ class IntelligentProductCache:
             logger.warning("Error saving cache", extra={"error": str(e), "cache_file": self.cache_file})
     
     def _save_metadata(self):
-        """Save metadata to file."""
+        """Save metadata to file"""
         try:
             with open(self.metadata_file, 'w', encoding='utf-8') as f:
                 json.dump(self.metadata, f, indent=2, ensure_ascii=False)
@@ -113,7 +113,7 @@ class IntelligentProductCache:
             logger.warning("Error saving metadata", extra={"error": str(e)})
 
     def get_cache_stats(self) -> Dict:
-        """Get cache statistics."""
+        """Get cache statistics"""
         if not self._cache_loaded and self.cache is None:
              self.cache = self._load_cache()
              self._cache_loaded = True

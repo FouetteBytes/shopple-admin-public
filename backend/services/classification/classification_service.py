@@ -40,7 +40,7 @@ class SmartFallbackAIClassifier:
         # Initialize API handlers - simplified (no load balancing)
         if self.api_config.get('groq_api_key'):
             self.groq_handler = GroqHandler(self.api_config.get('groq_api_key'))
-            logger.debug("Groq initialized")
+            logger.debug("🔑 Groq initialized")
         else:
             self.groq_handler = GroqHandler()
             logger.debug("⚠️ No Groq API key found")
@@ -54,7 +54,7 @@ class SmartFallbackAIClassifier:
             logger.debug("⚡ Intelligent Cache: ENABLED")
         else:
             logger.debug("⚡ Intelligent Cache: DISABLED")
-        logger.debug("Online API Model Priority:")
+        logger.debug("🚀 Online API Model Priority:")
         
         logger.debug(f"   1️⃣ Groq API {'✅' if self.groq_handler.is_available() else '❌'}")
         logger.debug(f"   2️⃣ OpenRouter API {'✅' if self.openrouter_handler.is_available() else '❌'}")
@@ -220,7 +220,7 @@ VARIETY: Chicken Kochchi Bites"""
                     self.model_usage_stats['groq'] += 1
                     return response, "GROQ", groq_model
                 else:
-                    logger.debug("Groq failed...")
+                    logger.debug("🔄 Groq failed...")
             except SmartFallbackAIClassifier.ClassificationCancelled:
                 raise
             except Exception as e:
@@ -249,7 +249,7 @@ VARIETY: Chicken Kochchi Bites"""
                     self.model_usage_stats['openrouter'] += 1
                     return response, "OPENROUTER", or_model
                 else:
-                    logger.debug("OpenRouter failed...")
+                    logger.debug("🔄 OpenRouter failed...")
             except SmartFallbackAIClassifier.ClassificationCancelled:
                 raise
             except Exception as e:
@@ -278,7 +278,7 @@ VARIETY: Chicken Kochchi Bites"""
                     self.model_usage_stats['gemini'] += 1
                     return response, "GEMINI", gem_model
                 else:
-                    logger.debug("Gemini failed...")
+                    logger.debug("🔄 Gemini failed...")
             except SmartFallbackAIClassifier.ClassificationCancelled:
                 raise
             except Exception as e:
@@ -305,24 +305,24 @@ VARIETY: Chicken Kochchi Bites"""
                     self.model_usage_stats['cerebras'] += 1
                     return response, "CEREBRAS", "qwen-3-32b"
                 else:
-                    logger.debug("Cerebras failed...")
+                    logger.debug("🔄 Cerebras failed...")
             except SmartFallbackAIClassifier.ClassificationCancelled:
                 raise
             except Exception as e:
                 logger.debug(f"❌ Cerebras API exception: {e}")
 
-        # All online APIs exhausted. Cycle through them again with different prompts.
+        # 🚫 All online APIs exhausted - Try cycling through them again with different prompts
         check_cancel()
         if progress_callback:
             progress_callback("Retrying with alternative approach...", "RETRY")
         
-        logger.debug("All primary APIs failed, trying alternative approaches...")
+        logger.debug("🔄 All primary APIs failed, trying alternative approaches...")
         
         # Try a simplified prompt with Groq again
         try:
             check_cancel()
             if self.groq_handler.is_available():
-                logger.debug("Retrying Groq with simplified prompt...")
+                logger.debug("🔄 Retrying Groq with simplified prompt...")
                 simplified_prompt = f"Classify this Sri Lankan product briefly: {product_name}"
                 response = self.groq_handler.get_classification(simplified_prompt)
                 check_cancel()
@@ -339,7 +339,7 @@ VARIETY: Chicken Kochchi Bites"""
         try:
             check_cancel()
             if self.openrouter_handler.is_available():
-                logger.debug("Retrying OpenRouter with simplified prompt...")
+                logger.debug("🔄 Retrying OpenRouter with simplified prompt...")
                 simplified_prompt = f"Classify this Sri Lankan product briefly: {product_name}"
                 response = self.openrouter_handler.get_classification(simplified_prompt)
                 check_cancel()
@@ -419,15 +419,14 @@ VARIETY: Chicken Kochchi Bites"""
                 result['model_used'] = 'CACHE'
                 return result
         
-        logger.debug(f"AI classifying: {product_name}")
+        logger.debug(f"🤖 AI classifying: {product_name}")
         check_cancel()
         
         if progress_callback:
-            # Enhanced reasoning prompt.
-            progress_callback("Starting enhanced model cascade...", "Enhanced Cascade")
+            progress_callback("Starting enhanced model cascade...", "Enhanced Cascade")# ULTRA-INTELLIGENT REASONING PROMPT - Think, Don't Memorize
         prompt = f"""You are an expert product analyst. Analyze this product name intelligently: "{product_name}"
 
-THINK STEP BY STEP - Do not just follow examples; reason through the product:
+🧠 THINK STEP BY STEP - Don't just follow examples, REASON through the product:
 
 STEP 1: PRODUCT_TYPE Analysis
 - Look at the CORE INGREDIENT/ITEM in the name
@@ -544,7 +543,7 @@ VARIETY: [your reasoned answer or None]"""
         check_cancel()
         
         if ai_response and len(ai_response) > 10:
-            logger.debug(f"AI Response (from {model_used} model):")
+            logger.debug(f"🤖 AI Response (from {model_used} model):")
             logger.debug("-" * 50)
             logger.debug(ai_response)
             logger.debug("-" * 50)
@@ -564,7 +563,7 @@ VARIETY: [your reasoned answer or None]"""
                     extracted_variety = self.corrections.intelligent_variety_extraction(product_name, parsed.get('product_type'))
                     if extracted_variety:
                         parsed['variety'] = extracted_variety
-                        logger.debug(f"Added missing critical variety: '{extracted_variety}'")
+                        logger.debug(f"🔧 Added missing critical variety: '{extracted_variety}'")
             
             # Build result with EXACT SAME format as original
             result = {
@@ -593,7 +592,7 @@ VARIETY: [your reasoned answer or None]"""
                 except Exception as e:
                     logger.warning(f"Failed to cache result: {e}", extra={"error": str(e)})
             elif not store_in_cache:
-                logger.debug("Skipping cache storage (disabled by user)")
+                logger.debug(f"🚫 Skipping cache storage (disabled by user)")
             
             return result
         else:
@@ -669,28 +668,28 @@ VARIETY: [your reasoned answer or None]"""
                 result[field_name] = found_value
               # Enhanced product_name handling - keep descriptive name, remove size
             if not result.get('product_name') or result['product_name'] == 'Unknown':
-                # Remove size info from the original name to keep a descriptive product name.
-                clean_name = re.sub(r'\s*\d+\s*[gGkKmMlLsS]+\b', '', original_name)  # Remove 20g, 1kg, 10S, etc.
-                clean_name = re.sub(r'\s*\([^)]*[0-9]+[^)]*\)\s*', '', clean_name)  # Only remove size-related parentheses like (5U) and (10 pieces).
-                clean_name = re.sub(r'\s*bulk\s*kg\s*', '', clean_name, flags=re.IGNORECASE)  # Remove "bulk kg".
-                clean_name = re.sub(r'\s+', ' ', clean_name).strip()  # Clean up extra spaces.
+                # Remove size info from original name to get clean descriptive product name
+                clean_name = re.sub(r'\s*\d+\s*[gGkKmMlLsS]+\b', '', original_name)  # Remove 20g, 1kg, 10S etc
+                clean_name = re.sub(r'\s*\([^)]*[0-9]+[^)]*\)\s*', '', clean_name)  # Only remove size-related parentheses like (5U), (10 pieces)
+                clean_name = re.sub(r'\s*bulk\s*kg\s*', '', clean_name, flags=re.IGNORECASE)  # Remove "bulk kg"
+                clean_name = re.sub(r'\s+', ' ', clean_name).strip()  # Clean up extra spaces
                 result['product_name'] = clean_name
             else:
-                # Also clean the AI-provided product name while preserving descriptive parentheses.
+                # Also clean the AI-provided product name - but preserve descriptive parentheses
                 ai_name = result['product_name']
                 clean_name = re.sub(r'\s*\d+\s*[gGkKmMlLsS]+\b', '', ai_name)
-                clean_name = re.sub(r'\s*\([^)]*[0-9]+[^)]*\)\s*', '', clean_name)  # Only remove size-related parentheses.
-                clean_name = re.sub(r'\s*bulk\s*kg\s*', '', clean_name, flags=re.IGNORECASE)  # Remove "bulk kg".
+                clean_name = re.sub(r'\s*\([^)]*[0-9]+[^)]*\)\s*', '', clean_name)  # Only remove size-related parentheses
+                clean_name = re.sub(r'\s*bulk\s*kg\s*', '', clean_name, flags=re.IGNORECASE)  # Remove "bulk kg"
                 clean_name = re.sub(r'\s+', ' ', clean_name).strip()
                 result['product_name'] = clean_name
 
-            # MINIMAL CORRECTIONS - Only fix obvious AI errors and preserve correct AI responses.
-            logger.debug(f"Before corrections - Brand: '{result.get('brand_name')}', Product: '{result.get('product_name')}', Variety: '{result.get('variety')}'")
+            # MINIMAL CORRECTIONS - Only fix obvious AI errors, preserve correct AI responses
+            logger.debug(f"🔍 Before corrections - Brand: '{result.get('brand_name')}', Product: '{result.get('product_name')}', Variety: '{result.get('variety')}'")
             
-            # Only apply corrections if there are genuine errors; do not override correct AI responses.
+            # Only apply corrections if there are genuine errors - don't override correct AI responses
             corrected_result = self.corrections.apply_minimal_corrections(result, original_name)
             
-            logger.debug(f"After corrections - Brand: '{corrected_result.get('brand_name')}', Product: '{corrected_result.get('product_name')}', Variety: '{corrected_result.get('variety')}'")
+            logger.debug(f"🔍 After corrections - Brand: '{corrected_result.get('brand_name')}', Product: '{corrected_result.get('product_name')}', Variety: '{corrected_result.get('variety')}'")
             
             return corrected_result
             
@@ -704,19 +703,19 @@ VARIETY: [your reasoned answer or None]"""
             
     def _create_failed_result(self, product_name: str, price: str, image_url: str) -> Dict:
         """
-        Create a result when AI fails with intelligent fallback classification.
-        Enhanced to provide better results even when AI fails.
+        Create result when AI fails with intelligent fallback classification
+        Enhanced to provide better results even when AI fails
         """
-        # Clean product name (remove size info for failed cases).
+        # Clean product name (remove size info for failed cases)
         clean_name = re.sub(r'\s*\d+\s*[gGkKmMlL]+\s*', '', product_name)
         clean_name = re.sub(r'\s*\([^)]*\)\s*', '', clean_name).strip()
         
-        # Try to infer product type from name keywords as a fallback.
+        # Try to guess product type from name keywords as fallback
         product_type = "Unknown"
         variety = None
         brand_name = None
         
-        # Keyword-based classification as an emergency fallback.
+        # Simple keyword-based classification as emergency fallback
         name_lower = product_name.lower()
         
         # Basic product type detection

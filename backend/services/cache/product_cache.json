@@ -1,0 +1,1373 @@
+{
+  "4ever body milk aloe lavender moisturising_1960783e": {
+    "original_name": "4Ever Body Milk Aloe Lavender Moisturising 200ml",
+    "normalized_name": "4ever body milk aloe lavender moisturising 200ml",
+    "sample_price": "Rs 525.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122735.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Body Milk Aloe Lavender Moisturising",
+      "size": "200ml",
+      "variety": "Body Milk",
+      "price": "Rs 525.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122735.jpg",
+      "original_name": "4Ever Body Milk Aloe Lavender Moisturising 200ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Body Milk Aloe Lavender Moisturising\nSIZE: 200ml\nVARIETY: Body Milk",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:28:37.301889",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:28:37.301895",
+    "price_variations": [
+      "Rs 525.00"
+    ]
+  },
+  "4ever body milk cocoa butter moisturising_83af4929": {
+    "original_name": "4Ever Body Milk Cocoa Butter Moisturising 200ml",
+    "normalized_name": "4ever body milk cocoa butter moisturising 200ml",
+    "sample_price": "Rs 830.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122734.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Body Milk Cocoa Butter Moisturising",
+      "size": "200ml",
+      "variety": "Body Milk",
+      "price": "Rs 830.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122734.jpg",
+      "original_name": "4Ever Body Milk Cocoa Butter Moisturising 200ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Body Milk Cocoa Butter Moisturising\nSIZE: 200ml\nVARIETY: Body Milk",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:28:39.850770",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:28:39.850777",
+    "price_variations": [
+      "Rs 830.00"
+    ]
+  },
+  "4ever face wash aloe lavender_4ed02212": {
+    "original_name": "4Ever Face Wash Aloe Lavender 100ml",
+    "normalized_name": "4ever face wash aloe lavender 100ml",
+    "sample_price": "Rs 650.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122732.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Men's Face Scrub Active Charcoal",
+      "size": "100g",
+      "variety": "Face Scrub",
+      "confidence": 0,
+      "model_used": "GROQ",
+      "processing_time": 0,
+      "user_edited": true,
+      "edit_timestamp": "2026-01-07T12:45:29.350422",
+      "original_ai_result": {
+        "product_type": "Personal Care",
+        "brand_name": "4Ever",
+        "product_name": "4Ever Face Wash Aloe Lavender",
+        "size": "100ml",
+        "variety": "Face Wash"
+      }
+    },
+    "timestamp": "2026-01-07T12:28:42.217089",
+    "version": "1.1",
+    "access_count": 4,
+    "last_accessed": "2026-01-07T12:45:29.350424",
+    "price_variations": [
+      "Rs 390.00",
+      "Rs 650.00"
+    ],
+    "sample_image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic123721.jpg"
+  },
+  "4ever face wash kohomba kaha_526419e1": {
+    "original_name": "4Ever Face Wash Kohomba Kaha 100ml",
+    "normalized_name": "4ever face wash kohomba kaha 100ml",
+    "sample_price": "Rs 273.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic40404.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Face Wash Kohomba Kaha",
+      "size": "100ml",
+      "variety": "Face Wash",
+      "price": "Rs 273.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic40404.jpg",
+      "original_name": "4Ever Face Wash Kohomba Kaha 100ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Face Wash Kohomba Kaha\nSIZE: 100ml\nVARIETY: Face Wash",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:28:44.512520",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:28:44.512524",
+    "price_variations": [
+      "Rs 273.00"
+    ]
+  },
+  "4ever face wash rose anti acne_e1ace61c": {
+    "original_name": "4Ever Face Wash Rose Anti Acne 100ml",
+    "normalized_name": "4ever face wash rose anti acne 100ml",
+    "sample_price": "Rs 315.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122733.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Face Wash Rose Anti Acne",
+      "size": "100ml",
+      "variety": "Face Wash",
+      "price": "Rs 315.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122733.jpg",
+      "original_name": "4Ever Face Wash Rose Anti Acne 100ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Face Wash Rose Anti Acne\nSIZE: 100ml\nVARIETY: Face Wash",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:28:46.895022",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:28:46.895027",
+    "price_variations": [
+      "Rs 315.00"
+    ]
+  },
+  "4ever face wash tea tree oil_d07e91b0": {
+    "original_name": "4Ever Face Wash Tea Tree Oil 100ml",
+    "normalized_name": "4ever face wash tea tree oil 100ml",
+    "sample_price": "Rs 390.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic115253.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Face Wash Tea Tree Oil",
+      "size": "100ml",
+      "variety": "Face Wash",
+      "price": "Rs 390.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic115253.jpg",
+      "original_name": "4Ever Face Wash Tea Tree Oil 100ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Face Wash Tea Tree Oil\nSIZE: 100ml\nVARIETY: Face Wash",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:28:49.317099",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:28:49.317106",
+    "price_variations": [
+      "Rs 390.00"
+    ]
+  },
+  "4ever face wash venivel_b9fd6d76": {
+    "original_name": "4Ever Face Wash Venivel 100ml",
+    "normalized_name": "4ever face wash venivel 100ml",
+    "sample_price": "Rs 273.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic115254.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Face Wash Venivel",
+      "size": "100ml",
+      "variety": "Face Wash",
+      "price": "Rs 273.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic115254.jpg",
+      "original_name": "4Ever Face Wash Venivel 100ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Face Wash Venivel\nSIZE: 100ml\nVARIETY: Face Wash",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:28:51.724044",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:28:51.724047",
+    "price_variations": [
+      "Rs 273.00"
+    ]
+  },
+  "4ever foot crack cream_d1c8f1bc": {
+    "original_name": "4Ever Foot Crack Cream 100ml",
+    "normalized_name": "4ever foot crack cream 100ml",
+    "sample_price": "Rs 650.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic40398.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Gold Bb+ Cream",
+      "size": "15g",
+      "variety": "Bb Cream",
+      "confidence": 0,
+      "model_used": "GROQ",
+      "processing_time": 0,
+      "user_edited": true,
+      "edit_timestamp": "2026-01-07T12:45:29.349966",
+      "original_ai_result": {
+        "product_type": "Personal Care",
+        "brand_name": "4Ever",
+        "product_name": "4Ever Foot Crack Cream",
+        "size": "100ml",
+        "variety": "Foot Cream"
+      }
+    },
+    "timestamp": "2026-01-07T12:28:54.350972",
+    "version": "1.1",
+    "access_count": 4,
+    "last_accessed": "2026-01-07T12:45:29.349968",
+    "price_variations": [
+      "Rs 413.00",
+      "Rs 650.00"
+    ],
+    "sample_image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic116424.jpg"
+  },
+  "4ever gold bb cream spf15_44999e79": {
+    "original_name": "4Ever Gold Bb+ Cream (Spf15+) 15g",
+    "normalized_name": "4ever gold bb cream spf15 15g",
+    "sample_price": "Rs 650.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic116424.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Gold Bb+ Cream",
+      "size": "15g",
+      "variety": "Bb Cream",
+      "price": "Rs 650.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic116424.jpg",
+      "original_name": "4Ever Gold Bb+ Cream (Spf15+) 15g",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Gold Bb+ Cream\nSIZE: 15g\nVARIETY: Bb Cream",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:28:56.734527",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:28:56.734533",
+    "price_variations": [
+      "Rs 650.00"
+    ]
+  },
+  "4ever gold face wash_768c0d1c": {
+    "original_name": "4Ever Gold Face Wash 100ml",
+    "normalized_name": "4ever gold face wash 100ml",
+    "sample_price": "Rs 450.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112118.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Gold Face Wash",
+      "size": "100ml",
+      "variety": "Face Wash",
+      "price": "Rs 450.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112118.jpg",
+      "original_name": "4Ever Gold Face Wash 100ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Gold Face Wash\nSIZE: 100ml\nVARIETY: Face Wash",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:28:59.167202",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:28:59.167208",
+    "price_variations": [
+      "Rs 450.00"
+    ]
+  },
+  "4ever gold fairness day cream advance_c026b0f5": {
+    "original_name": "4Ever Gold Fairness Day Cream Advance 30g",
+    "normalized_name": "4ever gold fairness day cream advance 30g",
+    "sample_price": "Rs 950.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112119.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Gold Fairness Day Cream Advance",
+      "size": "30g",
+      "variety": "Day Cream",
+      "price": "Rs 950.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112119.jpg",
+      "original_name": "4Ever Gold Fairness Day Cream Advance 30g",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Gold Fairness Day Cream Advance\nSIZE: 30g\nVARIETY: Day Cream",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:29:01.512477",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:29:01.512481",
+    "price_variations": [
+      "Rs 950.00"
+    ]
+  },
+  "4ever gold pigmentation remove cream 25x2g_dba14a05": {
+    "original_name": "4Ever Gold Pigmentation Remove Cream 25X2g",
+    "normalized_name": "4ever gold pigmentation remove cream 25x2g",
+    "sample_price": "Rs 2,750.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic125747.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Gold Pigmentation Remove Cream",
+      "size": "50g",
+      "variety": "Pigmentation Cream",
+      "price": "Rs 2,750.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic125747.jpg",
+      "original_name": "4Ever Gold Pigmentation Remove Cream 25X2g",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Gold Pigmentation Remove Cream\nSIZE: 50g\nVARIETY: Pigmentation Cream",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:29:08.146686",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:29:08.146693",
+    "price_variations": [
+      "Rs 2,750.00"
+    ]
+  },
+  "4ever hand sanitizer red germ killer instant liquid spray_5415f563": {
+    "original_name": "4Ever Hand Sanitizer Red Germ Killer Instant Liquid Spray 50ml",
+    "normalized_name": "4ever hand sanitizer red germ killer instant liquid spray 50ml",
+    "sample_price": "Rs 260.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122736.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Hand Sanitizer Red Germ Killer Instant Liquid Spray",
+      "size": "50ml",
+      "variety": "Hand Sanitizer",
+      "price": "Rs 260.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122736.jpg",
+      "original_name": "4Ever Hand Sanitizer Red Germ Killer Instant Liquid Spray 50ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Hand Sanitizer Red Germ Killer Instant Liquid Spray\nSIZE: 50ml\nVARIETY: Hand Sanitizer",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:29:15.740505",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:29:15.740512",
+    "price_variations": [
+      "Rs 260.00"
+    ]
+  },
+  "4ever menpcs fscrub active charcoal_74a5f3fe": {
+    "original_name": "4Ever Men's F/Scrub Active Charcoal 100g",
+    "normalized_name": "4ever menpcs fscrub active charcoal 100g",
+    "sample_price": "Rs 650.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic123721.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Men's Face Scrub Active Charcoal",
+      "size": "100g",
+      "variety": "Face Scrub",
+      "price": "Rs 650.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic123721.jpg",
+      "original_name": "4Ever Men's F/Scrub Active Charcoal 100g",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Men's Face Scrub Active Charcoal\nSIZE: 100g\nVARIETY: Face Scrub",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:29:23.360197",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:29:23.360204",
+    "price_variations": [
+      "Rs 650.00"
+    ]
+  },
+  "4ever menpcs fairness cream_62ffd165": {
+    "original_name": "4Ever Men's Fairness Cream 50g",
+    "normalized_name": "4ever menpcs fairness cream 50g",
+    "sample_price": "Rs 950.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic123723.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Men's Fairness Cream",
+      "size": "50g",
+      "variety": "Fairness Cream",
+      "price": "Rs 950.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic123723.jpg",
+      "original_name": "4Ever Men's Fairness Cream 50g",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Men's Fairness Cream\nSIZE: 50g\nVARIETY: Fairness Cream",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:29:31.086466",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:29:31.086471",
+    "price_variations": [
+      "Rs 950.00"
+    ]
+  },
+  "4ever nourishing glowing gold moisturising body milk_2f569792": {
+    "original_name": "4Ever Nourishing & Glowing Gold Moisturising Body Milk 200ml",
+    "normalized_name": "4ever nourishing glowing gold moisturising body milk 200ml",
+    "sample_price": "Rs 950.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic121479.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Nourishing & Glowing Gold Moisturising Body Milk",
+      "size": "200ml",
+      "variety": "Body Milk",
+      "price": "Rs 950.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic121479.jpg",
+      "original_name": "4Ever Nourishing & Glowing Gold Moisturising Body Milk 200ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Nourishing & Glowing Gold Moisturising Body Milk\nSIZE: 200ml\nVARIETY: Body Milk",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:29:39.734434",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:29:39.734439",
+    "price_variations": [
+      "Rs 950.00"
+    ]
+  },
+  "4ever venivel 5 minutes clean up_5bfd927a": {
+    "original_name": "4Ever Venivel 5 Minutes Clean Up 60g",
+    "normalized_name": "4ever venivel 5 minutes clean up 60g",
+    "sample_price": "Rs 750.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112120.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "4Ever",
+      "product_name": "4Ever Venivel 5 Minutes Clean Up",
+      "size": "60g",
+      "variety": "Face Clean Up",
+      "price": "Rs 750.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112120.jpg",
+      "original_name": "4Ever Venivel 5 Minutes Clean Up 60g",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: 4Ever\nPRODUCT_NAME: 4Ever Venivel 5 Minutes Clean Up\nSIZE: 60g\nVARIETY: Face Clean Up",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:29:48.069571",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:29:48.069575",
+    "price_variations": [
+      "Rs 750.00"
+    ]
+  },
+  "abha hair colour liquid_67656e14": {
+    "original_name": "Abha Hair Colour Liquid 21ml",
+    "normalized_name": "abha hair colour liquid 21ml",
+    "sample_price": "Rs 260.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic123445.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "Abha",
+      "product_name": "Abha Hair Colour Liquid",
+      "size": "21ml",
+      "variety": "Hair Colour",
+      "price": "Rs 260.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic123445.jpg",
+      "original_name": "Abha Hair Colour Liquid 21ml",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: Abha\nPRODUCT_NAME: Abha Hair Colour Liquid\nSIZE: 21ml\nVARIETY: Hair Colour",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:29:55.625040",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:29:55.625048",
+    "price_variations": [
+      "Rs 260.00"
+    ]
+  },
+  "abha herbal black henna cream_d5513150": {
+    "original_name": "Abha Herbal Black Henna Cream 21g",
+    "normalized_name": "abha herbal black henna cream 21g",
+    "sample_price": "Rs 320.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic116339.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "Abha",
+      "product_name": "Abha Herbal Black Henna Cream",
+      "size": "21g",
+      "variety": "Henna Cream",
+      "price": "Rs 320.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic116339.jpg",
+      "original_name": "Abha Herbal Black Henna Cream 21g",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: Abha\nPRODUCT_NAME: Abha Herbal Black Henna Cream\nSIZE: 21g\nVARIETY: Henna Cream",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:30:03.199668",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:30:03.199673",
+    "price_variations": [
+      "Rs 320.00"
+    ]
+  },
+  "acon birthday hat_116d7f17": {
+    "original_name": "Acon Birthday Hat 6S",
+    "normalized_name": "acon birthday hat 6s",
+    "sample_price": "Rs 300.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Acon",
+      "product_name": "Acon Birthday Hat",
+      "size": "6 pieces",
+      "variety": "Birthday Hat",
+      "price": "Rs 300.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Acon Birthday Hat 6S",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Acon\nPRODUCT_NAME: Acon Birthday Hat\nSIZE: 6S\nVARIETY: Birthday Hat",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:30:11.365513",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:30:11.365521",
+    "price_variations": [
+      "Rs 300.00"
+    ]
+  },
+  "acon happy birthday cake topper plastic_116d7f17": {
+    "original_name": "Acon Happy Birthday Cake Topper Plastic",
+    "normalized_name": "acon happy birthday cake topper plastic",
+    "sample_price": "Rs 300.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Acon",
+      "product_name": "Acon Happy Birthday Cake Topper Plastic",
+      "size": "1",
+      "variety": "Cake Topper",
+      "price": "Rs 300.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Acon Happy Birthday Cake Topper Plastic",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Acon\nPRODUCT_NAME: Acon Happy Birthday Cake Topper Plastic\nSIZE: 1\nVARIETY: Cake Topper",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:30:18.859629",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:30:18.859634",
+    "price_variations": [
+      "Rs 300.00"
+    ]
+  },
+  "acon paper cups_116d7f17": {
+    "original_name": "Acon Paper Cups 10S",
+    "normalized_name": "acon paper cups 10s",
+    "sample_price": "Rs 280.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Paper Products",
+      "brand_name": "Acon",
+      "product_name": "Acon Paper Cups",
+      "size": "10 pieces",
+      "variety": "Paper Cups",
+      "price": "Rs 280.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Acon Paper Cups 10S",
+      "complete_ai_response": "PRODUCT_TYPE: Paper Products\nBRAND_NAME: Acon\nPRODUCT_NAME: Acon Paper Cups\nSIZE: 10S\nVARIETY: Paper Cups",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:30:26.276196",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:30:26.276203",
+    "price_variations": [
+      "Rs 280.00"
+    ]
+  },
+  "acon paper mat 7.5x12 inch_33b06833": {
+    "original_name": "Acon Paper Mat 7.5X12 Inch",
+    "normalized_name": "acon paper mat 7.5x12 inch",
+    "sample_price": "Rs 467.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic102756.jpg",
+    "result": {
+      "product_type": "Paper Products",
+      "brand_name": "Acon",
+      "product_name": "Acon Paper Mat",
+      "size": "1",
+      "variety": "Paper Mat",
+      "price": "Rs 467.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic102756.jpg",
+      "original_name": "Acon Paper Mat 7.5X12 Inch",
+      "complete_ai_response": "PRODUCT_TYPE: Paper Products\nBRAND_NAME: Acon\nPRODUCT_NAME: Acon Paper Mat\nSIZE: 1\nVARIETY: Paper Mat",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:30:34.137165",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:30:34.137174",
+    "price_variations": [
+      "Rs 467.00"
+    ]
+  },
+  "acon paper plates dotted_116d7f17": {
+    "original_name": "Acon Paper Plates Dotted 10S",
+    "normalized_name": "acon paper plates dotted 10s",
+    "sample_price": "Rs 300.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Paper Products",
+      "brand_name": "Acon",
+      "product_name": "Acon Paper Plates Dotted",
+      "size": "10 pieces",
+      "variety": "Paper Plates",
+      "price": "Rs 300.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Acon Paper Plates Dotted 10S",
+      "complete_ai_response": "PRODUCT_TYPE: Paper Products\nBRAND_NAME: Acon\nPRODUCT_NAME: Acon Paper Plates Dotted\nSIZE: 10S\nVARIETY: Paper Plates",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:30:41.804841",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:30:41.804848",
+    "price_variations": [
+      "Rs 300.00"
+    ]
+  },
+  "acon party favors magic relighting candles_c7e2f302": {
+    "original_name": "Acon Party Favors Magic Relighting Candles",
+    "normalized_name": "acon party favors magic relighting candles",
+    "sample_price": "Rs 377.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic46471.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Acon",
+      "product_name": "Acon Party Favors Magic Relighting Candles",
+      "size": "1",
+      "variety": "Magic Candles",
+      "price": "Rs 377.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic46471.jpg",
+      "original_name": "Acon Party Favors Magic Relighting Candles",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Acon\nPRODUCT_NAME: Acon Party Favors Magic Relighting Candles\nSIZE: 1\nVARIETY: Magic Candles",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:30:49.457741",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:30:49.457745",
+    "price_variations": [
+      "Rs 377.00"
+    ]
+  },
+  "acon snow spray_cf9aa59e": {
+    "original_name": "Acon Snow Spray",
+    "normalized_name": "acon snow spray",
+    "sample_price": "Rs 642.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic125769.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Acon",
+      "product_name": "Acon Snow Spray",
+      "size": "1",
+      "variety": "Snow Spray",
+      "price": "Rs 642.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic125769.jpg",
+      "original_name": "Acon Snow Spray",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Acon\nPRODUCT_NAME: Acon Snow Spray\nSIZE: 1\nVARIETY: Snow Spray",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:30:57.100257",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:30:57.100261",
+    "price_variations": [
+      "Rs 642.00"
+    ]
+  },
+  "all out laundry liquid top load_f04004c1": {
+    "original_name": "All Out Laundry Liquid Top Load 1L",
+    "normalized_name": "all out laundry liquid top load 1l",
+    "sample_price": "Rs 850.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic119807.jpg",
+    "result": {
+      "product_type": "Cleaning Supplies",
+      "brand_name": "All Out",
+      "product_name": "All Out Laundry Liquid",
+      "size": "1L",
+      "variety": "Top Load Laundry Liquid",
+      "price": "Rs 850.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic119807.jpg",
+      "original_name": "All Out Laundry Liquid Top Load 1L",
+      "complete_ai_response": "PRODUCT_TYPE: Cleaning Supplies\nBRAND_NAME: All Out\nPRODUCT_NAME: All Out Laundry Liquid\nSIZE: 1L\nVARIETY: Top Load Laundry Liquid",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:31:04.690943",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:31:04.690950",
+    "price_variations": [
+      "Rs 850.00"
+    ]
+  },
+  "amritha incense sticks gia_e6565138": {
+    "original_name": "Amritha Incense Sticks Gia 20S",
+    "normalized_name": "amritha incense sticks gia 20s",
+    "sample_price": "Rs 150.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic124483.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Amritha",
+      "product_name": "Amritha Incense Sticks Gia",
+      "size": "20 pieces",
+      "variety": "Incense Sticks",
+      "price": "Rs 150.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic124483.jpg",
+      "original_name": "Amritha Incense Sticks Gia 20S",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Amritha\nPRODUCT_NAME: Amritha Incense Sticks Gia\nSIZE: 20S\nVARIETY: Incense Sticks",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:31:12.203432",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:31:12.203438",
+    "price_variations": [
+      "Rs 150.00"
+    ]
+  },
+  "amritha incense sticks jasmine_a2dc6425": {
+    "original_name": "Amritha Incense Sticks Jasmine 20S",
+    "normalized_name": "amritha incense sticks jasmine 20s",
+    "sample_price": "Rs 150.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic113671.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Amritha",
+      "product_name": "Amritha Incense Sticks Jasmine",
+      "size": "20 pieces",
+      "variety": "Jasmine Incense Sticks",
+      "price": "Rs 150.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic113671.jpg",
+      "original_name": "Amritha Incense Sticks Jasmine 20S",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Amritha\nPRODUCT_NAME: Amritha Incense Sticks Jasmine\nSIZE: 20S\nVARIETY: Jasmine Incense Sticks",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:31:20.755930",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:31:20.755932",
+    "price_variations": [
+      "Rs 150.00"
+    ]
+  },
+  "amritha incense sticks pineapple_e6b8d815": {
+    "original_name": "Amritha Incense Sticks Pineapple 20S",
+    "normalized_name": "amritha incense sticks pineapple 20s",
+    "sample_price": "Rs 150.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic124484.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Amritha",
+      "product_name": "Amritha Incense Sticks Pineapple",
+      "size": "20 pieces",
+      "variety": "Pineapple Incense Sticks",
+      "price": "Rs 150.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic124484.jpg",
+      "original_name": "Amritha Incense Sticks Pineapple 20S",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Amritha\nPRODUCT_NAME: Amritha Incense Sticks Pineapple\nSIZE: 20S\nVARIETY: Pineapple Incense Sticks",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:31:28.212765",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:31:28.212773",
+    "price_variations": [
+      "Rs 150.00"
+    ]
+  },
+  "amritha incense sticks rose_e8fa916f": {
+    "original_name": "Amritha Incense Sticks Rose 20S",
+    "normalized_name": "amritha incense sticks rose 20s",
+    "sample_price": "Rs 150.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic124485.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Amritha",
+      "product_name": "Amritha Incense Sticks Rose",
+      "size": "20 pieces",
+      "variety": "Rose Incense Sticks",
+      "price": "Rs 150.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic124485.jpg",
+      "original_name": "Amritha Incense Sticks Rose 20S",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Amritha\nPRODUCT_NAME: Amritha Incense Sticks Rose\nSIZE: 20S\nVARIETY: Rose Incense Sticks",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:31:35.670032",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:31:35.670038",
+    "price_variations": [
+      "Rs 150.00"
+    ]
+  },
+  "amritha joss sticks 2 in 1_73d71879": {
+    "original_name": "Amritha Joss Sticks 2 In 1 20S",
+    "normalized_name": "amritha joss sticks 2 in 1 20s",
+    "sample_price": "Rs 150.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112568.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Amritha",
+      "product_name": "Amritha Joss Sticks 2 In 1",
+      "size": "20 pieces",
+      "variety": "2 In 1 Joss Sticks",
+      "price": "Rs 150.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112568.jpg",
+      "original_name": "Amritha Joss Sticks 2 In 1 20S",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Amritha\nPRODUCT_NAME: Amritha Joss Sticks 2 In 1\nSIZE: 20S\nVARIETY: 2 In 1 Joss Sticks",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:31:44.201420",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:31:44.201423",
+    "price_variations": [
+      "Rs 150.00"
+    ]
+  },
+  "amritha joss sticks 4 in 1_f0e2b1e6": {
+    "original_name": "Amritha Joss Sticks 4 In 1 20S",
+    "normalized_name": "amritha joss sticks 4 in 1 20s",
+    "sample_price": "Rs 150.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112569.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Amritha",
+      "product_name": "Amritha Joss Sticks 4 In 1",
+      "size": "20 pieces",
+      "variety": "4 In 1 Joss Sticks",
+      "price": "Rs 150.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic112569.jpg",
+      "original_name": "Amritha Joss Sticks 4 In 1 20S",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Amritha\nPRODUCT_NAME: Amritha Joss Sticks 4 In 1\nSIZE: 20S\nVARIETY: 4 In 1 Joss Sticks",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:31:52.807073",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:31:52.807083",
+    "price_variations": [
+      "Rs 150.00"
+    ]
+  },
+  "anchor baby milk powder pediapro 1-3y_2037e627": {
+    "original_name": "Anchor Baby Milk Powder Pediapro 1-3Y 400g",
+    "normalized_name": "anchor baby milk powder pediapro 1-3y 400g",
+    "sample_price": "Rs 910.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic27607.jpg",
+    "result": {
+      "product_type": "Dairy",
+      "brand_name": "Anchor",
+      "product_name": "Anchor Plus Milk Powder",
+      "size": "300g",
+      "variety": "Plus 1-5Y",
+      "confidence": 0,
+      "model_used": "GROQ",
+      "processing_time": 0,
+      "user_edited": true,
+      "edit_timestamp": "2026-01-07T12:45:29.352359",
+      "original_ai_result": {
+        "product_type": "Dairy",
+        "brand_name": "Anchor",
+        "product_name": "Anchor Pediapro Milk Powder",
+        "size": "400g",
+        "variety": "Pediapro 4-6Y"
+      }
+    },
+    "timestamp": "2026-01-07T12:32:00.392953",
+    "version": "1.1",
+    "access_count": 6,
+    "last_accessed": "2026-01-07T12:45:29.352362",
+    "price_variations": [
+      "Rs 1,314.00",
+      "Rs 910.00"
+    ],
+    "sample_image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic113096.jpg"
+  },
+  "anchor milk powder pediapro 3-5y_f75bffdb": {
+    "original_name": "Anchor Milk Powder Pediapro 3-5Y 400g",
+    "normalized_name": "anchor milk powder pediapro 3-5y 400g",
+    "sample_price": "Rs 1,390.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic27608.jpg",
+    "result": {
+      "product_type": "Dairy",
+      "brand_name": "Anchor",
+      "product_name": "Anchor Milk Powder Pediapro",
+      "size": "400g",
+      "variety": "Pediapro 3-5Y",
+      "price": "Rs 1,390.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic27608.jpg",
+      "original_name": "Anchor Milk Powder Pediapro 3-5Y 400g",
+      "complete_ai_response": "PRODUCT_TYPE: Dairy\nBRAND_NAME: Anchor\nPRODUCT_NAME: Anchor Milk Powder Pediapro\nSIZE: 400g\nVARIETY: Pediapro 3-5Y",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:32:09.010214",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:32:09.010221",
+    "price_variations": [
+      "Rs 1,390.00"
+    ]
+  },
+  "anchor pediapro baby milk powder 1-3 years_91efc24e": {
+    "original_name": "Anchor Pediapro Baby Milk Powder Box 1-3 Years 200g",
+    "normalized_name": "anchor pediapro baby milk powder 1-3 years 200g",
+    "sample_price": "Rs 830.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic27606.jpg",
+    "result": {
+      "product_type": "Baby Food",
+      "brand_name": "Anchor",
+      "product_name": "Anchor Pediapro Baby Milk Powder",
+      "size": "200g",
+      "variety": "Pediapro 1-3 Years",
+      "price": "Rs 830.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic27606.jpg",
+      "original_name": "Anchor Pediapro Baby Milk Powder Box 1-3 Years 200g",
+      "complete_ai_response": "PRODUCT_TYPE: Baby Food\nBRAND_NAME: Anchor\nPRODUCT_NAME: Anchor Pediapro Baby Milk Powder\nSIZE: 200g\nVARIETY: Pediapro 1-3 Years",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:32:16.588488",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:32:16.588494",
+    "price_variations": [
+      "Rs 830.00"
+    ]
+  },
+  "anchor pediapro cereal_1702dc06": {
+    "original_name": "Anchor Pediapro Cereal 200g",
+    "normalized_name": "anchor pediapro cereal 200g",
+    "sample_price": "Rs 790.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122493.jpg",
+    "result": {
+      "product_type": "Baby Food",
+      "brand_name": "Anchor",
+      "product_name": "Anchor Pediapro Cereal",
+      "size": "200g",
+      "variety": "Pediapro Cereal",
+      "price": "Rs 790.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic122493.jpg",
+      "original_name": "Anchor Pediapro Cereal 200g",
+      "complete_ai_response": "PRODUCT_TYPE: Baby Food\nBRAND_NAME: Anchor\nPRODUCT_NAME: Anchor Pediapro Cereal\nSIZE: 200g\nVARIETY: Pediapro Cereal",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:32:25.133089",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:32:25.133095",
+    "price_variations": [
+      "Rs 790.00"
+    ]
+  },
+  "anchor pediapro mpowder 4-6y_116d7f17": {
+    "original_name": "Anchor Pediapro M/Powder Box 4-6Y 400g",
+    "normalized_name": "anchor pediapro mpowder 4-6y 400g",
+    "sample_price": "Rs 1,314.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Dairy",
+      "brand_name": "Anchor",
+      "product_name": "Anchor Pediapro Milk Powder",
+      "size": "400g",
+      "variety": "Pediapro 4-6Y",
+      "price": "Rs 1,314.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Anchor Pediapro M/Powder Box 4-6Y 400g",
+      "complete_ai_response": "PRODUCT_TYPE: Dairy\nBRAND_NAME: Anchor\nPRODUCT_NAME: Anchor Pediapro Milk Powder\nSIZE: 400g\nVARIETY: Pediapro 4-6Y",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:32:32.582718",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:32:32.582726",
+    "price_variations": [
+      "Rs 1,314.00"
+    ]
+  },
+  "anchor plus mpwdr 1-5y_db14bf5f": {
+    "original_name": "Anchor Plus M/Pwdr Box 1-5Y 300g",
+    "normalized_name": "anchor plus mpwdr 1-5y 300g",
+    "sample_price": "Rs 910.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic113096.jpg",
+    "result": {
+      "product_type": "Dairy",
+      "brand_name": "Anchor",
+      "product_name": "Anchor Plus Milk Powder",
+      "size": "300g",
+      "variety": "Plus 1-5Y",
+      "price": "Rs 910.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic113096.jpg",
+      "original_name": "Anchor Plus M/Pwdr Box 1-5Y 300g",
+      "complete_ai_response": "PRODUCT_TYPE: Dairy\nBRAND_NAME: Anchor\nPRODUCT_NAME: Anchor Plus Milk Powder\nSIZE: 300g\nVARIETY: Plus 1-5Y",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:32:41.246639",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:32:41.246642",
+    "price_variations": [
+      "Rs 910.00"
+    ]
+  },
+  "animox animal lotion_75db280f": {
+    "original_name": "Animox Animal Lotion 225ml",
+    "normalized_name": "animox animal lotion 225ml",
+    "sample_price": "Rs 630.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic45896.jpg",
+    "result": {
+      "product_type": "Pet Food & Supplies",
+      "brand_name": "Animox",
+      "product_name": "Animox Animal Lotion",
+      "size": "225ml",
+      "variety": "Animal Lotion",
+      "price": "Rs 630.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic45896.jpg",
+      "original_name": "Animox Animal Lotion 225ml",
+      "complete_ai_response": "PRODUCT_TYPE: Pet Food & Supplies\nBRAND_NAME: Animox\nPRODUCT_NAME: Animox Animal Lotion\nSIZE: 225ml\nVARIETY: Animal Lotion",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:32:48.766635",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:32:48.766642",
+    "price_variations": [
+      "Rs 630.00"
+    ]
+  },
+  "antibo bath pouf_a44652da": {
+    "original_name": "Antibo Bath Pouf",
+    "normalized_name": "antibo bath pouf",
+    "sample_price": "Rs 290.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic126795.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "Antibo",
+      "product_name": "Antibo Bath Pouf",
+      "size": "1 piece",
+      "variety": "Bath Pouf",
+      "price": "Rs 290.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic126795.jpg",
+      "original_name": "Antibo Bath Pouf",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: Antibo\nPRODUCT_NAME: Antibo Bath Pouf\nSIZE: 1 piece\nVARIETY: Bath Pouf",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:32:56.393526",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:32:56.393532",
+    "price_variations": [
+      "Rs 290.00"
+    ]
+  },
+  "antibo bath scrub strip loofah_b23d673b": {
+    "original_name": "Antibo Bath Scrub Strip Loofah",
+    "normalized_name": "antibo bath scrub strip loofah",
+    "sample_price": "Rs 480.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic44669.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "Antibo",
+      "product_name": "Antibo Bath Scrub Strip Loofah",
+      "size": "1 piece",
+      "variety": "Loofah",
+      "price": "Rs 480.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic44669.jpg",
+      "original_name": "Antibo Bath Scrub Strip Loofah",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: Antibo\nPRODUCT_NAME: Antibo Bath Scrub Strip Loofah\nSIZE: 1 piece\nVARIETY: Loofah",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:33:05.093268",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:33:05.093274",
+    "price_variations": [
+      "Rs 480.00"
+    ]
+  },
+  "antibo diamond loofah_76fd2fd9": {
+    "original_name": "Antibo Diamond Loofah",
+    "normalized_name": "antibo diamond loofah",
+    "sample_price": "Rs 415.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic88831.jpg",
+    "result": {
+      "product_type": "Personal Care",
+      "brand_name": "Antibo",
+      "product_name": "Antibo Diamond Loofah",
+      "size": "1 piece",
+      "variety": "Diamond Loofah",
+      "price": "Rs 415.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/350x/Small/Pic88831.jpg",
+      "original_name": "Antibo Diamond Loofah",
+      "complete_ai_response": "PRODUCT_TYPE: Personal Care\nBRAND_NAME: Antibo\nPRODUCT_NAME: Antibo Diamond Loofah\nSIZE: 1 piece\nVARIETY: Diamond Loofah",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:33:12.618843",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:33:12.618851",
+    "price_variations": [
+      "Rs 415.00"
+    ]
+  },
+  "atl playpalz eduaids flash cards english_116d7f17": {
+    "original_name": "Atl Playpalz Eduaids Flash Cards English",
+    "normalized_name": "atl playpalz eduaids flash cards english",
+    "sample_price": "Rs 490.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Atl",
+      "product_name": "Atl Playpalz Eduaids Flash Cards English",
+      "size": "1 piece",
+      "variety": "Flash Cards English",
+      "price": "Rs 490.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Atl Playpalz Eduaids Flash Cards English",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Atl\nPRODUCT_NAME: Atl Playpalz Eduaids Flash Cards English\nSIZE: 1 piece\nVARIETY: Flash Cards English",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:33:20.170729",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:33:20.170735",
+    "price_variations": [
+      "Rs 490.00"
+    ]
+  },
+  "atl playpalz eduaids flash cards fruits_116d7f17": {
+    "original_name": "Atl Playpalz Eduaids Flash Cards Fruits",
+    "normalized_name": "atl playpalz eduaids flash cards fruits",
+    "sample_price": "Rs 290.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Atl",
+      "product_name": "Atl Playpalz Eduaids Flash Cards Fruits",
+      "size": "1 piece",
+      "variety": "Flash Cards Fruits",
+      "price": "Rs 290.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Atl Playpalz Eduaids Flash Cards Fruits",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Atl\nPRODUCT_NAME: Atl Playpalz Eduaids Flash Cards Fruits\nSIZE: 1 piece\nVARIETY: Flash Cards Fruits",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:33:27.678484",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:33:27.678488",
+    "price_variations": [
+      "Rs 290.00"
+    ]
+  },
+  "atl playpalz eduaids flash cards numbers_116d7f17": {
+    "original_name": "Atl Playpalz Eduaids Flash Cards Numbers",
+    "normalized_name": "atl playpalz eduaids flash cards numbers",
+    "sample_price": "Rs 290.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Atl",
+      "product_name": "Atl Playpalz Eduaids Flash Cards Numbers",
+      "size": "1 piece",
+      "variety": "Flash Cards Numbers",
+      "price": "Rs 290.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Atl Playpalz Eduaids Flash Cards Numbers",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Atl\nPRODUCT_NAME: Atl Playpalz Eduaids Flash Cards Numbers\nSIZE: 1 piece\nVARIETY: Flash Cards Numbers",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:33:35.183135",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:33:35.183138",
+    "price_variations": [
+      "Rs 290.00"
+    ]
+  },
+  "atl playpalz eduaids flash cards sinhala_116d7f17": {
+    "original_name": "Atl Playpalz Eduaids Flash Cards Sinhala",
+    "normalized_name": "atl playpalz eduaids flash cards sinhala",
+    "sample_price": "Rs 490.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Atl",
+      "product_name": "Atl Playpalz Eduaids Flash Cards Sinhala",
+      "size": "1 piece",
+      "variety": "Flash Cards Sinhala",
+      "price": "Rs 490.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Atl Playpalz Eduaids Flash Cards Sinhala",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Atl\nPRODUCT_NAME: Atl Playpalz Eduaids Flash Cards Sinhala\nSIZE: 1 piece\nVARIETY: Flash Cards Sinhala",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:33:43.882908",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:33:43.882915",
+    "price_variations": [
+      "Rs 490.00"
+    ]
+  },
+  "atl playpalz eduaids flash cards vege_116d7f17": {
+    "original_name": "Atl Playpalz Eduaids Flash Cards Vege",
+    "normalized_name": "atl playpalz eduaids flash cards vege",
+    "sample_price": "Rs 290.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Atl",
+      "product_name": "Atl Playpalz Eduaids Flash Cards Vege",
+      "size": "1 piece",
+      "variety": "Flash Cards Vegetables",
+      "price": "Rs 290.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Atl Playpalz Eduaids Flash Cards Vege",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Atl\nPRODUCT_NAME: Atl Playpalz Eduaids Flash Cards Vege\nSIZE: 1 piece\nVARIETY: Flash Cards Vegetables",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:33:51.362293",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:33:51.362302",
+    "price_variations": [
+      "Rs 290.00"
+    ]
+  },
+  "atl playpalz eduaids flash cards vehicle_116d7f17": {
+    "original_name": "Atl Playpalz Eduaids Flash Cards Vehicle",
+    "normalized_name": "atl playpalz eduaids flash cards vehicle",
+    "sample_price": "Rs 290.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Atl",
+      "product_name": "Atl Playpalz Eduaids Flash Cards Vehicle",
+      "size": "1 piece",
+      "variety": "Flash Cards Vehicles",
+      "price": "Rs 290.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Atl Playpalz Eduaids Flash Cards Vehicle",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Atl\nPRODUCT_NAME: Atl Playpalz Eduaids Flash Cards Vehicle\nSIZE: 1 piece\nVARIETY: Flash Cards Vehicles",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:33:58.873730",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:33:58.873737",
+    "price_variations": [
+      "Rs 290.00"
+    ]
+  },
+  "atl playpalz eduaids one and more_116d7f17": {
+    "original_name": "Atl Playpalz Eduaids One And More",
+    "normalized_name": "atl playpalz eduaids one and more",
+    "sample_price": "Rs 750.00",
+    "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+    "result": {
+      "product_type": "Household Items",
+      "brand_name": "Atl",
+      "product_name": "Atl Playpalz Eduaids One And More",
+      "size": "1 piece",
+      "variety": "One And More",
+      "price": "Rs 750.00",
+      "image_url": "https://essstr.blob.core.windows.net/essimg/Small/Default.jpg",
+      "original_name": "Atl Playpalz Eduaids One And More",
+      "complete_ai_response": "PRODUCT_TYPE: Household Items\nBRAND_NAME: Atl\nPRODUCT_NAME: Atl Playpalz Eduaids One And More\nSIZE: 1 piece\nVARIETY: One And More",
+      "model_used": "GROQ",
+      "selected_model": "llama-3.3-70b-versatile",
+      "status": "success"
+    },
+    "timestamp": "2026-01-07T12:34:07.459433",
+    "version": "1.1",
+    "access_count": 1,
+    "last_accessed": "2026-01-07T12:34:07.459441",
+    "price_variations": [
+      "Rs 750.00"
+    ]
+  }
+}

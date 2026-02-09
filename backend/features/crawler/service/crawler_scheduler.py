@@ -65,6 +65,8 @@ class CrawlerScheduler:
         self._poll_seconds = max(1, int(os.getenv("CRAWLER_SCHEDULER_POLL_SECONDS", "5")))
         self._min_interval_minutes = max(1, int(os.getenv("CRAWLER_SCHEDULE_MIN_INTERVAL_MINUTES", "240")))
         self._min_interval_delta = timedelta(minutes=self._min_interval_minutes)
+        self._last_load_time: float = 0.0
+        self._sync_interval_seconds = max(1, int(os.getenv("CRAWLER_SCHEDULER_SYNC_SECONDS", "10")))
 
         self._load()
 
@@ -112,6 +114,19 @@ class CrawlerScheduler:
         self._local_store.save_all(self._schedules)
         if self._remote_store:
             self._remote_store.save_all(self._schedules, deleted_ids)
+        self._last_load_time = _utc_now().timestamp()
+
+    def _sync_if_stale(self) -> None:
+        """Reload schedules from storage if data may be out-of-date.
+
+        In a multi-worker setup (e.g. gunicorn), another worker may have
+        modified the persistent store.  Re-read periodically so that every
+        worker converges on the same state.
+        """
+        now = _utc_now().timestamp()
+        if now - self._last_load_time >= self._sync_interval_seconds:
+            self._load()
+            self._last_load_time = now
 
     def _resolve_limit_mode(self, requested: Optional[str], has_explicit_max: bool) -> str:
         allowed = {"default", "custom", "all"}
@@ -126,10 +141,12 @@ class CrawlerScheduler:
     # ------------------------------------------------------------------
     def list_schedules(self) -> List[Dict[str, Any]]:
         with self._lock:
+            self._sync_if_stale()
             return [schedule.copy() for schedule in self._schedules.values()]
 
     def get_schedule(self, schedule_id: str) -> Optional[Dict[str, Any]]:
         with self._lock:
+            self._sync_if_stale()
             schedule = self._schedules.get(schedule_id)
             return schedule.copy() if schedule else None
 
@@ -175,6 +192,7 @@ class CrawlerScheduler:
 
     def update_schedule(self, schedule_id: str, updates: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         with self._lock:
+            self._sync_if_stale()
             schedule = self._schedules.get(schedule_id)
             if not schedule:
                 return None
@@ -216,6 +234,7 @@ class CrawlerScheduler:
     def delete_schedule(self, schedule_id: str) -> bool:
         schedule_snapshot: Optional[Dict[str, Any]] = None
         with self._lock:
+            self._sync_if_stale()
             if schedule_id in self._schedules:
                 schedule_snapshot = self._schedules[schedule_id].copy()
                 del self._schedules[schedule_id]
@@ -231,6 +250,7 @@ class CrawlerScheduler:
 
     def toggle_schedule(self, schedule_id: str, enabled: bool) -> Optional[Dict[str, Any]]:
         with self._lock:
+            self._sync_if_stale()
             schedule = self._schedules.get(schedule_id)
             if not schedule:
                 return None

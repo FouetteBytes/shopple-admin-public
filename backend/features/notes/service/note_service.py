@@ -20,16 +20,16 @@ class NoteService(BaseService):
         self.note_repository = note_repository
 
     def get_notes(self, user_id: str) -> List[Dict[str, Any]]:
-        # Return dictionaries to preserve the legacy API response shape.
-        # Controllers serialize lists of note dictionaries.
+        # Return dictionaries to preserve the legacy API response shape
+        # where controllers serialize lists of note dictionaries.
         
         notes = self.note_repository.find_all_by_user(user_id)
         # Map entities to response dictionaries.
         return [to_note_response(n).to_dict() for n in notes]
 
     def create_note(self, user_id: str, request: CreateNoteRequest) -> Dict[str, Any]:
-        # Logic from legacy create_note.
-        # Generate an ID when not provided.
+        # Logic from legacy create_note
+        # ID generation if not provided
         note_id = request.id or str(int(datetime.now().timestamp() * 1000))
         
         if not request.title:
@@ -54,7 +54,7 @@ class NoteService(BaseService):
         return to_note_response(saved_note).to_dict()
 
     def update_note(self, user_id: str, note_id: str, request: UpdateNoteRequest) -> bool:
-        # Existing note check.
+        # Existing note check
         current_note = self.note_repository.find_by_user_and_id(user_id, note_id)
         
         
@@ -62,7 +62,7 @@ class NoteService(BaseService):
             
             raise ValueError("Note not found") 
 
-        # Apply updates.
+        # Apply updates
         if request.title is not None: current_note.title = request.title
         if request.content is not None: current_note.content = request.content
         if request.completed is not None: current_note.completed = request.completed

@@ -37,7 +37,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCancel })
         setProxiedImageUrl(resolvedUrl.href);
       } else {
         const proxyUrl = `${API_BASE_URL}/api/products/proxy-image?url=${encodeURIComponent(resolvedUrl.href)}`;
-        console.log(' [ImageEditor] Using proxy URL for cross-origin image:', proxyUrl);
+        console.log('🔧 [ImageEditor] Using proxy URL for cross-origin image:', proxyUrl);
         setProxiedImageUrl(proxyUrl);
       }
     } catch (error) {
@@ -146,10 +146,10 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCancel })
   }, [completedCrop, activeTab, brightness, contrast, saturation, blur, grayscale, sepia, hueRotate]);
 
   const handleSave = async () => {
-    console.log(' [ImageEditor] Starting save process');
+    console.log('🎨 [ImageEditor] Starting save process');
     setIsSaving(true);
     try {
-      console.log(' [ImageEditor] Getting cropped image...');
+      console.log('🎨 [ImageEditor] Getting cropped image...');
       const blob = await getCroppedImage();
       
       if (!blob) {
@@ -157,15 +157,15 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCancel })
         throw new Error('Failed to generate image blob');
       }
       
-      console.log(' [ImageEditor] Blob created:', {
+      console.log('🎨 [ImageEditor] Blob created:', {
         size: blob.size,
         type: blob.type
       });
       
       const url = URL.createObjectURL(blob);
-      console.log(' [ImageEditor] Local URL created:', url);
+      console.log('🎨 [ImageEditor] Local URL created:', url);
       
-      console.log(' [ImageEditor] Calling onSave callback...');
+      console.log('🎨 [ImageEditor] Calling onSave callback...');
       // Call onSave and wait for it if it's async
       await Promise.resolve(onSave(url, blob));
       
@@ -179,7 +179,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCancel })
       alert('Failed to save image. Please try again.');
     } finally {
       setIsSaving(false);
-      console.log(' [ImageEditor] Save process ended');
+      console.log('🎨 [ImageEditor] Save process ended');
     }
   };
 

@@ -467,7 +467,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
   const handleFieldUpdate = (filteredIndex: number, field: keyof Product, value: string) => {
     if (onProductUpdate) {
-      console.log(` Field update: ${field} = "${value}" at filtered index ${filteredIndex}`)
+      console.log(`📝 Field update: ${field} = "${value}" at filtered index ${filteredIndex}`)
       
       // Get the target product from filtered results
       const targetProduct = filteredProducts[filteredIndex]

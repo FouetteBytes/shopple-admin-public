@@ -203,7 +203,7 @@ class ProductRequestService:
             # Send notification for high priority or error reports
             if priority == "high" or validated.get("requestType") == "reportError":
                 try:
-                    # Build a compact digest for this single request.
+                    # Build a simple digest for this single request
                     digest = {
                         "items": [{
                             "id": request_id,

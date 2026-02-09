@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # -----------------------------------------------------------------------------
-# Shopple Admin - OpenSearch Dashboards bootstrap
+# Shopple Admin - OpenSearch Dashboards Bootstrap
 #
 # Purpose:
 #   Creates or updates OpenSearch Dashboards saved objects (index pattern,
@@ -416,7 +416,7 @@ path.write_text("\n".join(json.dumps(item) for item in out) + "\n", encoding="ut
 print(path)
 PY
 
-# Use the path printed by Python (written to /tmp/shopple-logs-objects.ndjson).
+# Use the path printed by Python (it writes to /tmp/shopple-logs-objects.ndjson)
 NDJSON_PATH="/tmp/shopple-logs-objects.ndjson"
 
 curl -s -X POST "${DASHBOARDS_URL}/api/saved_objects/_import?overwrite=true" \

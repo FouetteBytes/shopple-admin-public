@@ -329,7 +329,7 @@ export const ProductUploader: React.FC<ProductUploaderProps> = ({ onDatabaseChan
             } else if (data.type === 'log') {
               setDetectionLogs(prev => [...prev, data.message].slice(-100)); // Keep last 15 logs
             } else if (data.type === 'progress') {
-              console.log(' Progress update received:', data.stats);
+              console.log('📊 Progress update received:', data.stats);
               setDetectionStats({
                 total: data.stats.total,
                 processed: data.stats.processed,
@@ -344,8 +344,8 @@ export const ProductUploader: React.FC<ProductUploaderProps> = ({ onDatabaseChan
               setDetectionLogs(prev => [
                 ...prev,
                 `✅ Detection Complete!`,
-                ` Total: ${data.stats.total} | Duplicates: ${data.stats.duplicates} | New: ${data.stats.new_products}`,
-                ` Tiers: Perfect=${data.stats.tier1_matches} | Near=${data.stats.tier2_matches} | Fuzzy=${data.stats.tier3_matches}`
+                `📊 Total: ${data.stats.total} | Duplicates: ${data.stats.duplicates} | New: ${data.stats.new_products}`,
+                `🎯 Tiers: Perfect=${data.stats.tier1_matches} | Near=${data.stats.tier2_matches} | Fuzzy=${data.stats.tier3_matches}`
               ]);
               
               // Update final stats with tier data
@@ -358,7 +358,7 @@ export const ProductUploader: React.FC<ProductUploaderProps> = ({ onDatabaseChan
                 tier2Matches: data.stats.tier2_matches || 0,
                 tier3Matches: data.stats.tier3_matches || 0
               };
-              console.log(' Setting final detection stats:', finalStats);
+              console.log('📊 Setting final detection stats:', finalStats);
               setDetectionStats(finalStats);
               
               // Now get full preview data from regular endpoint
@@ -844,7 +844,7 @@ export const ProductUploader: React.FC<ProductUploaderProps> = ({ onDatabaseChan
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="text-4xl"></div>
+              <div className="text-4xl">📁</div>
               <div>
                 <p className="text-lg font-medium text-gray-900 mb-2">
                   Drop AI-classified JSON file here or click to browse
@@ -1111,7 +1111,7 @@ export const ProductUploader: React.FC<ProductUploaderProps> = ({ onDatabaseChan
           {/* Duplicate Details */}
           {uploadStats.duplicates > 0 && uploadStats.duplicate_details && uploadStats.duplicate_details.length > 0 && (
             <div className="mt-4">
-              <h4 className="font-medium text-gray-900 mb-2"> Intelligent Duplicate Detection Results:</h4>
+              <h4 className="font-medium text-gray-900 mb-2">🔍 Intelligent Duplicate Detection Results:</h4>
               <div className="max-h-40 overflow-y-auto space-y-2">
                 {uploadStats.duplicate_details.slice(0, 10).map((dup, index) => (
                   <div key={index} className="text-sm bg-yellow-50 p-3 rounded border-l-4 border-yellow-400">
@@ -1164,7 +1164,7 @@ export const ProductUploader: React.FC<ProductUploaderProps> = ({ onDatabaseChan
               </div>
               {uploadStats.error_details.some(e => e.error.includes('Invalid category')) && (
                 <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
-                   <strong>Tip:</strong> &ldquo;Invalid category&rdquo; errors are usually caused by empty entries in the JSON file. 
+                  💡 <strong>Tip:</strong> &ldquo;Invalid category&rdquo; errors are usually caused by empty entries in the JSON file. 
                   Make sure all entries have valid product_type, product_name, and other required fields.
                 </div>
               )}

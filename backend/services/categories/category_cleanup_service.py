@@ -20,7 +20,7 @@ try:
     logger.debug("Firebase Admin SDK imported successfully")
 except ImportError as e:
     logger.error("Error importing Firebase Admin SDK", extra={"error": str(e)})
-    print("Install with: pip install firebase-admin")
+    print("💡 Install with: pip install firebase-admin")
     sys.exit(1)
 
 def initialize_firebase() -> firestore.Client:
@@ -55,15 +55,15 @@ def initialize_firebase() -> firestore.Client:
             
             # Get Firestore client
             db = firestore.client()
-            print("Firestore client connected")
+            print("✅ Firestore client connected")
             return db
         else:
             logger.error("Firebase credentials not found in environment variables")
-            print("Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY environment variables")
+            print("💡 Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY environment variables")
             sys.exit(1)
         
     except Exception as e:
-        print(f"Error initializing Firebase: {e}")
+        print(f"❌ Error initializing Firebase: {e}")
         sys.exit(1)
 
 def cleanup_deprecated_categories(db: firestore.Client) -> None:
@@ -73,7 +73,7 @@ def cleanup_deprecated_categories(db: firestore.Client) -> None:
         "traditional_medicine"
     ]
     
-    print(f"\nCleaning up {len(deprecated_categories)} deprecated categories...")
+    print(f"\n🧹 Cleaning up {len(deprecated_categories)} deprecated categories...")
     
     categories_ref = db.collection('categories')
     
@@ -84,19 +84,19 @@ def cleanup_deprecated_categories(db: firestore.Client) -> None:
             
             if doc.exists:
                 doc_ref.delete()
-                print(f"   Deleted: {category_id}")
+                print(f"   ✅ Deleted: {category_id}")
             else:
-                print(f"   Not found: {category_id}")
+                print(f"   ⚠️  Not found: {category_id}")
                 
         except Exception as e:
-            print(f"   Error deleting {category_id}: {e}")
+            print(f"   ❌ Error deleting {category_id}: {e}")
     
-    print("Cleanup completed.")
+    print("🧹 Cleanup completed!")
 
 def verify_cleanup(db: firestore.Client) -> None:
     """Verify the cleanup was successful."""
     
-    print("\nVerifying cleanup...")
+    print(f"\n🔍 Verifying cleanup...")
     
     try:
         # Get all documents from categories collection
@@ -109,36 +109,36 @@ def verify_cleanup(db: firestore.Client) -> None:
             category_data['id'] = doc.id
             retrieved_categories.append(category_data)
         
-        print(f"Total categories after cleanup: {len(retrieved_categories)}")
+        print(f"✅ Total categories after cleanup: {len(retrieved_categories)}")
         
         # Check if Traditional Medicine is gone
         traditional_medicine_exists = any(cat['id'] == 'traditional_medicine' for cat in retrieved_categories)
         
         if not traditional_medicine_exists:
-            print("Traditional Medicine successfully removed")
+            print("✅ Traditional Medicine successfully removed")
         else:
-            print("Traditional Medicine still exists")
+            print("❌ Traditional Medicine still exists")
         
         # Check if Cereal exists
         cereal_exists = any(cat['id'] == 'cereal' for cat in retrieved_categories)
         
         if cereal_exists:
-            print("Cereal category exists")
+            print("✅ Cereal category exists")
         else:
-            print("Cereal category missing")
+            print("❌ Cereal category missing")
         
-        print("\nCurrent categories:")
+        print(f"\n📊 Current categories:")
         for cat in sorted(retrieved_categories, key=lambda x: x['sort_order']):
             food_type = "Food" if cat['is_food'] else "Non-food"
             print(f"   {cat['sort_order']:2d}. {cat['display_name']:<25} -> {cat['id']} ({food_type})")
         
     except Exception as e:
-        print(f"Error verifying cleanup: {e}")
+        print(f"❌ Error verifying cleanup: {e}")
 
 def main():
     """Main function to cleanup deprecated categories."""
     
-    print("Cleaning Up Deprecated Categories")
+    print("🧹 Cleaning Up Deprecated Categories")
     print("=" * 40)
     print("Removing: Traditional Medicine")
     print("=" * 40)
@@ -152,7 +152,7 @@ def main():
     # Verify the cleanup
     verify_cleanup(db)
     
-    print("\nCleanup complete. Categories are now up to date.")
+    print("\n✅ Cleanup complete! Categories are now up to date.")
 
 if __name__ == "__main__":
     main()

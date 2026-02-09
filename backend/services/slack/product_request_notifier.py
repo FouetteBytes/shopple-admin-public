@@ -121,7 +121,7 @@ def build_product_request_digest_blocks(digest: Dict[str, Any]) -> List[Dict[str
         "text": {
             "type": "mrkdwn",
             "text": (
-                f"*Product Request Digest*\n"
+                f"*🚨 Product Request Digest*\n"
                 f"Window: last {digest['windowMinutes']} minutes | "
                 f"Min priority: {digest['minPriority'].title()}"
             ),

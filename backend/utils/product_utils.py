@@ -9,29 +9,29 @@ def normalize_text(text: str) -> str:
     Normalize text for use in product IDs.
     
     Rules:
-    - Convert to lowercase.
-    - Remove accents and special characters.
-    - Remove spaces and special characters.
-    - Keep only alphanumeric characters.
+    - Convert to lowercase
+    - Remove accents and special characters
+    - Replace spaces and special chars with nothing
+    - Keep only alphanumeric characters
     """
     if not text:
         return ""
     
-    # Convert to lowercase.
+    # Convert to lowercase
     text = text.lower()
     
-    # Remove accents and normalize Unicode.
+    # Remove accents and normalize unicode
     text = unicodedata.normalize('NFD', text)
     text = ''.join(c for c in text if unicodedata.category(c) != 'Mn')
     
-    # Remove special characters and spaces; keep only alphanumeric characters.
+    # Remove special characters and spaces, keep only alphanumeric
     text = re.sub(r'[^a-z0-9]', '', text)
     
     return text
 
 def generate_product_id(brand_name: str, product_name: str, size: str) -> str:
     """
-    Generate a unique product ID using a consistent algorithm.
+    Generate unique product ID using smart algorithm.
     
     Format: "brand_productname_size" or "none_productname_size"
     
@@ -41,18 +41,18 @@ def generate_product_id(brand_name: str, product_name: str, size: str) -> str:
     - "maliban_chocolatecreampuff_200g"
     """
     
-    # Normalize all components.
+    # Normalize all components
     brand_part = normalize_text(brand_name) if brand_name else "none"
     product_part = normalize_text(product_name) if product_name else "unknown"
     size_part = normalize_text(size) if size else "unknown"
     
-    # Combine parts with underscores.
+    # Combine parts with underscores
     product_id = f"{brand_part}_{product_part}_{size_part}"
     
-    # Collapse repeated underscores.
+    # Clean up any double underscores
     product_id = re.sub(r'_+', '_', product_id)
     
-    # Remove leading and trailing underscores.
+    # Remove leading/trailing underscores
     product_id = product_id.strip('_')
     
     return product_id
@@ -67,7 +67,7 @@ def parse_size_string(size_str):
     - "250ml" -> (250.0, "ml")
     - "6 pieces" -> (6.0, "pieces")
     - "1.5L" -> (1.5, "L")
-    - "2 x 500g" -> (1000.0, "g")  # Convert multi-pack.
+    - "2 x 500g" -> (1000.0, "g")  # Convert multi-pack
     - "pack of 12" -> (12.0, "pieces")
     - "1 dozen" -> (12.0, "pieces")
     
@@ -80,23 +80,23 @@ def parse_size_string(size_str):
     if not size_str or not isinstance(size_str, str):
         return None, None
     
-    # Normalize the input.
+    # Clean the input
     size_str = size_str.strip().lower()
     
-    # Handle special cases first.
+    # Handle special cases first
     if 'dozen' in size_str:
-        # Extract the number before "dozen".
+        # Extract number before "dozen"
         match = re.search(r'(\d+(?:\.\d+)?)\s*dozen', size_str)
         if match:
             return float(match.group(1)) * 12, "pieces"
         return 12.0, "pieces"
     
-    # Handle "pack of X" format.
+    # Handle "pack of X" format
     pack_match = re.search(r'pack\s+of\s+(\d+)', size_str)
     if pack_match:
         return float(pack_match.group(1)), "pieces"
     
-    # Handle "X x Y unit" format (multi-pack).
+    # Handle "X x Y unit" format (multi-pack)
     multi_pack_match = re.search(r'(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)\s*([a-zA-Z]+)', size_str)
     if multi_pack_match:
         count = float(multi_pack_match.group(1))
@@ -104,14 +104,14 @@ def parse_size_string(size_str):
         unit = multi_pack_match.group(3)
         return count * size_per_unit, unit
     
-    # Handle standard "number + unit" format.
+    # Handle standard "number + unit" format
     # Match patterns like: 1kg, 500g, 250ml, 1.5L, 6 pieces, etc.
     standard_match = re.search(r'(\d+(?:\.\d+)?)\s*([a-zA-Z]+)', size_str)
     if standard_match:
         value = float(standard_match.group(1))
         unit = standard_match.group(2)
         
-        # Normalize common units.
+        # Normalize common units
         unit_mapping = {
             'kg': 'kg',
             'g': 'g',
@@ -154,7 +154,7 @@ def parse_size_string(size_str):
     if number_match:
         return float(number_match.group(1)), "pieces"
     
-    # If nothing matches, return None.
+    # If nothing matches, return None
     return None, None
 
 def format_size_display(size_value, size_unit):
@@ -179,28 +179,28 @@ def format_size_display(size_value, size_unit):
     if size_value is None or size_unit is None:
         return ""
     
-    # Format the number (remove unnecessary .0).
+    # Format the number (remove unnecessary .0)
     if size_value == int(size_value):
         formatted_value = str(int(size_value))
     else:
         formatted_value = str(size_value)
     
-    # Units that should have a space before them.
+    # Units that should have a space before them
     spaced_units = {
         "pieces", "bottles", "cans", "packets", "packs", "boxes", 
         "dozen", "pounds"
     }
     
-    # Units that should be attached directly (no space).
+    # Units that should be attached directly (no space)
     attached_units = {
         "g", "kg", "ml", "L", "oz", "lb"
     }
     
-    # Determine spacing.
+    # Determine spacing
     if size_unit in spaced_units:
         return f"{formatted_value} {size_unit}"
     elif size_unit in attached_units:
         return f"{formatted_value}{size_unit}"
     else:
-        # Default: use a space for unknown units.
+        # Default: use space for unknown units
         return f"{formatted_value} {size_unit}"

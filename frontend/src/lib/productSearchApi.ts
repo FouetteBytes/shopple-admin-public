@@ -28,7 +28,7 @@ export async function searchCatalogue(
   const trimmed = query.trim();
   if (!trimmed) return [];
 
-  // Build the URL safely and handle absolute or relative paths.
+  // Build URL safely - handle both absolute URLs and relative paths
   const baseUrl = getApiBaseUrl();
   const searchPath = '/api/products';
   const params = new URLSearchParams();
@@ -38,7 +38,7 @@ export async function searchCatalogue(
   if (options?.category) params.set('category', options.category);
   if (options?.brand) params.set('brand', options.brand);
   
-  // If baseUrl is empty (same-origin), use a relative path.
+  // If baseUrl is empty (same-origin), use relative path
   const url = baseUrl ? `${baseUrl}${searchPath}?${params.toString()}` : `${searchPath}?${params.toString()}`;
 
   const response = await fetch(url, {

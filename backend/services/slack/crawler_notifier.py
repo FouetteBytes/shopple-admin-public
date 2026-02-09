@@ -99,7 +99,7 @@ class CrawlerSlackNotifier(SlackWebhookClient):
         if not self.enabled:
             return
         label = self._schedule_label(schedule)
-        header = "Automation schedule updated"
+        header = "✏️ Automation schedule updated"
         blocks: List[Dict[str, Any]] = [
             {"type": "header", "text": {"type": "plain_text", "text": label[:150]}},
             {
@@ -128,7 +128,7 @@ class CrawlerSlackNotifier(SlackWebhookClient):
         if not self.enabled:
             return
         label = self._schedule_label(schedule)
-        header = "Automation schedule deleted"
+        header = "🗑️ Automation schedule deleted"
         blocks = [
             {"type": "header", "text": {"type": "plain_text", "text": label[:150]}},
             {
@@ -154,7 +154,7 @@ class CrawlerSlackNotifier(SlackWebhookClient):
             return
         label = self._schedule_label(schedule)
         manual_suffix = " (manual)" if manual else ""
-        header = f"Starting crawler schedule{manual_suffix}"
+        header = f"🚀 Starting crawler schedule{manual_suffix}"
         blocks: List[Dict[str, Any]] = [
             {"type": "header", "text": {"type": "plain_text", "text": label[:150]}},
             {
@@ -182,9 +182,10 @@ class CrawlerSlackNotifier(SlackWebhookClient):
             return
 
         label = self._schedule_label(schedule)
+        emoji = "✅" if success else "❌"
         manual_suffix = " • Manual trigger" if manual else ""
         status_text = "completed" if success else "failed"
-        header = f"Crawler schedule {status_text}{manual_suffix}"
+        header = f"{emoji} Crawler schedule {status_text}{manual_suffix}"
 
         selection = schedule.get("selection", {})
         schedule_conf = schedule.get("schedule", {})

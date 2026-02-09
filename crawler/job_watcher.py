@@ -9,7 +9,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from file_watcher import FileWatcher
 
-# Add the backend path for logger_service.
+# Add backend to path for logger_service
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 from services.system.logger_service import get_logger
 
@@ -21,11 +21,11 @@ class JobHandler(FileSystemEventHandler):
         self.processing = set()
         self.processing_lock = threading.Lock()
         
-        # Config path matches naming used by the backend.
+        # Config path matches naming in backend
         self.config_path = os.path.join(base_dir, 'config', 'crawler_settings.json')
         os.makedirs(os.path.dirname(self.config_path), exist_ok=True)
         
-        # Track active threads.
+        # Track active threads
         self.active_threads = []
         
         logger.info(f"Initialized JobHandler with dynamic concurrency limit")
@@ -57,34 +57,34 @@ class JobHandler(FileSystemEventHandler):
         
         logger.info(f"New job detected: {filename}")
         
-        # Run in a separate thread that waits for an available slot.
+        # Run in separate thread that will wait for a slot
         thread = threading.Thread(target=self.process_job, args=(job_file,))
         thread.start()
 
     def process_job(self, job_file):
-        # Join the thread to the active list.
+        # Join thread to active list
         current_thread = threading.current_thread()
         
-        # Wait for an available slot.
+        # Wait for available slot
         while True:
             max_jobs = self.get_max_concurrent_crawlers()
             
-            # Prune completed threads.
+            # Prune dead threads
             self.active_threads = [t for t in self.active_threads if t.is_alive()]
             
             if len(self.active_threads) < max_jobs:
                 self.active_threads.append(current_thread)
                 break
             
-            time.sleep(2)  # Check again later.
+            time.sleep(2)  # Check again later
 
         try:
-            # Check whether the file still exists (race condition check).
+            # Check if file still exists (race condition check)
             if not os.path.exists(job_file):
                 logger.warning(f"Job file vanished before processing: {job_file}")
                 return
 
-            # Wait briefly for the file write to complete.
+            # Wait briefly for file write to complete
             time.sleep(0.5)
             
             with open(job_file, 'r') as f:
@@ -97,12 +97,12 @@ class JobHandler(FileSystemEventHandler):
             
             logger.info(f"Starting crawler job {crawler_id}: {script_path}")
             
-            # Prepare the environment.
+            # Prepare environment
             env = os.environ.copy()
             env.update(env_vars)
             env['PYTHONUNBUFFERED'] = '1'
             
-            # Run the crawler and redirect output to a backend-readable log file.
+            # Run the crawler and redirect stdout/stderr to a backend-readable log file.
             log_dir = os.path.join(self.base_dir, 'logs')
             os.makedirs(log_dir, exist_ok=True)
             log_file = os.path.join(log_dir, f"{crawler_id}.log")
@@ -120,7 +120,7 @@ class JobHandler(FileSystemEventHandler):
                 
             logger.info(f"Job {crawler_id} completed with code {process.returncode}")
             
-            # Clean up the job file.
+            # Clean up job file
             if os.path.exists(job_file):
                 os.remove(job_file)
             
@@ -141,7 +141,7 @@ def start_job_watcher():
     
     logger.info(f"Starting Job Watcher in {jobs_dir}")
 
-    # Start the file watcher for the output directory.
+    # Start File Watcher for output directory
     file_watcher = FileWatcher()
     file_watcher.start()
     
@@ -152,12 +152,12 @@ def start_job_watcher():
     
     try:
         while True:
-            # Fallback polling for Docker volume mounts (watchdog can be flaky on mounts).
+            # Fallback polling for Docker volume mounts (watchdog can be flaky on mounts)
             try:
                 for filename in os.listdir(jobs_dir):
                     if filename.endswith('.json'):
                         job_file = os.path.join(jobs_dir, filename)
-                        # Simulate a creation event; handler deduplicates.
+                        # Simulate creation event - handler handles deduplication
                         class MockEvent:
                             is_directory = False
                             src_path = job_file

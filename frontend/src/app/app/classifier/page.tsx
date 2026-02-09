@@ -428,8 +428,8 @@ function Classifier() {
     }
 
     const handleOutputProductUpdate = (index: number, product: Product) => {
-        console.log(` Editing product at index ${index}:`, product.name || 'Unknown Product')
-        console.log(` Product data being saved:`, product)
+        console.log(`🔄 Editing product at index ${index}:`, product.name || 'Unknown Product')
+        console.log(`📝 Product data being saved:`, product)
         const updatedData = [...outputData]
         updatedData[index] = product
         setOutputData(updatedData)
@@ -523,8 +523,8 @@ function Classifier() {
         
         try {
             setCacheSaveStatus('saving')
-            console.log(` Saving ${products.length} products to cache...`)
-            console.log(` First product sample:`, products[0])
+            console.log(`🚀 Saving ${products.length} products to cache...`)
+            console.log(`📦 First product sample:`, products[0])
             
             // Map frontend Product fields to backend cache format
             const mappedProducts = products.map(product => ({
@@ -545,7 +545,7 @@ function Classifier() {
                 description: product.description || ''
             }))
             
-            console.log(` Mapped product sample:`, mappedProducts[0])
+            console.log(`🔄 Mapped product sample:`, mappedProducts[0])
             
             const result = await classificationAPI.saveEditedDataToCache(mappedProducts)
             console.log('✅ Cache save API response:', result)
@@ -592,7 +592,7 @@ function Classifier() {
             if (event.ctrlKey && event.key === 's') {
                 event.preventDefault()
                 if (outputData.length > 0) {
-                    console.log(' Manual save triggered (Ctrl+S)')
+                    console.log('🔥 Manual save triggered (Ctrl+S)')
                     saveUserEditsImmediately(outputData)
                 }
             }
@@ -666,7 +666,7 @@ function Classifier() {
                     signal: abortControllerRef.current.signal,
                     onJobId: (jobId: string) => {
                         currentJobIdRef.current = jobId
-                        addProcessingLog(` Job started (id: ${jobId.substring(0, 8)}…)`, 'info')
+                        addProcessingLog(`🔗 Job started (id: ${jobId.substring(0, 8)}…)`, 'info')
                     }
                 }
             )
@@ -700,7 +700,7 @@ function Classifier() {
                 setIsProcessing(false)
                 setProcessingStartTime(null)
                 setCurrentProductIndex(null)
-                addProcessingLog(' Classification stopped by user.', 'info')
+                addProcessingLog('🛑 Classification stopped by user.', 'info')
                 // Return user to the start (input) view
                 setCurrentView('input')
                 setCurrentStep('')
@@ -733,7 +733,7 @@ function Classifier() {
                 setModelProgress({ step: 'Model successful!', progress: 100 })
                 addProcessingLog(data.message, 'success')
                 if (data.selected_model) {
-                    addProcessingLog(` Selected model: ${data.model_used} (${data.selected_model})`, 'detail')
+                    addProcessingLog(`🔧 Selected model: ${data.model_used} (${data.selected_model})`, 'detail')
                 }
                 // Update model stats with enhanced tracking
                 const modelKey = data.model_used?.includes('GROQ') ? 'groq' : 
@@ -741,7 +741,7 @@ function Classifier() {
                                 data.model_used?.includes('GEMINI') ? 'gemini' :
                                 data.model_used?.includes('OPENROUTER') ? 'openrouter' : 'other'
                 
-                console.log(' Model success event:', {
+                console.log('🔍 Model success event:', {
                     model_used: data.model_used,
                     mapped_key: modelKey,
                     event_data: data
@@ -754,7 +754,7 @@ function Classifier() {
                             [modelKey]: prev[modelKey] + 1,
                             switches: data.model_used?.includes('RETRY') || data.model_used?.includes('QWQ') || data.model_used?.includes('QWEN') ? prev.switches + 1 : prev.switches
                         }
-                        console.log(` Model stats updated: ${modelKey} = ${newStats[modelKey]}`, newStats)
+                        console.log(`📊 Model stats updated: ${modelKey} = ${newStats[modelKey]}`, newStats)
                         return newStats
                     })
                 } else {
@@ -764,14 +764,14 @@ function Classifier() {
 
             case 'ai_response':
                 // Log the AI response header
-                addProcessingLog(` AI Response (from ${data.model_used} model${data.selected_model ? `: ${data.selected_model}` : ''}):`, 'ai')
+                addProcessingLog(`🤖 AI Response (from ${data.model_used} model${data.selected_model ? `: ${data.selected_model}` : ''}):`, 'ai')
                 addProcessingLog('-'.repeat(50), 'separator')
                 
                 // Display think content if available
                 if (data.think_content && data.think_content.length > 0) {
-                    addProcessingLog(` AI Reasoning Process:`, 'think')
+                    addProcessingLog(`💭 AI Reasoning Process:`, 'think')
                     data.think_content.forEach((thinkText: string, index: number) => {
-                        addProcessingLog(` Think Block ${index + 1}:`, 'think-header')
+                        addProcessingLog(`💡 Think Block ${index + 1}:`, 'think-header')
                         addProcessingLog(thinkText, 'think-content')
                     })
                     addProcessingLog('-'.repeat(50), 'separator')
@@ -781,11 +781,11 @@ function Classifier() {
                     const thinkMatches = fullResponse.match(/<think>([\s\S]*?)<\/think>/g)
                     
                     if (thinkMatches && thinkMatches.length > 0) {
-                        addProcessingLog(` AI Reasoning Process:`, 'think')
+                        addProcessingLog(`💭 AI Reasoning Process:`, 'think')
                         thinkMatches.forEach((thinkBlock: string, index: number) => {
                             const thinkContent = thinkBlock.replace(/<\/?think>/g, '').trim()
                             if (thinkContent) {
-                                addProcessingLog(` Think Block ${index + 1}:`, 'think-header')
+                                addProcessingLog(`💡 Think Block ${index + 1}:`, 'think-header')
                                 addProcessingLog(thinkContent, 'think-content')
                             }
                         })
@@ -796,7 +796,7 @@ function Classifier() {
                 // Show the cleaned classification response
                 const cleanedResponse = (data.response || '').replace(/<think>[\s\S]*?<\/think>/g, '').trim()
                 if (cleanedResponse) {
-                    addProcessingLog(' Final Classification Output:', 'response-header')
+                    addProcessingLog('📋 Final Classification Output:', 'response-header')
                     addProcessingLog(cleanedResponse, 'response')
                 }
                 addProcessingLog('-'.repeat(50), 'separator')
@@ -826,7 +826,7 @@ function Classifier() {
                     gemini: Math.max(prev.gemini, data.gemini_successes || 0),
                     openrouter: Math.max(prev.openrouter, data.openrouter_successes || 0)
                 }))
-                console.log(' Progress update - server stats:', {
+                console.log('📊 Progress update - server stats:', {
                     groq: data.groq_successes,
                     cerebras: data.cerebras_successes,
                     gemini: data.gemini_successes,
@@ -849,11 +849,11 @@ function Classifier() {
                 addProcessingLog(`⚡ Total time: ${data.stats?.total_time} (${data.stats?.avg_time_per_product} per product)`, 'stats')
                 addProcessingLog(`✅ Successfully classified: ${data.stats?.successful}`, 'stats')
                 addProcessingLog(`❌ Failed: ${data.stats?.failed}`, 'stats')
-                addProcessingLog(` Model Usage Stats:`, 'stats')
-                if (data.stats?.groq_successes) addProcessingLog(`    Groq: ${data.stats.groq_successes} products`, 'stats')
-                if (data.stats?.cerebras_successes) addProcessingLog(`    Cerebras: ${data.stats.cerebras_successes} products`, 'stats')
-                if (data.stats?.gemini_successes) addProcessingLog(`    Gemini: ${data.stats.gemini_successes} products`, 'stats')
-                if (data.stats?.openrouter_successes) addProcessingLog(`    OpenRouter: ${data.stats.openrouter_successes} products`, 'stats')
+                addProcessingLog(`📊 Model Usage Stats:`, 'stats')
+                if (data.stats?.groq_successes) addProcessingLog(`   🚀 Groq: ${data.stats.groq_successes} products`, 'stats')
+                if (data.stats?.cerebras_successes) addProcessingLog(`   🧠 Cerebras: ${data.stats.cerebras_successes} products`, 'stats')
+                if (data.stats?.gemini_successes) addProcessingLog(`   💎 Gemini: ${data.stats.gemini_successes} products`, 'stats')
+                if (data.stats?.openrouter_successes) addProcessingLog(`   🌐 OpenRouter: ${data.stats.openrouter_successes} products`, 'stats')
                 setOutputData(data.results || [])
                 setIsProcessing(false)
                 setCurrentView('output')
@@ -984,9 +984,9 @@ function Classifier() {
             // Request backend stop when a job ID is available.
             if (currentJobIdRef.current) {
                 await classificationAPI.stopClassification(currentJobIdRef.current)
-                addProcessingLog(' Stop requested. Waiting for backend to finalize…', 'info')
+                addProcessingLog('🛑 Stop requested. Waiting for backend to finalize…', 'info')
             } else {
-                addProcessingLog(' Stop requested (no job id yet).', 'info')
+                addProcessingLog('🛑 Stop requested (no job id yet).', 'info')
             }
         } catch (e) {
             console.error('Failed to stop job:', e)
@@ -1138,21 +1138,21 @@ function Classifier() {
             return
         }
 
-        console.log(' Starting enhanced download... [Version 3.1]')
-        console.log(' Current downloadConfig state:', downloadConfig)
+        console.log('🚀 Starting enhanced download... [Version 3.1]')
+        console.log('🔧 Current downloadConfig state:', downloadConfig)
 
         const { requestPayload, supermarket } = buildExportPayload()
         const classificationDate = requestPayload.classification_date
 
-        console.log(' Download date logic:')
+        console.log('🔍 Download date logic:')
         console.log('   useCurrentDate:', downloadConfig.useCurrentDate)
         console.log('   classificationDate input:', downloadConfig.classificationDate)
         console.log('   final classificationDate:', classificationDate)
 
-        console.log(' Download request payload:', requestPayload)
-        console.log(' Supermarket being sent:', supermarket)
-        console.log(' Classification date:', classificationDate)
-        console.log('️ Custom name:', downloadConfig.customName)
+        console.log('📤 Download request payload:', requestPayload)
+        console.log('🏪 Supermarket being sent:', supermarket)
+        console.log('📅 Classification date:', classificationDate)
+        console.log('🏷️ Custom name:', downloadConfig.customName)
 
         try {
             setIsDownloadingResults(true)
@@ -1167,8 +1167,8 @@ function Classifier() {
                 body: JSON.stringify(requestPayload)
             })
 
-            console.log(' Response status:', response.status)
-            console.log(' Response headers:', Object.fromEntries(response.headers.entries()))
+            console.log('📨 Response status:', response.status)
+            console.log('📨 Response headers:', Object.fromEntries(response.headers.entries()))
 
             if (!response.ok) {
                 const errorData = await response.text()
@@ -1180,33 +1180,33 @@ function Classifier() {
             const contentDisposition = response.headers.get('Content-Disposition')
             let filename = 'classification_results_fallback.json'
 
-            console.log(' Raw Content-Disposition header:', contentDisposition)
-            console.log(' Blob size:', blob.size, 'bytes')
+            console.log('📁 Raw Content-Disposition header:', contentDisposition)
+            console.log('📁 Blob size:', blob.size, 'bytes')
 
             if (contentDisposition) {
-                console.log(' MANUAL REGEX TEST:')
+                console.log('🧪 MANUAL REGEX TEST:')
                 const testString = 'attachment; filename="cargills_classification_20250709.json"'
                 const testPattern = /filename="([^"]+)"/i
                 const testMatch = testString.match(testPattern)
-                console.log(' Test string:', testString)
-                console.log(' Test pattern:', testPattern)
-                console.log(' Test match:', testMatch)
+                console.log('🧪 Test string:', testString)
+                console.log('🧪 Test pattern:', testPattern)
+                console.log('🧪 Test match:', testMatch)
 
-                console.log(' ACTUAL PARSING:')
-                console.log(' Raw Content-Disposition:', JSON.stringify(contentDisposition))
-                console.log(' Content-Disposition as string:', contentDisposition.toString())
+                console.log('🔍 ACTUAL PARSING:')
+                console.log('🔍 Raw Content-Disposition:', JSON.stringify(contentDisposition))
+                console.log('🔍 Content-Disposition as string:', contentDisposition.toString())
 
                 let extractedFilename: string | null = null
 
                 const basicMatch = contentDisposition.match(/filename="([^"]+)"/i)
-                console.log(' Basic filename pattern match:', basicMatch)
+                console.log('🔍 Basic filename pattern match:', basicMatch)
 
                 if (basicMatch && basicMatch[1]) {
                     extractedFilename = basicMatch[1].trim()
                     console.log('✅ Extracted filename via basic pattern:', extractedFilename)
                 } else {
                     const noQuotesMatch = contentDisposition.match(/filename=([^;,\s]+)/i)
-                    console.log(' No quotes pattern match:', noQuotesMatch)
+                    console.log('🔍 No quotes pattern match:', noQuotesMatch)
 
                     if (noQuotesMatch && noQuotesMatch[1]) {
                         extractedFilename = noQuotesMatch[1].trim()
@@ -1224,7 +1224,7 @@ function Classifier() {
                         ? new Date().toISOString().split('T')[0].replace(/-/g, '')
                         : downloadConfig.classificationDate.replace(/-/g, '') || new Date().toISOString().split('T')[0].replace(/-/g, '')
                     filename = `${supermarket}_classification_${useDate}.json`
-                    console.log(' Fallback filename:', filename)
+                    console.log('🔄 Fallback filename:', filename)
                 }
             } else {
                 console.log('⚠️ No Content-Disposition header found')
@@ -1232,10 +1232,10 @@ function Classifier() {
                     ? new Date().toISOString().split('T')[0].replace(/-/g, '')
                     : downloadConfig.classificationDate.replace(/-/g, '') || new Date().toISOString().split('T')[0].replace(/-/g, '')
                 filename = `${supermarket}_classification_${useDate}.json`
-                console.log(' Created filename without header:', filename)
+                console.log('🔄 Created filename without header:', filename)
             }
 
-            console.log(' Final filename for download:', filename)
+            console.log('💾 Final filename for download:', filename)
 
             const url = URL.createObjectURL(blob)
             const link = document.createElement('a')
@@ -1244,7 +1244,7 @@ function Classifier() {
             link.style.display = 'none'
 
             document.body.appendChild(link)
-            console.log(' Created download link with filename:', link.download)
+            console.log('🔗 Created download link with filename:', link.download)
             link.click()
             document.body.removeChild(link)
             URL.revokeObjectURL(url)
@@ -1290,17 +1290,17 @@ function Classifier() {
                 const info = JSON.parse(crawlerInfo);
                 if (info.store) {
                     detectedSupermarket = info.store.toLowerCase();
-                    console.log(' Detected supermarket from crawler info:', detectedSupermarket);
+                    console.log('🏪 Detected supermarket from crawler info:', detectedSupermarket);
                 }
                 // Extract custom name from category or other crawler metadata
                 if (info.category) {
                     detectedCustomName = info.category.toLowerCase().replace(/_/g, ' ');
-                    console.log('️ Detected custom name from crawler category:', detectedCustomName);
+                    console.log('🏷️ Detected custom name from crawler category:', detectedCustomName);
                 }
                 // Check for any custom_name field in crawler metadata
                 if (info.custom_name) {
                     detectedCustomName = info.custom_name;
-                    console.log('️ Using custom name from crawler metadata:', detectedCustomName);
+                    console.log('🏷️ Using custom name from crawler metadata:', detectedCustomName);
                 }
             } catch (e) {
                 console.log('Could not parse crawler info from localStorage');
@@ -1318,7 +1318,7 @@ function Classifier() {
                         const firstProduct = products[0];
                         if (firstProduct.category) {
                             detectedCustomName = firstProduct.category.toLowerCase().replace(/_/g, ' ');
-                            console.log('️ Detected custom name from product category:', detectedCustomName);
+                            console.log('🏷️ Detected custom name from product category:', detectedCustomName);
                         }
                     }
                 } catch (e) {
@@ -1334,12 +1334,12 @@ function Classifier() {
                 firstProduct.description?.toLowerCase().includes('keells') ||
                 firstProduct.image_url?.toLowerCase().includes('keells')) {
                 detectedSupermarket = 'keells';
-                console.log(' Detected Keells from input data');
+                console.log('🏪 Detected Keells from input data');
             } else if (firstProduct.name?.toLowerCase().includes('cargills') || 
                        firstProduct.description?.toLowerCase().includes('cargills') ||
                        firstProduct.image_url?.toLowerCase().includes('cargills')) {
                 detectedSupermarket = 'cargills';
-                console.log(' Detected Cargills from input data');
+                console.log('🏪 Detected Cargills from input data');
             }
         }
 
@@ -1349,18 +1349,18 @@ function Classifier() {
             const urlSupermarket = urlParams.get('supermarket');
             if (urlSupermarket) {
                 detectedSupermarket = urlSupermarket.toLowerCase();
-                console.log(' Detected supermarket from URL:', detectedSupermarket);
+                console.log('🏪 Detected supermarket from URL:', detectedSupermarket);
             }
         }
 
         // If still no detection, ask user to specify or default to generic name
         if (!detectedSupermarket) {
             detectedSupermarket = 'supermarket'; // Better than 'unknown'
-            console.log(' No supermarket detected, using generic name');
+            console.log('🏪 No supermarket detected, using generic name');
         }
 
-        console.log(' Final detected supermarket:', detectedSupermarket);
-        console.log('️ Final detected custom name:', detectedCustomName || '(none)');
+        console.log('🏪 Final detected supermarket:', detectedSupermarket);
+        console.log('🏷️ Final detected custom name:', detectedCustomName || '(none)');
 
         setDownloadConfig(prev => ({
             ...prev,

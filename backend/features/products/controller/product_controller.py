@@ -448,16 +448,46 @@ class ProductController(BaseController):
 
                 from backend.features.products.service.product_creation_service import process_ai_classified_product
                 from backend.features.products.service.matcher.core import IntelligentProductMatcher
+                import threading
+                import time as _time
 
                 cache_file = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'cache', 'product_cache.pkl')
                 matcher = IntelligentProductMatcher(cache_file=cache_file, similarity_threshold=0.75)
                 
-                # Only refresh cache if empty or very stale; do not block on DB query.
+                # Refresh cache in a background thread so SSE keepalives can flow
                 if len(matcher.product_cache) == 0:
                     yield f"data: {json.dumps({'type': 'log', 'message': '⏳ Loading product cache from database...'})}\n\n"
-                    matcher.refresh_cache_from_db(db)
-                
-                yield f"data: {json.dumps({'type': 'log', 'message': f'Matcher ready with {len(matcher.product_cache)} cached products'})}\n\n"
+
+                    refresh_done = threading.Event()
+                    refresh_error = [None]  # mutable container for thread result
+
+                    def _bg_refresh():
+                        try:
+                            matcher.refresh_cache_from_db(db)
+                        except Exception as exc:
+                            refresh_error[0] = exc
+                        finally:
+                            refresh_done.set()
+
+                    t = threading.Thread(target=_bg_refresh, daemon=True)
+                    t.start()
+
+                    # Send keepalive heartbeats every 5s while cache loads
+                    _MAX_WAIT = 120  # seconds
+                    _elapsed = 0
+                    while not refresh_done.is_set():
+                        refresh_done.wait(timeout=5)
+                        _elapsed += 5
+                        if not refresh_done.is_set():
+                            yield f"data: {json.dumps({'type': 'log', 'message': f'⏳ Still loading product cache... ({_elapsed}s)'})}\n\n"
+                            if _elapsed >= _MAX_WAIT:
+                                yield f"data: {json.dumps({'type': 'log', 'message': '⚠️ Cache loading timed out, proceeding with empty cache'})}\n\n"
+                                break
+
+                    if refresh_error[0]:
+                        yield f"data: {json.dumps({'type': 'log', 'message': f'⚠️ Cache refresh error: {refresh_error[0]}'})}\n\n"
+
+                yield f"data: {json.dumps({'type': 'log', 'message': f'🔍 Matcher ready with {len(matcher.product_cache)} cached products'})}\n\n"
 
                 stats = {
                     'total': len(products),
@@ -479,7 +509,7 @@ class ProductController(BaseController):
                             product_brand = product_doc.get('brand_name', '')
                             product_size = product_doc.get('size', '')
 
-                            log_msg = f"Checking: '{product_name}' | Brand: '{product_brand or 'N/A'}' | Size: '{product_size or 'N/A'}'"
+                            log_msg = f"🔍 Checking: '{product_name}' | Brand: '{product_brand or 'N/A'}' | Size: '{product_size or 'N/A'}'"
                             yield f"data: {json.dumps({'type': 'log', 'message': log_msg})}\n\n"
 
                             all_matches = matcher.find_similar_products(product_doc, limit=10)
@@ -506,9 +536,9 @@ class ProductController(BaseController):
                                     stats['duplicates'] += 1
                                     duplicate_msg = f"   └─ ⚠️ DUPLICATE DETECTED ({best_match.similarity_score*100:.1f}%)"
                                     yield f"data: {json.dumps({'type': 'log', 'message': duplicate_msg})}\n\n"
-                                    match_msg = f"   └─ Match: '{match_name}' | Brand: '{match_brand or 'N/A'}' | Size: '{match_size or 'N/A'}'"
+                                    match_msg = f"   └─ 🔎 Match: '{match_name}' | Brand: '{match_brand or 'N/A'}' | Size: '{match_size or 'N/A'}'"
                                     yield f"data: {json.dumps({'type': 'log', 'message': match_msg})}\n\n"
-                                    yield f"data: {json.dumps({'type': 'log', 'message': f'   └─ ️ {match_tier}'})}\n\n"
+                                    yield f"data: {json.dumps({'type': 'log', 'message': f'   └─ 🏷️ {match_tier}'})}\n\n"
                                 else:
                                     stats['new_products'] += 1
                                     yield f"data: {json.dumps({'type': 'log', 'message': '   └─ ❌ No matches found'})}\n\n"
@@ -553,10 +583,44 @@ class ProductController(BaseController):
 
         return Response(stream_with_context(generate()), mimetype='text/event-stream')
 
+    def refresh_matcher_cache(self):
+        """Diagnostic/admin endpoint to refresh the product matcher cache from Firestore."""
+        import time as _time
+        try:
+            db = initialize_firebase()
+            from backend.features.products.service.matcher.core import IntelligentProductMatcher
+
+            cache_file = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'cache', 'product_cache.pkl')
+            matcher = IntelligentProductMatcher(cache_file=cache_file, similarity_threshold=0.75)
+
+            before_count = len(matcher.product_cache)
+            logger.info("Manual matcher cache refresh requested", extra={"before_count": before_count})
+
+            start = _time.time()
+            matcher.refresh_cache_from_db(db)
+            elapsed = _time.time() - start
+
+            after_count = len(matcher.product_cache)
+            logger.info("Matcher cache refreshed", extra={
+                "before_count": before_count,
+                "after_count": after_count,
+                "elapsed_seconds": round(elapsed, 2)
+            })
+
+            return jsonify({
+                'success': True,
+                'before_count': before_count,
+                'after_count': after_count,
+                'elapsed_seconds': round(elapsed, 2)
+            })
+        except Exception as e:
+            logger.error(f"Matcher cache refresh failed: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 500
+
     def upload_product_image(self):
         """Upload a product image file"""
         try:
-            logger.info(" [Backend] Upload image endpoint called")
+            logger.info("🔷 [Backend] Upload image endpoint called")
 
             if 'image' not in request.files:
                 logger.error("❌ [Backend] No image file in request")
@@ -566,7 +630,7 @@ class ProductController(BaseController):
             product_id = request.form.get('product_id', '')
             old_image_url = request.form.get('old_image_url', '')
 
-            logger.info(" [Backend] Upload request details", extra={
+            logger.info("🔷 [Backend] Upload request details", extra={
                 "uploaded_filename": file.filename,
                 "content_type": file.content_type,
                 "product_id": product_id,
@@ -578,12 +642,12 @@ class ProductController(BaseController):
                 return jsonify({'success': False, 'error': 'No file selected'}), 400
 
             if old_image_url and product_id:
-                logger.info("️ [Backend] Deleting old product image before upload", extra={
+                logger.info("🗑️ [Backend] Deleting old product image before upload", extra={
                     "product_id": product_id,
                     "old_image_url": old_image_url
                 })
                 deletion_result = self.image_service.delete_product_image(product_id, old_image_url)
-                logger.info(f"️ [Backend] Deletion result: {deletion_result}")
+                logger.info(f"🗑️ [Backend] Deletion result: {deletion_result}")
 
             logger.info("⬆️ [Backend] Starting image upload to Firebase")
             result = self.image_service.upload_product_image(file, product_id)

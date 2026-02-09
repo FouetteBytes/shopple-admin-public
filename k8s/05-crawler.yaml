@@ -35,7 +35,7 @@ spec:
         env:
         - name: HEADLESS_MODE
           value: "true"
-        # The crawler writes output files to persistent volumes.
+        # Crawler writes output files to persistent volumes.
         volumeMounts:
         - name: crawler-output
           mountPath: /app/crawler/output

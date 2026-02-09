@@ -52,7 +52,7 @@ const ProductEditModal: React.FC<ProductEditModalProps> = ({
   onSave
 }) => {
   // Debug: Check API_BASE_URL
-  console.log(' [ProductEditModal] Component loaded, API_BASE_URL:', API_BASE_URL);
+  console.log('🔧 [ProductEditModal] Component loaded, API_BASE_URL:', API_BASE_URL);
   
   const [formData, setFormData] = useState<Partial<Product>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -196,8 +196,8 @@ const ProductEditModal: React.FC<ProductEditModalProps> = ({
   };
 
   const handleImageEditorSave = async (editedImageUrl: string, editedImageBlob: Blob) => {
-    console.log(' [ProductEditModal] Starting image editor save');
-    console.log(' [ProductEditModal] Blob details:', {
+    console.log('📤 [ProductEditModal] Starting image editor save');
+    console.log('📤 [ProductEditModal] Blob details:', {
       size: editedImageBlob.size,
       type: editedImageBlob.type,
       productId: product?.id
@@ -214,19 +214,19 @@ const ProductEditModal: React.FC<ProductEditModalProps> = ({
       // Send old image URL so backend can delete it from Firebase
       if (product?.image_url) {
         formData.append('old_image_url', product.image_url);
-        console.log(' [ProductEditModal] Old image URL to delete:', product.image_url);
+        console.log('📤 [ProductEditModal] Old image URL to delete:', product.image_url);
       }
 
-      console.log(' [ProductEditModal] Sending upload request to:', `${API_BASE_URL}/api/products/upload-image`);
+      console.log('📤 [ProductEditModal] Sending upload request to:', `${API_BASE_URL}/api/products/upload-image`);
       const response = await fetch(`${API_BASE_URL}/api/products/upload-image`, {
         method: 'POST',
         body: formData,
       });
 
-      console.log(' [ProductEditModal] Response status:', response.status);
+      console.log('📤 [ProductEditModal] Response status:', response.status);
       
       const result = await response.json();
-      console.log(' [ProductEditModal] Response data:', result);
+      console.log('📤 [ProductEditModal] Response data:', result);
       
       if (result.success && result.image_url) {
         console.log('✅ [ProductEditModal] Image uploaded successfully:', result.image_url);
@@ -251,7 +251,7 @@ const ProductEditModal: React.FC<ProductEditModalProps> = ({
       throw error; // Re-throw so ImageEditor can catch it
     } finally {
       setIsLoadingImage(false);
-      console.log(' [ProductEditModal] Upload process ended');
+      console.log('📤 [ProductEditModal] Upload process ended');
     }
   };
 
@@ -483,7 +483,7 @@ const ProductEditModal: React.FC<ProductEditModalProps> = ({
                   className="w-full"
                   disabled={isLoadingImage}
                 >
-                   Edit Image
+                  🎨 Edit Image
                 </Button>
 
                 {/* Confirmation Buttons */}

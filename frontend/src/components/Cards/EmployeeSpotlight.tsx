@@ -52,7 +52,7 @@ function EmployeeSpotlight() {
                         <Image src={Avatar2} alt='loom' height={36} width={36} className='rounded-full' />
                         <div className='font-medium'>
                             <p className='text-xxs text-gray-500'>Dwayne Johnson</p>
-                            <p className='text-sm text-gray-700 font-medium'>Looks insane!</p>
+                            <p className='text-sm text-gray-700 font-medium'>Looks insane!🔥</p>
                         </div>
                     </div>
                     <button onClick={() => setComment1Liked(!comment1Liked)} className={`${comment1Liked ? 'text-red-500' : 'text-gray-400'} duration-200 active:scale-50`}>
@@ -71,7 +71,7 @@ function EmployeeSpotlight() {
                         <Image src={Avatar3} alt='loom' height={36} width={36} className='rounded-full' />
                         <div className='font-medium'>
                             <p className='text-xxs text-gray-500'>Steve Smith</p>
-                            <p className='text-sm text-gray-700 font-medium'>Update is live now!</p>
+                            <p className='text-sm text-gray-700 font-medium'>Update is live now!🎉</p>
                         </div>
                     </div>
                     <button

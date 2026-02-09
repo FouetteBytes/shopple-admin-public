@@ -136,7 +136,7 @@ function TimeTracker() {
                     
                     breakTimeoutRef.current = setTimeout(() => {
                         showNotification(
-                            ' Break Time Over!',
+                            '🔄 Break Time Over!',
                             `Your ${notificationSettings.breakIntervalMinutes} minute break is complete. Ready to get back to work?`
                         )
                         setNextBreakTime(null)
@@ -216,11 +216,11 @@ function TimeTracker() {
 
     const getProductivityTip = () => {
         const tips = [
-            " Use the 25-minute Pomodoro technique for focused work sessions",
-            " Set specific goals for each time tracking session", 
+            "💡 Use the 25-minute Pomodoro technique for focused work sessions",
+            "🎯 Set specific goals for each time tracking session", 
             "☕ Take regular breaks to maintain productivity",
-            " Turn off distractions during focused work time",
-            " Review your time logs to identify productivity patterns"
+            "🔕 Turn off distractions during focused work time",
+            "📊 Review your time logs to identify productivity patterns"
         ]
         return tips[Math.floor(Math.random() * tips.length)]
     }

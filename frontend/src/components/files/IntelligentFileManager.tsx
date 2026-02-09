@@ -228,7 +228,7 @@ const IntelligentFileManager: React.FC<IntelligentFileManagerProps> = ({
       {/* Header with Stats */}
       <div className='flex items-center justify-between'>
         <div>
-          <h3 className='text-lg font-semibold text-gray-800'> Intelligent File Manager</h3>
+          <h3 className='text-lg font-semibold text-gray-800'>📁 Intelligent File Manager</h3>
           <p className='text-sm text-gray-600'>
             {stats.total} files • {formatFileSize(stats.totalSize)}
           </p>

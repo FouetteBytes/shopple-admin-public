@@ -186,7 +186,7 @@ class SystemService(BaseService):
                     'name': service_key,
                     'container_name': container_name,
                     'status': status,
-                    'uptime': uptime,
+                    'uptime': uptime, # TODO: parse logic
                     'cpu': cpu_usage,
                     'memory': memory_usage
                 })

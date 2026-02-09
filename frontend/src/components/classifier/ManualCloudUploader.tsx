@@ -356,7 +356,7 @@ const ManualCloudUploader: React.FC<ManualCloudUploaderProps> = ({ onUploadSucce
                   <div className="min-w-[220px] max-w-xl">
                     <div className="flex items-center gap-3">
                       <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-200/70">
-                        
+                        📄
                       </div>
                       <div>
                         <p className="text-base font-semibold text-slate-900">{file.originalName}</p>

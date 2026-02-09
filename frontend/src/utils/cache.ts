@@ -1,5 +1,5 @@
 /**
- * Caching utility for reducing API calls and improving performance.
+ * Intelligent caching utility for reducing API calls and improving performance
  */
 
 interface CacheItem<T> {
@@ -18,7 +18,7 @@ class IntelligentCache {
   }
 
   /**
-  * Set a cache entry with automatic expiration.
+   * Set cache with automatic expiry
    */
   set<T>(key: string, data: T, ttlMinutes: number = 30): void {
     const item: CacheItem<T> = {
@@ -31,7 +31,7 @@ class IntelligentCache {
       this.storage.setItem(this.prefix + key, JSON.stringify(item));
     } catch (error) {
       console.warn('Cache storage failed:', error);
-      // If storage is full, clear expired entries and retry.
+      // If storage is full, try to clear old items
       this.clearExpired();
       try {
         this.storage.setItem(this.prefix + key, JSON.stringify(item));
@@ -42,7 +42,7 @@ class IntelligentCache {
   }
 
   /**
-  * Get cached data if it has not expired.
+   * Get cached data if not expired
    */
   get<T>(key: string): T | null {
     try {
@@ -51,7 +51,7 @@ class IntelligentCache {
 
       const item: CacheItem<T> = JSON.parse(itemStr);
       
-      // Check for expiration.
+      // Check if expired
       if (Date.now() > item.expiry) {
         this.remove(key);
         return null;
@@ -66,21 +66,21 @@ class IntelligentCache {
   }
 
   /**
-  * Check whether the cache contains valid data.
+   * Check if cache has valid (non-expired) data
    */
   has(key: string): boolean {
     return this.get(key) !== null;
   }
 
   /**
-  * Remove a specific cache item.
+   * Remove specific cache item
    */
   remove(key: string): void {
     this.storage.removeItem(this.prefix + key);
   }
 
   /**
-  * Clear all expired cache items.
+   * Clear all expired cache items
    */
   clearExpired(): void {
     const keysToRemove: string[] = [];
@@ -106,7 +106,7 @@ class IntelligentCache {
   }
 
   /**
-  * Clear all cache items with this prefix.
+   * Clear all cache items with this prefix
    */
   clearAll(): void {
     const keysToRemove: string[] = [];
@@ -122,7 +122,7 @@ class IntelligentCache {
   }
 
   /**
-  * Clear all cache items that match a pattern.
+   * Clear all cache items that match a pattern
    */
   clearPattern(pattern: string): void {
     const keysToRemove: string[] = [];
@@ -141,7 +141,7 @@ class IntelligentCache {
   }
 
   /**
-  * Get cache statistics.
+   * Get cache statistics
    */
   getStats(): { size: number; items: number; expired: number } {
     let size = 0;
@@ -171,7 +171,7 @@ class IntelligentCache {
   }
 
   /**
-  * Get detailed cache statistics.
+   * Get detailed cache statistics
    */
   statistics(): {
     totalEntries: number;
@@ -200,7 +200,7 @@ class IntelligentCache {
               newestTimestamp = item.timestamp;
             }
           } catch (error) {
-            // Skip invalid items.
+            // Skip invalid items
           }
         }
       }
@@ -215,20 +215,20 @@ class IntelligentCache {
   }
 
   /**
-  * Cleanup utility for application initialization.
+   * Cleanup utility for app initialization
    */
   async cleanup(): Promise<void> {
-    console.log('️ Initializing cache system...');
+    console.log('🗑️ Initializing cache system...');
     
     try {
-      // Remove expired entries from both caches.
+      // Clean expired entries from both caches
       this.clearExpired();
       
-      // Log cache statistics.
+      // Log cache statistics
       const localStats = this.getStats();
       const sessionStats = this.getStats();
       
-      console.log(' Cache Statistics:');
+      console.log('📊 Cache Statistics:');
       console.log('- Local Cache:', {
         entries: localStats.items,
         size: `${(localStats.size / 1024).toFixed(2)}KB`,
@@ -249,11 +249,11 @@ class IntelligentCache {
   }
 }
 
-// Create singleton instances.
+// Create singleton instances
 export const localCache = new IntelligentCache(false);
 export const sessionCache = new IntelligentCache(true);
 
-// Cache key generators.
+// Cache key generators
 export const cacheKeys = {
   priceStats: () => 'price_stats',
   enhancedProducts: (page: number, filters: string) => `enhanced_products_${page}_${filters}`,
@@ -263,24 +263,24 @@ export const cacheKeys = {
   productOverview: (filters: string) => `product_overview_${filters}`,
 };
 
-// Run auto-cleanup on application start.
+// Auto-cleanup on app start
 localCache.clearExpired();
 sessionCache.clearExpired();
 
-// Cleanup utility for application initialization.
+// Cleanup utility for app initialization
 export const initializeCacheSystem = async () => {
-  console.log('️ Initializing cache system...');
+  console.log('🗑️ Initializing cache system...');
   
   try {
-    // Remove expired entries from both caches.
+    // Clean expired entries from both caches
     await localCache.cleanup();
     await sessionCache.cleanup();
     
-    // Log cache statistics.
+    // Log cache statistics
     const localStats = await localCache.statistics();
     const sessionStats = await sessionCache.statistics();
     
-    console.log(' Cache Statistics:');
+    console.log('📊 Cache Statistics:');
     console.log('- Local Cache:', {
       entries: localStats.totalEntries,
       size: `${localStats.storageSize}KB`,
@@ -300,11 +300,11 @@ export const initializeCacheSystem = async () => {
   }
 };
 
-// Periodic auto-cleanup routine.
+// Auto-cleanup function to run periodically
 export const startCacheCleanupTimer = () => {
-  // Clean up every 30 minutes.
+  // Clean up every 30 minutes
   const cleanupInterval = setInterval(async () => {
-    console.log(' Running scheduled cache cleanup...');
+    console.log('🔄 Running scheduled cache cleanup...');
     try {
       await localCache.cleanup();
       await sessionCache.cleanup();
@@ -314,9 +314,9 @@ export const startCacheCleanupTimer = () => {
     }
   }, 30 * 60 * 1000); // 30 minutes
 
-  // Return the cleanup function.
+  // Return cleanup function
   return () => {
     clearInterval(cleanupInterval);
-    console.log(' Cache cleanup timer stopped');
+    console.log('🛑 Cache cleanup timer stopped');
   };
 };

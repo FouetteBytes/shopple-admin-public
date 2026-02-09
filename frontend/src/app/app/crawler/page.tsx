@@ -551,7 +551,7 @@ function WebCrawler() {
         if (!value) return '—';
         const date = new Date(value);
         if (Number.isNaN(date.getTime())) return '—';
-        return `${date.toLocaleDateString()} • ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        return `${date.toLocaleDateString('en-US', { timeZone: 'Asia/Colombo' })} • ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Colombo', timeZoneName: 'short' })}`;
     };
 
     const formatIntervalPhrase = (minutesRaw: any) => {
@@ -3192,7 +3192,7 @@ function WebCrawler() {
                                                             </span>
                                                             {isPseudo && (
                                                                 <span className='inline-flex w-fit items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-700'>
-                                                                     File Only
+                                                                    📁 File Only
                                                                 </span>
                                                             )}
                                                         </div>
@@ -3328,7 +3328,7 @@ function WebCrawler() {
                                                 </span>
                                                 {isPseudo && (
                                                     <span className='inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-[11px] font-semibold text-yellow-700'>
-                                                         File Only
+                                                        📁 File Only
                                                     </span>
                                                 )}
                                             </div>
@@ -3508,7 +3508,7 @@ function WebCrawler() {
                                                     }`}
                                                 >
                                                     {activity.status === 'running'
-                                                        ? ' Running'
+                                                        ? '🔄 Running'
                                                         : activity.status === 'error'
                                                             ? '❌ Error'
                                                             : activity.status === 'starting'
@@ -3831,7 +3831,7 @@ function WebCrawler() {
                                         setPauseAutoRefresh(true);
                                         console.log('Auto-refresh paused for Clear All operation');
 
-                                        console.log(' Clearing all results in backend...');
+                                        console.log('🔄 Clearing all results in backend...');
                                         const backendResponse = await crawlerAPI.clearResults(undefined, true);
                                         console.log('✅ Backend clear successful:', backendResponse);
 
@@ -4085,7 +4085,7 @@ function WebCrawler() {
 
                                                                     setPauseAutoRefresh(true);
 
-                                                                    console.log(` Deleting result ${resultId} in backend...`);
+                                                                    console.log(`🔄 Deleting result ${resultId} in backend...`);
                                                                     const backendResponse = await crawlerAPI.deleteResult(resultId);
                                                                     console.log('✅ Backend delete successful:', backendResponse);
 

@@ -261,10 +261,13 @@ export default function UploadPricesView() {
     stopProgressTimer();
     progressTimerRef.current = setInterval(() => {
       setProgressPercent((prev) => {
-        const next = prev + Math.random() * 6 + 2; // small bursts to feel alive
+        // Slow down as we approach the cap so it never feels stuck
+        const remaining = upperBound - prev;
+        const increment = Math.max(0.3, remaining * 0.04 + Math.random() * 1.5);
+        const next = prev + increment;
         return next > upperBound ? upperBound : next;
       });
-    }, 450);
+    }, 800);
   };
 
   const setStage = (stage: StageState, percent?: number) => {
@@ -346,15 +349,15 @@ export default function UploadPricesView() {
         processed: 0,
         current: `Found ${productsArray.length} products to upload`,
         details: [
-          ` File parsed successfully`,
-          ` Target: ${selectedSupermarket}`,
-          ` Price Date: ${selectedDate.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}`,
-          ` Upload Time: ${new Date().toLocaleTimeString()}`,
+          `📋 File parsed successfully`,
+          `🏪 Target: ${selectedSupermarket}`,
+          `📅 Price Date: ${selectedDate.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}`,
+          `🕒 Upload Time: ${new Date().toLocaleTimeString()}`,
         ],
       });
 
       setStage('uploading', 32);
-      gentlyAdvanceProgress(82);
+      gentlyAdvanceProgress(95);
       const response = await fetch(`${API_BASE_URL}/api/prices/upload`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -380,9 +383,9 @@ export default function UploadPricesView() {
           current: 'Upload completed successfully!',
           details: [
             `✅ Processed: ${result.stats.total_processed} products`,
-            ` Price records created: ${result.stats.total_processed}`,
-            ` Success rate: 100%`,
-            ` Database updated`,
+            `💰 Price records created: ${result.stats.total_processed}`,
+            `🎯 Success rate: 100%`,
+            `📊 Database updated`,
           ],
         });
         setStage('completed', 100);
@@ -396,15 +399,8 @@ export default function UploadPricesView() {
           // Mark a flag for today's date to show a sidebar badge
           const todayKey = new Date().toISOString().split('T')[0];
           localStorage.setItem('pricesUploadedOn', todayKey);
-          // Persist daily count in Firestore (increment by processed count)
-          const dayKey = selectedDate.toISOString().split('T')[0];
-          const ref = doc(db, 'price_uploads_daily', dayKey);
-          const snap = await getDoc(ref);
-          if (snap.exists()) {
-            await updateDoc(ref, { count: increment(result.stats.total_processed), updatedAt: serverTimestamp() });
-          } else {
-            await setDoc(ref, { count: result.stats.total_processed, updatedAt: serverTimestamp() });
-          }
+          // Note: daily count in Firestore is already updated by the backend
+          // (which deduplicates by product_id). No need to increment here.
         } catch {}
         setTimeout(() => {
           setSelectedFile(null);
@@ -793,7 +789,11 @@ export default function UploadPricesView() {
 
                     {/* Simplified Progress View */}
                     <div className="flex items-center justify-between text-sm text-slate-600">
-                      <span>{uploadProgress?.processed || 0} / {uploadProgress?.total || 0} items processed</span>
+                      <span>
+                        {progressStage === 'uploading'
+                          ? `Uploading ${uploadProgress?.total || 0} items to cloud…`
+                          : `${uploadProgress?.processed || 0} / ${uploadProgress?.total || 0} items processed`}
+                      </span>
                       <span>{Math.round(progressPercent)}%</span>
                     </div>
 

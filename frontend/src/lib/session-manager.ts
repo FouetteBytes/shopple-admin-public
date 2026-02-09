@@ -1,13 +1,13 @@
 /**
- * Session management system.
- * Implements Firebase session cookies for persistent authentication.
+ * Enhanced Session Management System
+ * Implements Firebase session cookies for persistent authentication
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { adminApp, adminAuth } from './firebase-admin-enhanced';
 import { auditLogger } from './audit-logger';
 
-// Session configuration.
+// Session configuration
 const SESSION_CONFIG = {
   cookieName: 'admin-session',
   maxAge: 24 * 60 * 60 * 1000, // 24 hours
@@ -37,7 +37,7 @@ export class SessionManager {
   private static adminAuth = adminAuth;
 
   /**
-  * Create a Firebase session cookie after successful authentication.
+   * Create Firebase session cookie after successful authentication
    */
   static async createSession(
     idToken: string,
@@ -45,14 +45,14 @@ export class SessionManager {
     userAgent: string
   ): Promise<SessionData> {
     try {
-      // Create a session cookie with a 24-hour expiration.
+      // Create session cookie with 24 hour expiration
       const expiresIn = 24 * 60 * 60 * 1000; // 24 hours
       const sessionCookie = await this.adminAuth.createSessionCookie(idToken, { expiresIn });
       
-      // Verify the session cookie to retrieve claims.
+      // Verify the session cookie to get claims
       const decodedClaims = await this.adminAuth.verifySessionCookie(sessionCookie, true);
       
-      // Build session data.
+      // Create session data
       const sessionData: SessionData = {
         uid: decodedClaims.uid,
         email: decodedClaims.email || '',
@@ -69,7 +69,7 @@ export class SessionManager {
         sessionCookie,
       };
 
-      // Log session creation.
+      // Log session creation
       await auditLogger.logSecurityEvent({
         event: 'admin_session_created',
         severity: 'LOW',
@@ -91,7 +91,7 @@ export class SessionManager {
   }
 
   /**
-  * Validate a session using a Firebase session cookie.
+   * Validate session using Firebase session cookie
    */
   static async validateSession(sessionCookie: string, ipAddress: string): Promise<SessionData | null> {
     try {
@@ -99,10 +99,10 @@ export class SessionManager {
         return null;
       }
 
-      // Verify the session cookie with the Firebase Admin SDK.
+      // Verify session cookie with Firebase Admin SDK
       const decodedClaims = await this.adminAuth.verifySessionCookie(sessionCookie, true);
       
-      // Build session data from claims.
+      // Create session data from claims
       const sessionData: SessionData = {
         uid: decodedClaims.uid,
         email: decodedClaims.email || '',
@@ -112,7 +112,7 @@ export class SessionManager {
         isSuperAdmin: decodedClaims.superAdmin || false,
         mustResetPassword: decodedClaims.forcePasswordReset === true,
         sessionId: this.generateSessionId(),
-        createdAt: decodedClaims.iat * 1000, // Convert to milliseconds.
+        createdAt: decodedClaims.iat * 1000, // Convert to milliseconds
         lastActivity: Date.now(),
         ipAddress,
         userAgent: 'server',
@@ -121,7 +121,7 @@ export class SessionManager {
 
       return sessionData;
     } catch (error: any) {
-      // Suppress logs for expected session expiration.
+      // Only log errors that aren't expired sessions (normal logout/timeout)
       if (error?.errorInfo?.code !== 'auth/session-cookie-expired') {
         console.error('Error validating session:', error);
       }
@@ -130,7 +130,7 @@ export class SessionManager {
   }
 
   /**
-  * Destroy a session by revoking tokens.
+   * Destroy session by revoking tokens
    */
   static async destroySession(sessionCookie: string): Promise<void> {
     try {
@@ -138,13 +138,13 @@ export class SessionManager {
         return;
       }
 
-      // Verify the session cookie to obtain the user ID.
+      // Verify session cookie to get user ID
       const decodedClaims = await this.adminAuth.verifySessionCookie(sessionCookie, false);
       
-      // Revoke refresh tokens to invalidate all sessions.
+      // Revoke refresh tokens to invalidate all sessions
       await this.adminAuth.revokeRefreshTokens(decodedClaims.uid);
 
-      // Log session destruction.
+      // Log session destruction
       await auditLogger.logSecurityEvent({
         event: 'admin_session_destroyed',
         severity: 'LOW',
@@ -157,12 +157,12 @@ export class SessionManager {
       });
     } catch (error: any) {
       console.error('Error destroying session:', error);
-      // Continue even if destruction fails.
+      // Continue even if destruction fails
     }
   }
 
   /**
-  * Set the session cookie on the response.
+   * Set session cookie in response
    */
   static setSessionCookie(response: NextResponse, sessionData: SessionData): void {
     const options = {
@@ -177,14 +177,14 @@ export class SessionManager {
   }
 
   /**
-  * Get the session cookie from the request.
+   * Get session cookie from request
    */
   static getSessionCookie(request: NextRequest): string | null {
     return request.cookies.get(SESSION_CONFIG.cookieName)?.value || null;
   }
 
   /**
-  * Clear the session cookie from the response.
+   * Clear session cookie from response
    */
   static clearSessionCookie(response: NextResponse): void {
     response.cookies.set(SESSION_CONFIG.cookieName, '', {
@@ -197,14 +197,14 @@ export class SessionManager {
   }
 
   /**
-  * Get the session ID from the request for legacy compatibility.
+   * Get session ID from request (for legacy compatibility)
    */
   static getSessionId(request: NextRequest): string | null {
     return this.getSessionCookie(request);
   }
 
   /**
-  * Get the client IP address.
+   * Get client IP address
    */
   static getClientIP(request: NextRequest): string {
     const forwarded = request.headers.get('x-forwarded-for');
@@ -215,21 +215,21 @@ export class SessionManager {
   }
 
   /**
-  * Get the user agent.
+   * Get user agent
    */
   static getUserAgent(request: NextRequest): string {
     return request.headers.get('user-agent') || 'unknown';
   }
 
   /**
-  * Generate a unique session ID.
+   * Generate unique session ID
    */
   private static generateSessionId(): string {
     return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   /**
-  * Get all active sessions (simplified for admin management).
+   * Get all active sessions (simplified version for admin management)
    */
   static async getAllActiveSessions(): Promise<any[]> {
     // Firebase session cookies do not provide a server-side session store.
@@ -239,11 +239,11 @@ export class SessionManager {
   }
 
   /**
-  * Revoke a user session by forcing token revocation.
+   * Revoke user session by forcing token revocation
    */
   static async revokeUserSession(userId: string): Promise<{ success: boolean; message: string }> {
     try {
-      // Revoke all refresh tokens for the user.
+      // Revoke all refresh tokens for the user
       await this.adminAuth.revokeRefreshTokens(userId);
       
       return { 
@@ -260,11 +260,11 @@ export class SessionManager {
   }
 
   /**
-  * Clean up expired sessions (compatibility only).
+   * Clean up expired sessions (for compatibility)
    */
   static cleanupExpiredSessions(): void {
-    // With Firebase session cookies, cleanup is handled automatically.
-    // This method is retained for compatibility.
+    // With Firebase session cookies, cleanup is handled automatically
+    // This method is kept for compatibility
   }
 }
 

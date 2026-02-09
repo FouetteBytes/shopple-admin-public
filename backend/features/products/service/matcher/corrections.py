@@ -43,43 +43,43 @@ class IntelligentCorrections:
         # Lentil/Pulse detection (Dhal/Dal)
         if 'dhal' in product_lower or 'dal ' in product_lower:
             if parsed_result.get('product_type', '').lower() != 'lentil':
-                logger.debug(f"INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Lentil' (contains 'dhal')")
+                logger.debug(f"🧠 INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Lentil' (contains 'dhal')")
                 parsed_result['product_type'] = 'Lentil'
         
         # Snack Bar detection
         elif 'bar' in product_lower and ('grain' in product_lower or 'choxy' in product_lower or 'protein' in product_lower):
             if parsed_result.get('product_type', '').lower() not in ['snack bar', 'cereal bar', 'energy bar']:
-                logger.debug(f"INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Snack Bar' (contains 'bar' + grain indicators)")
+                logger.debug(f"🧠 INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Snack Bar' (contains 'bar' + grain indicators)")
                 parsed_result['product_type'] = 'Snack Bar'
         
         # Oil detection
         elif 'oil' in product_lower and 'coconut' in product_lower:
             if parsed_result.get('product_type', '').lower() != 'oil':
-                logger.debug(f"INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Oil' (contains 'coconut oil')")
+                logger.debug(f"🧠 INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Oil' (contains 'coconut oil')")
                 parsed_result['product_type'] = 'Oil'
         
         # Milk detection
         elif 'milk' in product_lower and ('coconut' in product_lower or 'powder' in product_lower):
             if parsed_result.get('product_type', '').lower() not in ['milk', 'milk powder', 'coconut milk']:
-                logger.debug(f"INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Milk Product' (contains milk indicators)")
+                logger.debug(f"🧠 INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Milk Product' (contains milk indicators)")
                 parsed_result['product_type'] = 'Milk Product'
         
         # Flour detection
         elif 'flour' in product_lower:
             if parsed_result.get('product_type', '').lower() != 'flour':
-                logger.debug(f"INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Flour' (contains 'flour')")
+                logger.debug(f"🧠 INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Flour' (contains 'flour')")
                 parsed_result['product_type'] = 'Flour'
         
         # Fish detection (more specific)
         elif any(fish in product_lower for fish in ['mackerel', 'sprats', 'tuna', 'sardine', 'salmon']):
             if parsed_result.get('product_type', '').lower() != 'fish':
-                logger.debug(f"INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Fish' (contains fish type)")
+                logger.debug(f"🧠 INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Fish' (contains fish type)")
                 parsed_result['product_type'] = 'Fish'
         
         # Dry Fish detection
         elif 'dry fish' in product_lower or ('dry' in product_lower and any(fish in product_lower for fish in ['fish', 'thalapath', 'katta'])):
             if parsed_result.get('product_type', '').lower() not in ['dry fish', 'fish']:
-                logger.debug(f"INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Dry Fish' (contains dry fish indicators)")
+                logger.debug(f"🧠 INTELLIGENT CORRECTION: '{parsed_result.get('product_type')}' → 'Dry Fish' (contains dry fish indicators)")
                 parsed_result['product_type'] = 'Dry Fish'
         
         return parsed_result

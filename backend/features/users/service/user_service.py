@@ -403,13 +403,13 @@ class UserService(BaseService):
             })
         online_ids = []
         friend_ids = [f["uid"] for f in friends]
-           if friend_ids:
-               # Limit the online-status lookup to the first 10 IDs.
-               check_ids = friend_ids[:10]
-             status_map = self.insights_repository.fetch_status_documents(check_ids)
-             for fid, st in status_map.items():
-                 if st.get("state") == "online":
-                     online_ids.append(fid)
+        if friend_ids:
+            # Limit the online-status lookup to the first 10 IDs.
+            check_ids = friend_ids[:10]
+            status_map = self.insights_repository.fetch_status_documents(check_ids)
+            for fid, st in status_map.items():
+                if st.get("state") == "online":
+                    online_ids.append(fid)
         return {
             "items": friends,
             "onlineNow": online_ids,

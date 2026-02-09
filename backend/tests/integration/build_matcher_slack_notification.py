@@ -65,7 +65,7 @@ def build_slack_payload(github_context):
                     "type": "header",
                     "text": {
                         "type": "plain_text",
-                        "text": " Intelligent Product Matcher Tests",
+                        "text": "🧠 Intelligent Product Matcher Tests",
                         "emoji": True
                     }
                 },
@@ -84,10 +84,10 @@ def build_slack_payload(github_context):
                     "fields": [
                         {"type": "mrkdwn", "text": f"*✅ Tests Passed*\n`{passed}`"},
                         {"type": "mrkdwn", "text": f"*❌ Tests Failed*\n`{failed}`"},
-                        {"type": "mrkdwn", "text": f"* Total Tests*\n`{total}`"},
+                        {"type": "mrkdwn", "text": f"*📊 Total Tests*\n`{total}`"},
                         {"type": "mrkdwn", "text": f"*⏱️ Duration*\n`{duration}s`"},
-                        {"type": "mrkdwn", "text": f"* Coverage*\n`{coverage}`"},
-                        {"type": "mrkdwn", "text": f"* Branch*\n`{github_context['branch']}`"}
+                        {"type": "mrkdwn", "text": f"*📈 Coverage*\n`{coverage}`"},
+                        {"type": "mrkdwn", "text": f"*🌿 Branch*\n`{github_context['branch']}`"}
                     ]
                 },
                 {
@@ -97,7 +97,7 @@ def build_slack_payload(github_context):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"* Matching Algorithm Tests*\n\n{test_results}"
+                        "text": f"*🧪 Matching Algorithm Tests*\n\n{test_results}"
                     }
                 },
                 {
@@ -108,7 +108,7 @@ def build_slack_payload(github_context):
                     "elements": [
                         {
                             "type": "mrkdwn",
-                            "text": f"⚙️ *Workflow:* `{github_context['workflow']}` •  *Triggered by:* `{github_context['event']}` • <{github_context['run_url']}| View Full Logs>"
+                            "text": f"⚙️ *Workflow:* `{github_context['workflow']}` • 👤 *Triggered by:* `{github_context['event']}` • <{github_context['run_url']}|📋 View Full Logs>"
                         }
                     ]
                 }

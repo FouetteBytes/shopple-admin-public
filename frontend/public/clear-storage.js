@@ -5,11 +5,11 @@
  * to ensure clean database migration.
  */
 
-console.log(' Clearing browser storage...');
+console.log('🧹 Clearing browser storage...');
 
 // Clear localStorage
 if (typeof localStorage !== 'undefined') {
-  console.log(' Current localStorage items:');
+  console.log('📋 Current localStorage items:');
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     console.log(`  - ${key}`);
@@ -40,4 +40,4 @@ if (typeof sessionStorage !== 'undefined') {
   console.log('✅ Cleared sessionStorage');
 }
 
-console.log(' Storage cleared! Please refresh the page.');
+console.log('🎉 Storage cleared! Please refresh the page.');

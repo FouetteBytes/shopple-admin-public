@@ -207,7 +207,7 @@ function CacheInsights() {
                     </div>
                     {cacheStatus.hitRate < 70 && (
                         <p className='text-xs text-gray-500 mt-2'>
-                             Consider optimizing cache settings for better performance
+                            💡 Consider optimizing cache settings for better performance
                         </p>
                     )}
                 </div>
